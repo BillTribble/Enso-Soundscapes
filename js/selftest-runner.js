@@ -607,6 +607,28 @@
             feltLpRemoved:
                 !(window.enoApp && window.enoApp.audioEngine &&
                   window.enoApp.audioEngine.feltPianoConfig.lowpassHz),
+            pianoRuntimeBuffersNormalized: (() => {
+              const ae = window.enoApp?.audioEngine;
+              const normFn = window.EnsoPianoSampler?.normalizeNoteAudioBuffer;
+              if (!ae || !ae.ctx || typeof normFn !== 'function') return false;
+              const tb = ae.ctx.createBuffer(1, 32, ae.ctx.sampleRate);
+              tb.getChannelData(0)[0] = 0.0705;
+              normFn(tb, 60);
+              const m = ae._findClosestPianoSample?.(60);
+              return Boolean(tb._ensoNormalized && Math.abs(tb._normalizedPeak - 0.82) < 0.01 && tb._normGainApplied > 11.0 && m?.buffer?._ensoNormalized);
+            })(),
+            pianoMakeupGain: Number((window.enoApp?.audioEngine?.feltPianoConfig?.makeupGain || 0).toFixed(2)),
+            pianoStemFilterOpen: Boolean(
+                (window.enoApp?.audioEngine?.pianoStem?.masterFilter?.frequency?.value || 0) >= 6800),
+            crossfade90BoostVerified: (() => {
+              const ae = window.enoApp?.audioEngine;
+              if (!ae) return false;
+              const prevXf = ae.params.pianoCrossfade;
+              const st90 = ae.setPianoCrossfade(-0.90);
+              const ok = st90.pianoBoost > 1.8 && st90.otherStemTaper < 0.25 && ae.pianoStem?.stemInput?.gain?.value > 1.8;
+              ae.setPianoCrossfade(prevXf);
+              return ok;
+            })(),
             topBarBadgeRemoved: !document.getElementById('active-preset-badge'),
             topBarTabsLabels,
             topBarPickerCentered,

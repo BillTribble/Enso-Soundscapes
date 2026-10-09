@@ -413,8 +413,8 @@ class PhraseEngine {
       const fireStep = () => {
         this.activeStepIndex = sIdx;
         this._highlightPhraseStep(sIdx);
-        const chordScale = stepMidis.length > 1 ? (1 / Math.pow(stepMidis.length, 0.42)) : 1.0;
-        const vel = (step.vel || 0.70) * (options.velocity || 1.0) * chordScale;
+        const chordScale = stepMidis.length > 1 ? (1 / Math.pow(stepMidis.length, 0.16)) : 1.0;
+        const vel = Math.min(1.0, (step.vel || 0.76) * 1.15 * (options.velocity || 1.0) * chordScale);
         const pan = (Math.random() * 2 - 1) * 0.40;
         const pVoice = voice || ((this.probEngine && Array.isArray(this.probEngine.voices)) ? this.probEngine.voices.find((x) => x.id === 'piano') : null);
         const gain = (pVoice && typeof pVoice.gain === 'number') ? pVoice.gain : 2.0;

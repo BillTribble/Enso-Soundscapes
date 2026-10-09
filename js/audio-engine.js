@@ -42,11 +42,12 @@ class AudioEngine {
     this.feltPianoConfig = {
       library: 'Salamander Grand Piano v3 (Yamaha C5, 48kHz/24-bit Stereo FLAC)',
       forceLayer: 'v1',
+      makeupGain: 1.55,
       bodyWarmthHz: 240,
       bodyWarmthGainDb: 3.2,
       highShelfHz: 1850,
       highShelfCutDb: -11.5,
-      mechReleaseGain: 0.045
+      mechReleaseGain: 0.022
     };
     this.isRunning = false;
     this.ctx = null;
@@ -115,6 +116,8 @@ class AudioEngine {
     // Dual Post-FX Live Mixer Stems: independent Filter + Delay + Convolver Reverb + Shimmer for Piano vs. All Other Sounds
     this.otherStem = this._buildStemDsp(c, p);
     this.pianoStem = this._buildStemDsp(c, p);
+    this.pianoStem.isPianoStem = true;
+    this.pianoStem.masterFilter.frequency.value = Math.min(18000, Math.max(p.cutoff * 2.2, 6800));
     this.stems = [this.otherStem, this.pianoStem];
     Object.assign(n, this.otherStem);
     n.otherStem = this.otherStem;
@@ -288,7 +291,9 @@ class AudioEngine {
     if (!this.ctx) return;
     const eff = Math.max(40, Math.min(18000, this.params.cutoff * (this.params.circadianMultipliers.cutoff || 1.0)));
     for (const st of (this.stems || [this.nodes])) {
-      if (st && st.masterFilter) st.masterFilter.frequency.setTargetAtTime(eff, this.ctx.currentTime, 0.03);
+      if (!st || !st.masterFilter) continue;
+      const stemFreq = (st.isPianoStem && this.params.filterType === 'lowpass') ? Math.min(18000, Math.max(eff * 2.2, 6800)) : eff;
+      st.masterFilter.frequency.setTargetAtTime(stemFreq, this.ctx.currentTime, 0.03);
     }
   }
   setFilterResonance(q) {
@@ -490,13 +495,15 @@ class AudioEngine {
     const x = Math.max(-1, Math.min(1, Number(xf) || 0)), n = this.nodes;
     const pianoMult = x <= 0 ? 1.0 : Math.max(0, 1.0 - x);
     const otherMult = x >= 0 ? 1.0 : Math.max(0, 1.0 + x);
-    this.crossfadeState = { value: x, pianoMultiplier: pianoMult, otherMultiplier: otherMult };
+    const pianoBoost = x < 0 ? (1.0 + Math.pow(Math.abs(x), 0.85) * 0.95) : 1.0;
+    const otherStemTaper = x < 0 ? Math.pow(otherMult, 0.65) : 1.0;
+    this.crossfadeState = { value: x, pianoMultiplier: pianoMult, otherMultiplier: otherMult, pianoBoost, otherStemTaper };
     if (this.ctx && n.pianoCrossfadeBus && n.otherCrossfadeBus) {
       const now = this.ctx.currentTime;
-      const pianoStemGain = pianoMult <= 0.001 ? 0 : 1.0;
-      const otherStemGain = otherMult <= 0.001 ? 0 : 1.0;
-      this._setParamImmediate(n.pianoCrossfadeBus.gain, pianoStemGain, now);
-      this._setParamImmediate(n.otherCrossfadeBus.gain, otherStemGain, now);
+      this._setParamImmediate(n.pianoCrossfadeBus.gain, pianoMult <= 0.001 ? 0 : 1.0, now);
+      this._setParamImmediate(n.otherCrossfadeBus.gain, otherMult <= 0.001 ? 0 : 1.0, now);
+      if (this.pianoStem && this.pianoStem.stemInput) this._setParamImmediate(this.pianoStem.stemInput.gain, pianoBoost, now);
+      if (this.otherStem && this.otherStem.stemOutput) this._setParamImmediate(this.otherStem.stemOutput.gain, otherStemTaper, now);
       if (n.pianoShimmerCrossfade && n.otherShimmerCrossfade) {
         this._setParamImmediate(n.pianoShimmerCrossfade.gain, pianoMult, now);
         this._setParamImmediate(n.otherShimmerCrossfade.gain, otherMult, now);
@@ -552,9 +559,9 @@ class AudioEngine {
     const envGain = this.ctx.createGain();
     if (isPiano) {
       let activePianos = 0;
-      for (const an of this.activeNotes.values()) if (an.voiceId === 'piano') activePianos++;
-      const polyHeadroom = 1 / Math.pow(Math.max(1, activePianos + 1), 0.38);
-      const pianoPeak = peakGain * 1.15 * polyHeadroom;
+      for (const an of this.activeNotes.values()) if (an.voiceId === 'piano' && (now - (an.startTime || 0)) < 0.25) activePianos++;
+      const polyHeadroom = 1 / Math.pow(Math.max(1, activePianos + 1), 0.16);
+      const pianoPeak = peakGain * 1.65 * polyHeadroom;
       envGain.gain.setValueAtTime(pianoPeak, now);
       envGain.gain.setValueAtTime(pianoPeak, tSustainEnd);
       envGain.gain.exponentialRampToValueAtTime(0.0001, tReleaseEnd);

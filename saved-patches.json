@@ -2,7 +2,7 @@
   "activePresetId": "discreet_loops",
   "customPresets": {},
   "customTrackPatterns": {},
-  "globalVoiceBalance": -0.62,
+  "globalVoiceBalance": -0.39,
   "globalVoiceFilters": {
     "bell": {
       "cutoff": 9500,
@@ -37,6 +37,269 @@
     "piano": 2,
     "tape": 0.58
   },
-  "patchOverrides": {},
+  "patchOverrides": {
+    "discreet_loops": {
+      "chordProgInstrument": "tape",
+      "circadian": "morning",
+      "global": {
+        "attack": 1.4,
+        "cutoff": 1950,
+        "delayFeedback": 0.82,
+        "delayMix": 0.72,
+        "delayTime": 1.22,
+        "delayWow": 0.64,
+        "envelopeMode": "override",
+        "filterDrift": 0.45,
+        "filterType": "lowpass",
+        "masterVolume": 0.87,
+        "pianoCrossfade": -0.39,
+        "release": 5.8,
+        "resonance": 3.2,
+        "reverbDamping": 3200,
+        "reverbDecay": 10,
+        "reverbMix": 0.58,
+        "reverbShimmer": 0.12,
+        "sustain": 0.6
+      },
+      "phraseParams": {
+        "chordOctaveShiftChance": 0.1,
+        "chordProgCycle": 8.9,
+        "chordProgGate": 0.84,
+        "noteOctaveShiftChance": 0.03,
+        "phraseCompletionGate": 0.18,
+        "phraseGateProb": 0.8,
+        "phraseLoopCycle": 20.3,
+        "phraseNoteGate": 0.22,
+        "phraseSkipChance": 0.15,
+        "phraseVariationChance": 0.55
+      },
+      "pianoPhraseType": "short_motif",
+      "probability": {
+        "activeVoiceCount": 4,
+        "degreeWeights": [
+          0.9,
+          0.5,
+          0.75,
+          0.45,
+          0.85,
+          0.6,
+          0.4
+        ],
+        "densityBias": 0.08,
+        "globalProb": 0.7,
+        "mutationRate": 0.12,
+        "rotationSpeed": 1.55,
+        "timeStretch": 0.65,
+        "voiceOrder": [
+          "tape",
+          "drone",
+          "pad",
+          "piano",
+          "bell",
+          "choir"
+        ]
+      },
+      "scale": "onland_f",
+      "voices": {
+        "bell": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 11.3,
+          "gain": 0.5,
+          "muted": true,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.45,
+          "release": 0.2
+        },
+        "choir": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 23.9,
+          "gain": 0.56,
+          "muted": true,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.48,
+          "release": 7.5
+        },
+        "drone": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 19.3,
+          "gain": 0.62,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": -1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.74,
+          "release": 9.5
+        },
+        "pad": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 13.7,
+          "gain": 0.65,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.66,
+          "release": 7.9
+        },
+        "piano": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 20.3,
+          "gain": 2,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.8,
+          "release": 3.6
+        },
+        "tape": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 8.9,
+          "gain": 0.58,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.84,
+          "release": 8
+        }
+      }
+    },
+    "thursday": {
+      "chordProgInstrument": "choir",
+      "circadian": "off",
+      "global": {
+        "attack": 3.2,
+        "cutoff": 2200,
+        "delayFeedback": 0.58,
+        "delayMix": 0.38,
+        "delayTime": 0.82,
+        "delayWow": 0.18,
+        "envelopeMode": "override",
+        "filterDrift": 0.2,
+        "filterType": "lowpass",
+        "masterVolume": 0.84,
+        "pianoCrossfade": -0.39,
+        "release": 7,
+        "resonance": 1.1,
+        "reverbDamping": 6200,
+        "reverbDecay": 9.5,
+        "reverbMix": 0.5,
+        "reverbShimmer": 0.14,
+        "sustain": 0.7
+      },
+      "phraseParams": {
+        "chordOctaveShiftChance": 0.1,
+        "chordProgCycle": 10.7,
+        "chordProgGate": 0.87,
+        "noteOctaveShiftChance": 0.03,
+        "phraseCompletionGate": 0.18,
+        "phraseGateProb": 0.76,
+        "phraseLoopCycle": 6.7,
+        "phraseNoteGate": 0.22,
+        "phraseSkipChance": 0.15,
+        "phraseVariationChance": 0.55
+      },
+      "pianoPhraseType": "longer_pattern",
+      "probability": {
+        "activeVoiceCount": 6,
+        "degreeWeights": [
+          0.9,
+          0.75,
+          0.6,
+          0.3,
+          0.8,
+          0.5,
+          0.4
+        ],
+        "densityBias": 0.05,
+        "globalProb": 0.58,
+        "mutationRate": 0.1,
+        "rotationSpeed": 0.9,
+        "timeStretch": 1.11,
+        "voiceOrder": [
+          "pad",
+          "piano",
+          "bell",
+          "choir",
+          "tape",
+          "drone"
+        ]
+      },
+      "scale": "thursday_g",
+      "voices": {
+        "bell": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 13.1,
+          "gain": 0.4,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.4,
+          "release": 4.8
+        },
+        "choir": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 10.7,
+          "gain": 0.49,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.92,
+          "release": 9.2
+        },
+        "drone": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 37.3,
+          "gain": 0.62,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": -1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.7,
+          "release": 10.5
+        },
+        "pad": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 19.1,
+          "gain": 0.49,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.75,
+          "release": 8
+        },
+        "piano": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 6.7,
+          "gain": 2,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.76,
+          "release": 4.2
+        },
+        "tape": {
+          "chordOctaveShiftProb": 0.1,
+          "cycle": 17.9,
+          "gain": 0.58,
+          "muted": false,
+          "noteOctaveShiftProb": 0.03,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.5,
+          "release": 5.8
+        }
+      }
+    }
+  },
   "version": 3
 }

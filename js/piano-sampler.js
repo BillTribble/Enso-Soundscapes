@@ -34,6 +34,34 @@ const MECH_FILES = {
   harmV3C4: 'samples/piano/harmV3C4.flac'
 };
 
+function normalizeNoteAudioBuffer(buffer, midi = 60) {
+  if (!buffer || buffer._ensoNormalized) return buffer;
+  const numCh = buffer.numberOfChannels || 1;
+  let maxAbs = 0;
+  for (let c = 0; c < numCh; c++) {
+    const ch = buffer.getChannelData(c);
+    for (let i = 0; i < ch.length; i++) {
+      const a = Math.abs(ch[i]);
+      if (a > maxAbs) maxAbs = a;
+    }
+  }
+  if (maxAbs > 0.0001) {
+    const targetPeak = midi <= 72 ? 0.82 : Math.max(0.68, 0.82 - ((midi - 72) / 36) * 0.14);
+    const normGain = Math.min(28.0, Math.max(1.0, targetPeak / maxAbs));
+    if (normGain > 1.01) {
+      for (let c = 0; c < numCh; c++) {
+        const ch = buffer.getChannelData(c);
+        for (let i = 0; i < ch.length; i++) ch[i] *= normGain;
+      }
+    }
+    buffer._rawPeak = maxAbs;
+    buffer._normalizedPeak = maxAbs * normGain;
+    buffer._normGainApplied = normGain;
+  }
+  buffer._ensoNormalized = true;
+  return buffer;
+}
+
 async function fetchAndDecodeSample(ctx, url) {
   try {
     const resp = await fetch(url);
@@ -65,12 +93,18 @@ async function setPianoLibrary(libId) {
           this._fetchAndDecodeSample(z.close),
           this._fetchAndDecodeSample(z.decca)
         ]);
-        if (cBuf)
+        if (cBuf) {
+          normalizeNoteAudioBuffer(cBuf, z.midi);
+          if (dBuf) normalizeNoteAudioBuffer(dBuf, z.midi);
           targetMap.set(
               z.midi, {v1: cBuf, v3: dBuf || cBuf, v5: cBuf, decca: dBuf});
+        }
       } else if (z.file) {
         const buf = await this._fetchAndDecodeSample(z.file);
-        if (buf) targetMap.set(z.midi, {v1: buf, v3: buf, v5: buf});
+        if (buf) {
+          normalizeNoteAudioBuffer(buf, z.midi);
+          targetMap.set(z.midi, {v1: buf, v3: buf, v5: buf});
+        }
       }
     }));
     return true;
@@ -83,8 +117,7 @@ function loadPianoSamples() {
   if (this._pianoLoadPromise) return this._pianoLoadPromise;
   if (!this.ctx) this.init();
   if (typeof window !== 'undefined' && window.location &&
-      (window.location.protocol === 'file:' || navigator.webdriver ||
-       window.location.hash.includes('control=dials') ||
+      (window.location.protocol === 'file:' ||
        window.location.hash.includes('selftest=1'))) {
     return Promise.resolve(true);
   }
@@ -99,7 +132,7 @@ function loadPianoSamples() {
         if (entry[layer]) return;
         const buf = await this._fetchAndDecodeSample(
             `samples/piano/${zone.prefix}${layer}.flac`);
-        if (buf) entry[layer] = buf;
+        if (buf) entry[layer] = normalizeNoteAudioBuffer(buf, zone.midi);
       }));
       if (entry.v1 || entry.v3 || entry.v5)
         this.pianoLibraries.salamander.set(zone.midi, entry);
@@ -171,6 +204,7 @@ function findClosestPianoSample(engine, midiNote) {
     L[i] = sig * 0.5;
     R[i] = sig * 0.5;
   }
+  normalizeNoteAudioBuffer(buffer, midiNote);
   return {buffer, bestMidi: midiNote, chosenLayer: 'v1', playbackRate: 1.0};
 }
 
@@ -221,9 +255,17 @@ function triggerPianoSample(engine, {
   const silkShelf =
       engine._makeFilter('highshelf', cfg.highShelfHz, 0.7);
   silkShelf.gain.value = cfg.highShelfCutDb;
+  const sampleMakeup = engine.ctx.createGain();
+  const baseMakeup = (typeof cfg.makeupGain === 'number') ? cfg.makeupGain : 1.55;
+  const shelfCut = Math.min(0, Number(cfg.highShelfCutDb) || -11.5);
+  const shelfCompDb = Math.max(0, (-5.0 - shelfCut) * 0.36);
+  const shelfCompLinear = Math.pow(10, Math.min(5.0, shelfCompDb) / 20);
+  const regLift = midiNote >= 58 ? (1.0 + Math.min(0.28, (midiNote - 58) * 0.008)) : 1.0;
+  sampleMakeup.gain.value = baseMakeup * shelfCompLinear * regLift;
   src.connect(bodyEq);
   bodyEq.connect(silkShelf);
-  silkShelf.connect(envGain);
+  silkShelf.connect(sampleMakeup);
+  sampleMakeup.connect(envGain);
 
   const pianoShimSend = engine.ctx.createGain();
   const shimMult = (typeof cfg.shimmerSend === 'number') ? cfg.shimmerSend : 0.28;
@@ -233,7 +275,7 @@ function triggerPianoSample(engine, {
   src.start(now);
   src.stop(tReleaseEnd + 0.15);
   bufferSources.push(src);
-  internalNodes.push(bodyEq, silkShelf, pianoShimSend);
+  internalNodes.push(bodyEq, silkShelf, sampleMakeup, pianoShimSend);
 
   if (cfg.feltThumpGain > 0) {
     const vNode = voiceNode || envGain;
@@ -276,7 +318,7 @@ function triggerPianoSample(engine, {
     const mechSrc = engine.ctx.createBufferSource();
     mechSrc.buffer = mechBuf;
     const mechGain = engine.ctx.createGain();
-    mechGain.gain.value = cfg.mechReleaseGain * velocity;
+    mechGain.gain.value = Math.min(0.032, (cfg.mechReleaseGain || 0.022) * velocity);
     const mechLp = engine._makeFilter('lowpass', 1100, 0.7);
     mechSrc.connect(mechLp);
     mechLp.connect(mechGain);
@@ -312,6 +354,7 @@ if (typeof AudioEngine !== 'undefined') {
 window.EnsoPianoSampler = {
   SALAMANDER_ZONES,
   MECH_FILES,
+  normalizeNoteAudioBuffer,
   fetchAndDecodeSample,
   setPianoLibrary,
   loadPianoSamples,
