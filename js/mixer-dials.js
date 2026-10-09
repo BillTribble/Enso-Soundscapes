@@ -225,6 +225,9 @@
         else statusLbl.textContent = `Other +${Math.round(xf * 100)}%`;
       }
       if (slider) {
+        if (Math.abs((parseFloat(slider.value) || 0) - xf) > 0.001) {
+          slider.value = String(xf);
+        }
         const pct = ((xf + 1) / 2) * 100;
         slider.style.setProperty('--pct', `${pct.toFixed(2)}%`);
       }
@@ -232,9 +235,13 @@
     window.syncCrossfadeUI = syncCrossfade;
 
     if (slider) {
-      slider.addEventListener('input', () => syncCrossfade(slider.value));
+      slider.addEventListener('input', () => {
+        syncCrossfade(slider.value);
+        window.enoPatchStorage?.markDirty?.(true);
+      });
       slider.addEventListener('change', () => {
         syncCrossfade(slider.value);
+        window.enoPatchStorage?.markDirty?.(true);
         if (window.enoPatchStorage &&
             typeof window.enoPatchStorage.saveGlobalVoiceBalance ===
                 'function') {
@@ -247,7 +254,11 @@
         slider.dispatchEvent(new Event('input', { bubbles: true }));
         slider.dispatchEvent(new Event('change', {bubbles: true}));
       });
-      syncCrossfade(slider.value);
+      const initXf = (window.enoApp && typeof window.enoApp.globalVoiceBalance === 'number')
+        ? window.enoApp.globalVoiceBalance
+        : (parseFloat(slider.value) || 0);
+      slider.value = String(initXf);
+      syncCrossfade(initXf);
     }
     if (btnReset && slider) {
       btnReset.addEventListener('click', () => {

@@ -522,7 +522,65 @@
               badgeCs.fontVariantNumeric.includes('tabular-nums') &&
               hudCs.fontVariantNumeric.includes('tabular-nums');
 
+          const startupCheck = (() => {
+            const app = window.enoApp;
+            const banner = document.getElementById('startup-play-banner');
+            const startupBtn = document.getElementById('btn-startup-play');
+            const playBtn = document.getElementById('btn-play-toggle');
+            const playLbl = document.getElementById('play-label');
+            const topBar = document.querySelector('.top-app-bar');
+            const presetCard = document.querySelector('.preset-strip-card');
+            if (!app || !banner || !startupBtn || !playBtn || !playLbl || !topBar || !presetCard) {
+              return { startupBannerVerified: false, playPauseLabelsShortVerified: false };
+            }
+            app.toggleTransport(false);
+            const pausedLabel = (playLbl.textContent || '').trim();
+            app.showStartupBanner();
+            const bRect = banner.getBoundingClientRect();
+            const btnRect = startupBtn.getBoundingClientRect();
+            const tRect = topBar.getBoundingClientRect();
+            const pRect = presetCard.getBoundingClientRect();
+            const bCs = getComputedStyle(banner);
+            const tCs = getComputedStyle(topBar);
+            const pCs = getComputedStyle(presetCard);
+            const startupBtnText = (startupBtn.querySelector('.startup-play-label')?.textContent || startupBtn.textContent || '').replace('play_arrow', '').trim();
+            const coversTopAndPresets = bCs.display !== 'none' &&
+                bCs.visibility === 'visible' &&
+                tCs.visibility === 'hidden' &&
+                pCs.visibility === 'hidden' &&
+                Math.abs(bRect.top - (tRect.top + 8)) <= 4 &&
+                Math.abs(bRect.bottom - pRect.bottom) <= 4 &&
+                Math.abs(bRect.left - pRect.left) <= 4 &&
+                Math.abs(bRect.width - pRect.width) <= 4;
+            const playCenteredInBanner = btnRect.width > 0 && btnRect.height > 0 &&
+                Math.abs(((btnRect.left + btnRect.right) / 2) - ((bRect.left + bRect.right) / 2)) <= 4 &&
+                Math.abs(((btnRect.top + btnRect.bottom) / 2) - ((bRect.top + bRect.bottom) / 2)) <= 4;
+            startupBtn.click();
+            const dismissedAfterClick = !document.body.classList.contains('startup-banner-active') &&
+                banner.classList.contains('is-dismissed') &&
+                getComputedStyle(topBar).visibility === 'visible' &&
+                getComputedStyle(presetCard).visibility === 'visible' &&
+                Boolean(app.probEngine?.isRunning);
+            const playingLabel = (playLbl.textContent || '').trim();
+            return {
+              startupBannerVerified: Boolean(
+                  app.startupBannerBootVisible &&
+                  coversTopAndPresets &&
+                  playCenteredInBanner &&
+                  startupBtnText === 'Play' &&
+                  dismissedAfterClick),
+              playPauseLabelsShortVerified: Boolean(
+                  pausedLabel === 'Play' &&
+                  playingLabel === 'Pause' &&
+                  startupBtnText === 'Play' &&
+                  !/engine/i.test(pausedLabel) &&
+                  !/engine/i.test(playingLabel))
+            };
+          })();
+
           Object.assign(data, {
+            startupBannerVerified: startupCheck.startupBannerVerified,
+            playPauseLabelsShortVerified: startupCheck.playPauseLabelsShortVerified,
             hudGateCounterRemoved,
             hudNextTrackRemoved,
             tabularDigitsEqualWidth,

@@ -221,6 +221,8 @@ def run_browser_selftest():
   assert payload.get('mutualExclusionHolds') is True, f'Expected mutual exclusion between piano and other chords: {payload}'
   assert payload.get('outOfKeyNotesCount') == 0, f'Expected 0 out-of-key notes: {payload}'
   assert payload.get('sunlitAtriumLfoVerified') is True, f'Expected Sunlit Atrium 3m LFO verified: {payload}'
+  assert payload.get('octaveShiftSimulationVerified') is True, f'Expected octaveShiftSimulationVerified=True: {payload}'
+  assert payload.get('downwardOctaveCapVerified') is True, f'Expected downwardOctaveCapVerified=True (never go down 2 octaves): {payload}'
   assert payload.get('topBarBadgeRemoved') is True, f'Expected top-bar album badge removed: {payload}'
   assert payload.get('topBarTabsLabels') == ['Studio', 'Scale', 'Methods'], f'Expected top-bar tabs [Studio, Scale, Methods]: {payload}'
   assert payload.get('topBarPickerCentered') is True, f'Expected top-bar picker centered horizontally: {payload}'
@@ -260,6 +262,7 @@ def run_browser_selftest():
   assert payload.get('newPatchBtnPresent') is True, f'Expected newPatchBtnPresent=True: {payload}'
   assert payload.get('newPatchBtnIcon') == 'shuffle', f'Expected newPatchBtnIcon=="shuffle": {payload}'
   assert payload.get('patchStorageRoundtripVerified') is True, f'Expected patchStorageRoundtripVerified=True: {payload}'
+  assert payload.get('voiceBalanceSavedOnSavePatchVerified') is True, f'Expected voiceBalanceSavedOnSavePatchVerified=True: {payload}'
   assert payload.get('customPatchCreationVerified') is True, f'Expected customPatchCreationVerified=True: {payload}'
   assert payload.get('patchRandomizerVerified') is True, f'Expected patchRandomizerVerified=True: {payload}'
   assert payload.get('topBarVolumeDialPresent') is True, f'Expected topBarVolumeDialPresent=True: {payload}'
@@ -297,6 +300,12 @@ def run_browser_selftest():
   assert (
       payload.get('tabularDigitsEqualWidth') is True
   ), f'Expected tabularDigitsEqualWidth=True (11:11 == 08:08 width): {payload}'
+  assert (
+      payload.get('startupBannerVerified') is True
+  ), f'Expected startupBannerVerified=True on desktop: {payload}'
+  assert (
+      payload.get('playPauseLabelsShortVerified') is True
+  ), f'Expected playPauseLabelsShortVerified=True (Play / Pause without engine): {payload}'
   # Second self-test pass at 375x812 mobile viewport to verify real mobile geometry
   proc_m = _run_chrome_dom_dump('375,812')
   assert proc_m.returncode == 0, f'Mobile Chrome exited {proc_m.returncode}'
@@ -308,6 +317,8 @@ def run_browser_selftest():
   assert payload_m.get('canvasRenderedPixels') is True, f'Expected canvasRenderedPixels=True at 375px: {payload_m}'
   assert payload_m.get('patchSaveBtnPresent') is True, f'Expected patchSaveBtnPresent=True at 375px: {payload_m}'
   assert payload_m.get('newPatchBtnPresent') is True, f'Expected newPatchBtnPresent=True at 375px: {payload_m}'
+  assert payload_m.get('startupBannerVerified') is True, f'Expected startupBannerVerified=True at 375px mobile: {payload_m}'
+  assert payload_m.get('playPauseLabelsShortVerified') is True, f'Expected playPauseLabelsShortVerified=True at 375px mobile: {payload_m}'
   print(f'2. Browser self-test assertions passed (1440px desktop + 375px mobile): {json.dumps(payload)}')
 
 
@@ -342,6 +353,12 @@ def capture_screenshots():
   """Capture light and dark mode screenshots across all views with default minimal outside-encoder rotary dials."""
   os.makedirs(ARTIFACT_DIR, exist_ok=True)
   specs = [
+      ('enso_startup_banner_desktop_light.png', 'bloom=1&startup=1', 1440, 940),
+      ('enso_startup_banner_desktop_dark.png', 'bloom=1&theme=dark&startup=1', 1440, 940),
+      ('enso_startup_banner_mobile_light.png', 'bloom=1&startup=1', 375, 812),
+      ('enso_startup_banner_mobile_dark.png', 'bloom=1&theme=dark&startup=1', 375, 812),
+      ('enso_playing_pause_btn_desktop.png', 'bloom=1', 1440, 940),
+      ('enso_paused_play_btn_desktop.png', 'bloom=1&paused=1', 1440, 940),
       ('eno_studio_light.png', 'bloom=1', 1440, 1480),
       ('eno_studio_after_20s_light.png', 'bloom=1&hideHint=1', 1440, 1480),
       ('eno_probability_light.png', 'bloom=1&tab=probability', 1440, 1480),

@@ -62,108 +62,64 @@
       let initialMode = 'auto';
       try {
         const storedMode = localStorage.getItem('enso-theme-mode');
-        if (storedMode === 'light' || storedMode === 'dark' ||
-            storedMode === 'auto') {
-          initialMode = storedMode;
-        }
-      } catch (e) {
-      }
-      if (q.includes('theme=dark'))
-        initialMode = 'dark';
-      else if (q.includes('theme=light'))
-        initialMode = 'light';
-      else if (q.includes('theme=auto'))
-        initialMode = 'auto';
-
+        if (storedMode === 'light' || storedMode === 'dark' || storedMode === 'auto') initialMode = storedMode;
+      } catch (e) {}
+      if (q.includes('theme=dark')) initialMode = 'dark';
+      else if (q.includes('theme=light')) initialMode = 'light';
+      else if (q.includes('theme=auto')) initialMode = 'auto';
       this._systemDarkOverride = null;
       this.setTheme(initialMode);
-
       if (window.matchMedia) {
         this._themeMq = window.matchMedia('(prefers-color-scheme: dark)');
-        const onSystemThemeChange = () => {
-          if (this.themeMode === 'auto') this.setTheme('auto');
-        };
-        if (this._themeMq.addEventListener)
-          this._themeMq.addEventListener('change', onSystemThemeChange);
-        else if (this._themeMq.addListener)
-          this._themeMq.addListener(onSystemThemeChange);
+        const onSystemThemeChange = () => { if (this.themeMode === 'auto') this.setTheme('auto'); };
+        if (this._themeMq.addEventListener) this._themeMq.addEventListener('change', onSystemThemeChange);
+        else if (this._themeMq.addListener) this._themeMq.addListener(onSystemThemeChange);
       }
-
       try {
-        if (window.parent && window.parent !== window &&
-            window.parent.document && window.MutationObserver) {
-          const obs = new MutationObserver(() => {
-            if (this.themeMode === 'auto') this.setTheme('auto');
-          });
-          obs.observe(
-              window.parent.document.documentElement,
-              {attributes: true, attributeFilter: ['data-theme', 'class']});
+        if (window.parent && window.parent !== window && window.parent.document && window.MutationObserver) {
+          const obs = new MutationObserver(() => { if (this.themeMode === 'auto') this.setTheme('auto'); });
+          obs.observe(window.parent.document.documentElement, {attributes: true, attributeFilter: ['data-theme', 'class']});
         }
-      } catch (e) {
-      }
-
+      } catch (e) {}
       const btnTheme = document.getElementById('btn-theme-toggle');
       if (btnTheme) {
         btnTheme.addEventListener('click', () => {
           const order = ['auto', 'light', 'dark'];
-          const idx = order.indexOf(this.themeMode || 'auto');
-          const next = order[(idx + 1) % order.length];
+          const next = order[(order.indexOf(this.themeMode || 'auto') + 1) % order.length];
           this.setTheme(next);
-          try {
-            localStorage.setItem('enso-theme-mode', next);
-          } catch (e) {
-          }
+          try { localStorage.setItem('enso-theme-mode', next); } catch (e) {}
         });
       }
     }
 
-    resolveIsDark(
-        mode = this.themeMode, systemOverride = this._systemDarkOverride) {
+    resolveIsDark(mode = this.themeMode, systemOverride = this._systemDarkOverride) {
       if (mode === 'dark') return true;
       if (mode === 'light') return false;
       if (typeof systemOverride === 'boolean') return systemOverride;
       try {
-        if (window.parent && window.parent !== window &&
-            window.parent.document) {
-          const pTheme =
-              window.parent.document.documentElement.getAttribute('data-theme');
+        if (window.parent && window.parent !== window && window.parent.document) {
+          const pTheme = window.parent.document.documentElement.getAttribute('data-theme');
           if (pTheme) return pTheme.toLowerCase() === 'dark';
         }
-      } catch (e) {
-      }
-      return !!(
-          window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches);
+      } catch (e) {}
+      return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
     }
 
     setTheme(theme) {
-      const mode = (theme === 'dark' || theme === 'light' || theme === 'auto') ?
-          theme :
-          'auto';
+      const mode = (theme === 'dark' || theme === 'light' || theme === 'auto') ? theme : 'auto';
       this.themeMode = mode;
       const isDark = this.resolveIsDark(mode);
-      const root = document.documentElement;
-      const icon = document.getElementById('theme-icon');
-      const btn = document.getElementById('btn-theme-toggle');
+      const root = document.documentElement, icon = document.getElementById('theme-icon'), btn = document.getElementById('btn-theme-toggle');
       root.setAttribute('data-theme-mode', mode);
-      if (isDark)
-        root.setAttribute('data-theme', 'dark');
-      else
-        root.removeAttribute('data-theme');
-
+      if (isDark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
       const iconMap = { auto: 'brightness_auto', light: 'light_mode', dark: 'dark_mode' };
       if (icon) icon.textContent = iconMap[mode] || 'brightness_auto';
       if (btn) {
-        const label = mode === 'auto' ?
-            `Theme: Auto (${
-                isDark ? 'Dark' : 'Light'} system) · Click to switch` :
-            `Theme: ${mode === 'dark' ? 'Dark' : 'Light'} · Click to switch`;
-        btn.title = label;
-        btn.setAttribute('aria-label', label);
+        const label = mode === 'auto' ? `Theme: Auto (${isDark ? 'Dark' : 'Light'} system) · Click to switch` : `Theme: ${mode === 'dark' ? 'Dark' : 'Light'} · Click to switch`;
+        btn.title = label; btn.setAttribute('aria-label', label);
       }
       const metaTheme = document.querySelector('meta[name="theme-color"]');
-      if (metaTheme)
-        metaTheme.setAttribute('content', isDark ? '#0e141b' : '#f0f4f9');
+      if (metaTheme) metaTheme.setAttribute('content', isDark ? '#0e141b' : '#f0f4f9');
       if (this.visualizer) this.visualizer.updateThemeColors();
       if (window.aurora) window.aurora.setDark(isDark);
     }
@@ -201,6 +157,7 @@
           presetContainer.appendChild(btn);
         });
       }
+      this.syncStartupBannerBounds?.();
 
       const selectScale = document.getElementById('select-scale');
       if (selectScale && data.SCALES) {
@@ -376,42 +333,66 @@
     }
 
     bindTransportAndTopActions() {
-      const onClick = (id, fn) => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('click', fn);
-      };
+      const onClick = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+      this.startupBannerBootVisible = document.body.classList.contains('startup-banner-active') && !!document.getElementById('startup-play-banner');
       onClick('btn-play-toggle', () => this.toggleTransport());
+      onClick('btn-startup-play', (e) => { e.stopPropagation(); this.toggleTransport(true); });
+      onClick('startup-play-banner', () => this.toggleTransport(true));
       onClick('btn-bloom-chord', () => this.triggerAmbientCluster());
       onClick('btn-deep-listening', () => {
         const shell = document.getElementById('app-root');
         if (!shell) return;
         const active = shell.classList.toggle('deep-listening-active');
-        if (this.visualizer) {
-          this.visualizer.setMode(active ? 'deep' : 'orbits');
-          setTimeout(() => this.visualizer.resize(), 50);
-        }
-        document.querySelectorAll('.m3-pill-tab[data-canvas-mode]').forEach((b) => {
-          b.classList.toggle('active', b.dataset.canvasMode === (active ? 'deep' : 'orbits'));
-        });
+        if (this.visualizer) { this.visualizer.setMode(active ? 'deep' : 'orbits'); setTimeout(() => this.visualizer.resize(), 50); }
+        document.querySelectorAll('.m3-pill-tab[data-canvas-mode]').forEach((b) => b.classList.toggle('active', b.dataset.canvasMode === (active ? 'deep' : 'orbits')));
       });
+      this.syncStartupBannerBounds();
+      window.addEventListener('resize', () => this.syncStartupBannerBounds());
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.syncStartupBannerBounds());
+    }
+
+    showStartupBanner() {
+      const banner = document.getElementById('startup-play-banner');
+      document.body.classList.add('startup-banner-active');
+      if (banner) { banner.classList.remove('is-dismissed'); banner.setAttribute('aria-hidden', 'false'); }
+      this.syncStartupBannerBounds();
+    }
+
+    dismissStartupBanner() {
+      this.hasStartedOnce = true;
+      const banner = document.getElementById('startup-play-banner');
+      document.body.classList.remove('startup-banner-active');
+      if (banner) { banner.classList.add('is-dismissed'); banner.setAttribute('aria-hidden', 'true'); }
+    }
+
+    syncStartupBannerBounds() {
+      const banner = document.getElementById('startup-play-banner'), shell = document.getElementById('app-root');
+      const topBar = document.querySelector('.top-app-bar'), presetCard = document.querySelector('.preset-strip-card');
+      if (!banner || !shell || !topBar || !presetCard) return;
+      const shellRect = shell.getBoundingClientRect(), topRect = topBar.getBoundingClientRect(), presetRect = presetCard.getBoundingClientRect();
+      if (presetRect.width <= 0 || presetRect.bottom <= topRect.top) return;
+      const topOffset = Math.max(8, Math.round(topRect.top - shellRect.top + 8)), bottomEdge = Math.round(presetRect.bottom - shellRect.top);
+      banner.style.top = `${topOffset}px`;
+      banner.style.left = `${Math.round(presetRect.left - shellRect.left)}px`;
+      banner.style.right = 'auto';
+      banner.style.width = `${Math.round(presetRect.width)}px`;
+      banner.style.height = `${Math.max(96, bottomEdge - topOffset)}px`;
     }
 
     toggleTransport(forceState) {
       const next = typeof forceState === 'boolean' ? forceState : !this.probEngine.isRunning;
       this.audioEngine.setRunning(next);
-      if (next) { this.probEngine.start(); this.triggerAmbientCluster(); } else { this.probEngine.stop(); }
+      if (next) { this.dismissStartupBanner(); this.probEngine.start(); this.triggerAmbientCluster(); } else { this.probEngine.stop(); }
       const btn = document.getElementById('btn-play-toggle'), icon = document.getElementById('play-icon'), lbl = document.getElementById('play-label');
       if (btn) { btn.classList.toggle('is-playing', next); btn.setAttribute('aria-pressed', next ? 'true' : 'false'); }
       if (icon) icon.textContent = next ? 'pause' : 'play_arrow';
-      if (lbl) lbl.textContent = next ? 'Pause engine' : 'Start engine';
+      if (lbl) lbl.textContent = next ? 'Pause' : 'Play';
     }
 
     triggerAmbientCluster() {
       this.audioEngine.init();
       this.audioEngine.resume();
-      ['drone', 'pad', 'piano', 'bell'].forEach((vId, idx) => {
-        setTimeout(() => this.probEngine.triggerVoiceManual(vId), idx * 140);
-      });
+      ['drone', 'pad', 'piano', 'bell'].forEach((vId, idx) => setTimeout(() => this.probEngine.triggerVoiceManual(vId), idx * 140));
     }
 
     bindPhraseControls() {

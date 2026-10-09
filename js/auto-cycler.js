@@ -308,17 +308,11 @@ class EnsoAutoCycler {
       }
     }
 
-    const vOct = (voice && typeof voice.octaveOffset === 'number') ?
-        voice.octaveOffset :
-        0;
-    const cOct = (circadian && typeof circadian.octaveBias === 'number') ?
-        circadian.octaveBias :
-        0;
-    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ?
-        voice.roundOctaveShift :
-        0;
+    const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
+    const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
+    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ? Math.max(-1, voice.roundOctaveShift) : 0;
     const rawMidi = phraseEngine.degreeToMidi(
-        chosenDegree, vOct + cOct + roundShift, chosenScaleId);
+        chosenDegree, vOct + Math.max(-1, cOct + roundShift), chosenScaleId);
     const midi = this.snapMidiToSharedModalPivot(rawMidi);
     const noteName = (window.ENO_DATA && window.ENO_DATA.midiToNoteName) ?
         window.ENO_DATA.midiToNoteName(midi) :

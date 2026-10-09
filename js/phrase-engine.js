@@ -366,9 +366,10 @@ class PhraseEngine {
     }
     this.lastStepStates = stepStates;
 
-    const roundShift = typeof options.roundOctaveShift === 'number'
+    const rawRoundShift = typeof options.roundOctaveShift === 'number'
       ? options.roundOctaveShift
       : ((voice && typeof voice.roundOctaveShift === 'number' && !options.disableVariations) ? voice.roundOctaveShift : 0);
+    const roundShift = Math.max(-1, rawRoundShift);
 
     let firstMidi = 60;
     let firstNoteName = '—';
@@ -382,12 +383,13 @@ class PhraseEngine {
 
       const isChordStep = (stepDegrees.length > 1 || this.pianoPhraseType === 'chord_progression');
       const chordProb = typeof options.chordProb === 'number' ? options.chordProb : ((voice && typeof voice.chordOctaveShiftProb === 'number') ? voice.chordOctaveShiftProb : this.chordOctaveShiftChance);
-      const chordOctShift = (!options.disableVariations && isChordStep) ? this.rollChordOctaveShift({ ...options, chordProb }) : 0;
+      const chordOctShift = (!options.disableVariations && isChordStep) ? Math.max(-1, this.rollChordOctaveShift({ ...options, chordProb })) : 0;
 
       const stepMidis = stepDegrees.map((deg, dIdx) => {
         const noteProb = typeof options.prob === 'number' ? options.prob : ((voice && typeof voice.noteOctaveShiftProb === 'number') ? voice.noteOctaveShiftProb : this.noteOctaveShiftChance);
-        const noteOctShift = (!options.disableVariations) ? this.rollNoteOctaveShift({ ...options, prob: noteProb }) : 0;
-        const oct = (stepOctaves[dIdx] || 0) + vOct + roundShift + cOct + chordOctShift + noteOctShift;
+        const noteOctShift = (!options.disableVariations) ? Math.max(-1, this.rollNoteOctaveShift({ ...options, prob: noteProb })) : 0;
+        const netRandomOct = Math.max(-1, roundShift + cOct + chordOctShift + noteOctShift);
+        const oct = (stepOctaves[dIdx] || 0) + vOct + netRandomOct;
         return this.degreeToMidi(deg, oct, this.scaleId);
       });
 
@@ -510,24 +512,26 @@ class PhraseEngine {
 
     const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
     const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const roundShift = (options && typeof options.roundOctaveShift === 'number')
+    const rawRoundShift = (options && typeof options.roundOctaveShift === 'number')
       ? options.roundOctaveShift
-      : ((voice && typeof voice.roundOctaveShift === 'number') ? voice.roundOctaveShift : 0);
+      : ((voice && typeof voice.roundOctaveShift === 'number' && !options.disableVariations) ? voice.roundOctaveShift : 0);
+    const roundShift = Math.max(-1, rawRoundShift);
 
     let degrees = chord.degrees;
     let octaves = chord.octaves;
-    if (degrees.length >= 4 && Math.random() < this.phraseNoteGate) {
+    if (!options.disableVariations && !options.disableNoteOmit && degrees.length >= 4 && Math.random() < this.phraseNoteGate) {
       const omitIdx = 1 + Math.floor(Math.random() * (degrees.length - 2));
       degrees = degrees.filter((_, i) => i !== omitIdx);
       octaves = octaves.filter((_, i) => i !== omitIdx);
     }
 
     const chordProb = typeof options.chordProb === 'number' ? options.chordProb : ((voice && typeof voice.chordOctaveShiftProb === 'number') ? voice.chordOctaveShiftProb : this.chordOctaveShiftChance);
-    const chordOctShift = (!options.disableVariations) ? this.rollChordOctaveShift({ ...options, chordProb }) : 0;
+    const chordOctShift = (!options.disableVariations) ? Math.max(-1, this.rollChordOctaveShift({ ...options, chordProb })) : 0;
     const noteProb = typeof options.prob === 'number' ? options.prob : ((voice && typeof voice.noteOctaveShiftProb === 'number') ? voice.noteOctaveShiftProb : this.noteOctaveShiftChance);
     const midiNotes = degrees.map((deg, idx) => {
-      const noteOctShift = (!options.disableVariations) ? this.rollNoteOctaveShift({ ...options, prob: noteProb }) : 0;
-      return this.degreeToMidi(deg, (octaves[idx] || 0) + vOct + roundShift + cOct + chordOctShift + noteOctShift, this.scaleId);
+      const noteOctShift = (!options.disableVariations) ? Math.max(-1, this.rollNoteOctaveShift({ ...options, prob: noteProb })) : 0;
+      const netRandomOct = Math.max(-1, roundShift + cOct + chordOctShift + noteOctShift);
+      return this.degreeToMidi(deg, (octaves[idx] || 0) + vOct + netRandomOct, this.scaleId);
     });
     const noteNames = midiNotes.map((m) => (window.ENO_DATA && window.ENO_DATA.midiToNoteName) ? window.ENO_DATA.midiToNoteName(m) : `M${m}`);
     const vel = 0.65, pan = (Math.random() * 2 - 1) * 0.35, gain = (voice && typeof voice.gain === 'number') ? voice.gain : 0.70;
@@ -579,8 +583,8 @@ class PhraseEngine {
 
     const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
     const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ? voice.roundOctaveShift : 0;
-    const midi = this.degreeToMidi(chosenDegree, vOct + cOct + roundShift, this.scaleId);
+    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ? Math.max(-1, voice.roundOctaveShift) : 0;
+    const midi = this.degreeToMidi(chosenDegree, vOct + Math.max(-1, cOct + roundShift), this.scaleId);
     const noteName = (window.ENO_DATA && window.ENO_DATA.midiToNoteName) ? window.ENO_DATA.midiToNoteName(midi) : `M${midi}`;
     const freq = (window.ENO_DATA && window.ENO_DATA.midiToFreq) ? Number(window.ENO_DATA.midiToFreq(midi).toFixed(2)) : 440;
     return { midi, noteName, freq, degreeIdx: chosenDegree };

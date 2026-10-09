@@ -254,14 +254,16 @@ class ProbabilityEngine {
       voice.roundOctaveShift = 0;
       return 0;
     }
-    const currentShift =
-        typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
+    const currentShift = typeof voice.roundOctaveShift === 'number' ?
+        Math.max(-1, voice.roundOctaveShift) :
+        0;
     if (currentShift !== 0) {
       const stayProb = typeof voice.stayShiftedProb === 'number' ?
           voice.stayShiftedProb :
           0.30;
       const r = typeof options.r === 'number' ? options.r : Math.random();
       if (r < stayProb) {
+        voice.roundOctaveShift = currentShift;
         return currentShift;
       }
       voice.roundOctaveShift = 0;
@@ -276,12 +278,13 @@ class ProbabilityEngine {
     const dir = dirRoll < 0.5 ? 1 : -1;
     let nextShift = 0;
     if (r < p2) {
-      nextShift = 2 * dir;
+      nextShift = dir > 0 ? 2 : -1;
     } else if (r < p2 + p1) {
       nextShift = 1 * dir;
     } else {
       nextShift = 0;
     }
+    nextShift = Math.max(-1, nextShift);
     voice.roundOctaveShift = nextShift;
     return nextShift;
   }
@@ -463,10 +466,11 @@ class ProbabilityEngine {
 
     const voiceOctave = typeof voice.octaveOffset === 'number' ? voice.octaveOffset : 0;
     const circOctave = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const octShift =
-        typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
+    const octShift = typeof voice.roundOctaveShift === 'number' ?
+        Math.max(-1, voice.roundOctaveShift) :
+        0;
 
-    const totalOctave = voiceOctave + circOctave + octShift;
+    const totalOctave = voiceOctave + Math.max(-1, circOctave + octShift);
     const root = typeof scale.rootMidi === 'number' ? scale.rootMidi : 51;
     let midi = root + (totalOctave * 12) + (intervals[chosenDegree] || 0);
     midi = Math.max(0, Math.min(127, Math.round(midi)));

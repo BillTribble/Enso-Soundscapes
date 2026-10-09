@@ -751,8 +751,8 @@ select, .field-select {
   .brand-cluster { order: 1; flex: 1 1 auto; min-width: 0; }
   .brand-title { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .top-bar-actions { order: 2; flex: 0 0 auto; width: auto; justify-content: flex-end; gap: 6px; }
-  .top-app-bar #play-label, .top-app-bar .btn-label-text { display: none; }
-  .top-bar-actions #btn-play-toggle { padding: 6px; min-width: 36px; height: 36px; justify-content: center; }
+  .top-app-bar .btn-label-text { display: none; }
+  .top-bar-actions #btn-play-toggle { padding: 0 10px; min-width: 0; height: 32px; justify-content: center; gap: 4px; font-size: 12px; }
   .top-bar-actions .btn { padding: 6px 8px; font-size: 12px; }
   .top-app-bar .m3-pill-tabs[role="tablist"] { order: 3; flex: 0 0 100%; width: 100%; display: flex; justify-content: stretch; margin: 0; }
   .top-app-bar .m3-pill-tabs[role="tablist"] .m3-pill-tab { flex: 1 1 0; width: auto; justify-content: center; padding: 6px 8px; font-size: 12.5px; }

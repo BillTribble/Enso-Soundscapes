@@ -275,6 +275,15 @@ const EnsoUrlState = {
       app.probEngine.triggerCanvasBloom(0.66, 0.58);
       if (app.visualizer) app.visualizer.render();
     }
+    if (q.includes('startup=1')) {
+      app.toggleTransport(false);
+      app.showStartupBanner?.();
+      if (app.visualizer) app.visualizer.render();
+    }
+    if (q.includes('paused=1')) {
+      app.dismissStartupBanner?.();
+      app.toggleTransport(false);
+    }
     if (q.includes('tab=probability'))
       app.switchTab('probability');
     else if (q.includes('tab=research'))
@@ -373,6 +382,8 @@ const EnsoUrlState = {
             pe.simulateOctaveShiftMechanics(20000) :
             null;
         octaveShiftSimulationVerified = !!(octSim && octSim.ok);
+        var downwardOctaveCapVerified =
+            !!(octSim && octSim.downwardOctaveCapVerified);
       }
       const origMode = app.themeMode || 'auto';
       const btnTheme = document.getElementById('btn-theme-toggle');
@@ -440,6 +451,7 @@ const EnsoUrlState = {
         startOnlyDiceMinTwoVerified,
         sunlitAtriumLfoVerified,
         octaveShiftSimulationVerified,
+        downwardOctaveCapVerified: Boolean(downwardOctaveCapVerified),
         autoThemeModeVerified,
         defaultThemeMode: origMode
       }));
@@ -581,15 +593,17 @@ function attachPhraseEngineSimulations(target) {
       twoOctaveRatio: 0.20
     };
 
-    // 1. From unshifted state
+    // 1. From unshifted state (-1 octave floor cap: never goes down 2 octaves)
     let oneOctCount = 0, twoOctCount = 0, zeroCount = 0, upCount = 0,
-        downCount = 0;
+        downCount = 0, downTwoOctavesCount = 0, minOctaveShift = 0;
     for (let i = 0; i < runs; i++) {
       testVoice.roundOctaveShift = 0;
       const s = peObj.evaluateRoundOctaveShift(testVoice);
+      if (s < minOctaveShift) minOctaveShift = s;
+      if (s <= -2) downTwoOctavesCount++;
       if (Math.abs(s) === 1)
         oneOctCount++;
-      else if (Math.abs(s) === 2)
+      else if (s === 2)
         twoOctCount++;
       else if (s === 0)
         zeroCount++;
@@ -599,14 +613,15 @@ function attachPhraseEngineSimulations(target) {
         downCount++;
     }
 
-    // 2. From shifted states
+    // 2. From shifted states (including clamping legacy -2 state to -1)
     let stayCount = 0, resetCount = 0, invalidShiftCount = 0;
-    const testShifts = [-2, -1, 1, 2];
+    const testShifts = [-1, 1, 2];
     const perShiftRuns = Math.floor(runs / testShifts.length);
     testShifts.forEach((initShift) => {
       for (let i = 0; i < perShiftRuns; i++) {
         testVoice.roundOctaveShift = initShift;
         const s = peObj.evaluateRoundOctaveShift(testVoice);
+        if (s <= -2) downTwoOctavesCount++;
         if (s === initShift)
           stayCount++;
         else if (s === 0)
@@ -615,6 +630,8 @@ function attachPhraseEngineSimulations(target) {
           invalidShiftCount++;
       }
     });
+    testVoice.roundOctaveShift = -2;
+    const clampedFromMinus2 = peObj.evaluateRoundOctaveShift(testVoice, {r: 0.1});
 
     // 3. Motif note shift
     const origChance = this.noteOctaveShiftChance;
@@ -624,6 +641,7 @@ function attachPhraseEngineSimulations(target) {
       const s = typeof this.rollNoteOctaveShift === 'function' ?
           this.rollNoteOctaveShift() :
           0;
+      if (s <= -2) downTwoOctavesCount++;
       if (s !== 0) {
         shiftedNotes++;
         if (s > 0)
@@ -642,6 +660,7 @@ function attachPhraseEngineSimulations(target) {
       const s = typeof this.rollChordOctaveShift === 'function' ?
           this.rollChordOctaveShift() :
           0;
+      if (s <= -2) downTwoOctavesCount++;
       if (s !== 0) {
         shiftedChords++;
         if (s > 0)
@@ -653,9 +672,9 @@ function attachPhraseEngineSimulations(target) {
     this.chordOctaveShiftChance = origChordChance;
     const wholeChordShiftRate = shiftedChords / runs;
 
-    // 5. Verify whole-chord octave shifting on
-    // triggerInstrumentChordProgression
+    // 5. Verify whole-chord octave shifting & stacked downward floor (-12 st max drop)
     let wholeChordShiftVerified = false;
+    let stackedDownCapVerified = false;
     if (typeof this.triggerInstrumentChordProgression === 'function') {
       const vDummy = {
         id: 'piano',
@@ -668,14 +687,55 @@ function attachPhraseEngineSimulations(target) {
           vDummy, null, {dryRun: true, disableVariations: true});
       this.chordStepIndex = savedIdx;
       const shiftedRes = this.triggerInstrumentChordProgression(
-          vDummy, null, {dryRun: true, chordProb: 1.0, prob: 0.0});
-      if (baseRes && shiftedRes && Array.isArray(baseRes.midiNotes) &&
-          Array.isArray(shiftedRes.midiNotes)) {
+          vDummy, null, {dryRun: true, chordProb: 1.0, prob: 0.0, disableNoteOmit: true, dirRoll: 0.2, r: 0.0});
+      this.chordStepIndex = savedIdx;
+      const stackedRes = this.triggerInstrumentChordProgression(
+          vDummy, {octaveBias: -1}, {
+            dryRun: true,
+            roundOctaveShift: -2,
+            chordProb: 1.0,
+            prob: 1.0,
+            disableNoteOmit: true,
+            r: 0.0,
+            dirRoll: 0.9
+          });
+      if (baseRes && shiftedRes && stackedRes && Array.isArray(baseRes.midiNotes) &&
+          Array.isArray(shiftedRes.midiNotes) && Array.isArray(stackedRes.midiNotes)) {
         const shiftExpected = (shiftedRes.chordOctaveShift || 0) * 12;
         const diffs =
             shiftedRes.midiNotes.map((m, idx) => m - baseRes.midiNotes[idx]);
         wholeChordShiftVerified = Math.abs(shiftExpected) === 12 &&
             diffs.length > 0 && diffs.every((d) => d === shiftExpected);
+        const stackedDiffs =
+            stackedRes.midiNotes.map((m, idx) => m - baseRes.midiNotes[idx]);
+        stackedDownCapVerified =
+            stackedDiffs.length > 0 && stackedDiffs.every((d) => d === -12);
+      }
+      const phraseBase = this.triggerPianoPhrase(vDummy, null, {
+        dryRun: true,
+        forcePrimary: true,
+        ignoreLfo: true,
+        forceFull: true,
+        disableVariations: true
+      });
+      const phraseStacked = this.triggerPianoPhrase(
+          vDummy, {octaveBias: -1}, {
+            dryRun: true,
+            forcePrimary: true,
+            ignoreLfo: true,
+            forceFull: true,
+            roundOctaveShift: -2,
+            chordProb: 1.0,
+            prob: 1.0,
+            r: 0.0,
+            dirRoll: 0.9
+          });
+      if (phraseBase && phraseStacked && Array.isArray(phraseBase.allMidiNotes) &&
+          Array.isArray(phraseStacked.allMidiNotes)) {
+        const pDiffs = phraseStacked.allMidiNotes.map(
+            (m, idx) => m - phraseBase.allMidiNotes[idx]);
+        stackedDownCapVerified = stackedDownCapVerified && pDiffs.length > 0 &&
+            pDiffs.every((d) => d === -12);
       }
     }
 
@@ -685,15 +745,19 @@ function attachPhraseEngineSimulations(target) {
     const stayShiftedRate = stayCount / totalShiftedTests;
     const returnToBaseRate = resetCount / totalShiftedTests;
     const motifNoteShiftRate = shiftedNotes / runs;
+    const downwardOctaveCapVerified = downTwoOctavesCount === 0 &&
+        minOctaveShift === -1 && clampedFromMinus2 === -1 &&
+        stackedDownCapVerified === true;
 
-    const ok = Math.abs(unshiftedOneOctRate - 0.10) < 0.02 &&
-        Math.abs(unshiftedTwoOctRate - 0.02) < 0.01 &&
+    const ok = Math.abs(unshiftedOneOctRate - 0.11) < 0.02 &&
+        Math.abs(unshiftedTwoOctRate - 0.01) < 0.008 &&
         Math.abs(stayShiftedRate - 0.30) < 0.03 &&
         Math.abs(returnToBaseRate - 0.70) < 0.03 && invalidShiftCount === 0 &&
         Math.abs(motifNoteShiftRate - 0.03) < 0.01 &&
         Math.abs(wholeChordShiftRate - 0.10) < 0.02 &&
-        wholeChordShiftVerified === true && upNotes > 0 && downNotes > 0 &&
-        upChords > 0 && downChords > 0 && upCount > 0 && downCount > 0;
+        wholeChordShiftVerified === true && downwardOctaveCapVerified &&
+        upNotes > 0 && downNotes > 0 && upChords > 0 && downChords > 0 &&
+        upCount > 0 && downCount > 0;
 
     return {
       ok,
@@ -704,7 +768,10 @@ function attachPhraseEngineSimulations(target) {
       invalidShiftCount,
       motifNoteShiftRate,
       wholeChordShiftRate,
-      wholeChordShiftVerified
+      wholeChordShiftVerified,
+      downTwoOctavesCount,
+      minOctaveShift,
+      downwardOctaveCapVerified
     };
   };
 }

@@ -565,9 +565,11 @@ html[data-theme="dark"] .settings-popover {
     height: 26px;
   }
   .top-app-bar .top-bar-actions #btn-play-toggle {
-    min-width: 30px;
-    height: 30px;
-    padding: 4px;
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px;
+    gap: 3px;
+    font-size: 11px;
   }
   #top-bar-volume-row.control-row.has-rotary-dial.top-bar-volume-dial {
     padding: 2px 6px 2px 4px;

@@ -37,8 +37,8 @@
     }
   }
 
-  function bindModalAndActions() {
-    const PS = window.EnsoPatchStorage || {};
+  function bindModalAndActions(handlers) {
+    const PS = handlers || window.enoPatchStorage || window.EnsoPatchStorage || {};
     const saveBtn = document.getElementById('btn-save-patch');
     if (saveBtn && PS.saveCurrentPatch) {
       saveBtn.addEventListener('click', PS.saveCurrentPatch);
@@ -46,7 +46,13 @@
 
     const newBtn = document.getElementById('btn-new-patch');
     if (newBtn) {
-      newBtn.addEventListener('click', openNewPatchModal);
+      newBtn.addEventListener('click', () => {
+        if (window.EnsoPatchRandomizer?.randomizeAndAppendPatch) {
+          window.EnsoPatchRandomizer.randomizeAndAppendPatch();
+        } else {
+          openNewPatchModal();
+        }
+      });
     }
 
     const resetBtn = document.getElementById('btn-reset-patch');
@@ -70,15 +76,15 @@
     const confirmBtn = document.getElementById('btn-confirm-new-patch');
     const input = document.getElementById('new-patch-name-input');
     if (confirmBtn && input && PS.createNewPatch) {
-      confirmBtn.addEventListener('click', () => {
+      const handleCreate = () => {
         const val = input.value.trim() || 'My Soundscape Patch';
         PS.createNewPatch(val);
-      });
+      };
+      confirmBtn.addEventListener('click', handleCreate);
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
-          const val = input.value.trim() || 'My Soundscape Patch';
-          PS.createNewPatch(val);
+          handleCreate();
         }
       });
     }
@@ -107,11 +113,11 @@
     }
 
     const markDirty = PS.markDirty || (() => {});
-    document.querySelectorAll('.control-row input, .piano-phrases-card input, .xy-pad-surface').forEach((el) => {
-      if (el.id === 'piano-other-crossfade') return;
+    document.querySelectorAll('.control-row input, .piano-phrases-card input, .xy-pad-surface, #settings-popover input').forEach((el) => {
       el.addEventListener('input', () => markDirty(true));
       el.addEventListener('change', () => markDirty(true));
     });
+    document.getElementById('btn-reset-crossfade')?.addEventListener('click', () => markDirty(true));
     const voicesCont = document.getElementById('voices-cards-container');
     if (voicesCont) {
       voicesCont.addEventListener('input', () => markDirty(true));
