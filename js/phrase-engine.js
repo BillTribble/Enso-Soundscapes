@@ -19,11 +19,8 @@ class PhraseEngine {
     this.phraseNoteGate = 0.22; this.phraseCompletionGate = 0.18;
     this.phraseGateProb = 0.82; this.phraseLoopCycle = 7.9;
     this.chordProgGate = 0.74; this.chordProgCycle = 17.3;
-    this.noteOctaveShiftChance = 0.03;
-    this.noteOctaveShiftedCount = 0;
-    this.chordOctaveShiftChance = 0.10;
-    this.chordOctaveShiftedCount = 0;
-    this.lastChordOctaveShift = 0;
+    this.noteOctaveShiftChance = 0.03; this.noteOctaveShiftedCount = 0;
+    this.chordOctaveShiftChance = 0.10; this.chordOctaveShiftedCount = 0; this.lastChordOctaveShift = 0;
 
     this.skippedPhraseCount = 0; this.truncatedPhraseCount = 0; this.omittedNotesTotal = 0;
     this.lastStartOnlyDice = null; this.lastPhraseOutcome = 'full_phrase'; this.lastStepStates = [];
@@ -44,518 +41,71 @@ class PhraseEngine {
 
     return {
       thursday: {
-        presetId: 'thursday',
-        scaleId: 'thursday_g',
-        keyLabel: 'G Mixolydian',
-        defaultPianoPhraseType: 'longer_pattern',
-        defaultChordProgInstrument: 'choir',
-        melodicFallbackType: 'longer_pattern',
-        altChordInstrument: 'choir',
-        phraseLengthLfo:
-            {enabled: true, periodSec: 180, minRatio: 0.50, maxRatio: 1.00},
-        defaultVariationChance: 0.55,
-        defaultSkipChance: 0.15,
-        defaultNoteGate: 0.22,
-        defaultCompletionGate: 0.18,
-        defaultNoteOctaveShiftChance: 0.03,
-        defaultChordOctaveShiftChance: 0.10,
-        trackChords: [
-          {
-            numeral: 'I',
-            name: 'G',
-            degrees: [0, 2, 4, 6],
-            octaves: [0, 0, 0, 0]
-          },
-          {
-            numeral: '♭VII',
-            name: 'F',
-            degrees: [6, 1, 3, 5],
-            octaves: [-1, 0, 0, 0]
-          },
-          {
-            numeral: 'IV',
-            name: 'C',
-            degrees: [3, 5, 0, 2],
-            octaves: [0, 0, 1, 1]
-          },
-          {
-            numeral: 'v7',
-            name: 'Dm7',
-            degrees: [4, 6, 1, 3],
-            octaves: [0, 0, 1, 1]
-          }
-        ],
+        presetId: 'thursday', scaleId: 'thursday_g', keyLabel: 'G Mixolydian', defaultPianoPhraseType: 'longer_pattern',
+        defaultChordProgInstrument: 'choir', melodicFallbackType: 'longer_pattern', altChordInstrument: 'choir',
+        phraseLengthLfo: { enabled: true, periodSec: 180, minRatio: 0.50, maxRatio: 1.00 },
+        defaultVariationChance: 0.55, defaultSkipChance: 0.15, defaultNoteGate: 0.22, defaultCompletionGate: 0.18, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'I', name: 'G', degrees: [0, 2, 4, 6], octaves: [0, 0, 0, 0] }, { numeral: '♭VII', name: 'F', degrees: [6, 1, 3, 5], octaves: [-1, 0, 0, 0] }, { numeral: 'IV', name: 'C', degrees: [3, 5, 0, 2], octaves: [0, 0, 1, 1] }, { numeral: 'v7', name: 'Dm7', degrees: [4, 6, 1, 3], octaves: [0, 0, 1, 1] }],
         phrases: {
-          short_motif:
-              p('Atrium Drop Cell', 'Short motif',
-                'Delicate 4-note falling motif in pastoral G Mixolydian.',
-                [
-                  s([4], [1], 0, 0.72, 'D5'), s([2], [1], 620, 0.65, 'B4'),
-                  s([1], [1], 1200, 0.62, 'A4'), s([0], [1], 1840, 0.70, 'G4')
-                ],
-                [
-                  s([6], [1], 0, 0.68, 'F5'), s([4], [1], 580, 0.64, 'D5'),
-                  s([2], [1], 1160, 0.60, 'B4'), s([0], [1], 1780, 0.72, 'G4')
-                ]),
-          chord_progression: p(
-              'Mixolydian Sunlit Chords', 'Chord progression',
-              'Open spaced triads alternating between G, F, and C in pastoral afternoon light.',
-              [
-                c([0, 2, 4], [0, 0, 0], 0, 0.75, 34, 'G'),
-                c([6, 1, 3], [-1, 0, 0], 1240, 0.70, 36, 'F'),
-                c([3, 5, 0], [0, 0, 1], 2480, 0.72, 38, 'C'),
-                c([4, 6, 1], [0, 0, 1], 3720, 0.68, 35, 'Dm')
-              ],
-              [
-                c([0, 4, 1], [0, 0, 1], 0, 0.72, 35, 'Gsus2'),
-                c([6, 1, 3], [-1, 0, 0], 1260, 0.68, 38, 'F'),
-                c([3, 0, 2], [0, 1, 1], 2500, 0.70, 36, 'C'),
-                c([0, 2, 4], [0, 0, 0], 3760, 0.74, 34, 'G')
-              ]),
-          longer_pattern: p(
-              'Sunlit Canopy Cascade', 'Longer pattern',
-              '8-note cascading Harold Budd arpeggiated piano phrase with pedal point.',
-              [
-                s([0, 4], [0, 1], 0, 0.78, 'G4+D5'),
-                s([2], [1], 440, 0.66, 'B5'), s([1], [1], 880, 0.62, 'A5'),
-                s([4], [1], 1320, 0.70, 'D5'), s([6], [0], 1760, 0.60, 'F5'),
-                s([5], [0], 2200, 0.64, 'E5'), s([2], [0], 2640, 0.58, 'B4'),
-                s([0], [1], 3080, 0.72, 'G5')
-              ],
-              [
-                s([0, 4], [0, 1], 0, 0.76, 'G4+D5'),
-                s([1], [1], 420, 0.65, 'A5'), s([2], [1], 840, 0.68, 'B5'),
-                s([6], [1], 1260, 0.62, 'F6'), s([4], [1], 1680, 0.70, 'D5'),
-                s([3], [0], 2100, 0.58, 'C5'), s([1], [0], 2520, 0.60, 'A4'),
-                s([0], [1], 2980, 0.74, 'G5')
-              ])
+          short_motif: p('Atrium Drop Cell', 'Short motif', 'Delicate 4-note falling motif in pastoral G Mixolydian.', [s([4],[1],0,0.72,'D5'), s([2],[1],620,0.65,'B4'), s([1],[1],1200,0.62,'A4'), s([0],[1],1840,0.70,'G4')], [s([6],[1],0,0.68,'F5'), s([4],[1],580,0.64,'D5'), s([2],[1],1160,0.60,'B4'), s([0],[1],1780,0.72,'G4')]),
+          chord_progression: p('Mixolydian Sunlit Chords', 'Chord progression', 'Open spaced triads alternating between G, F, and C in pastoral afternoon light.', [c([0,2,4],[0,0,0],0,0.75,34,'G'), c([6,1,3],[-1,0,0],1240,0.70,36,'F'), c([3,5,0],[0,0,1],2480,0.72,38,'C'), c([4,6,1],[0,0,1],3720,0.68,35,'Dm')], [c([0,4,1],[0,0,1],0,0.72,35,'Gsus2'), c([6,1,3],[-1,0,0],1260,0.68,38,'F'), c([3,0,2],[0,1,1],2500,0.70,36,'C'), c([0,2,4],[0,0,0],3760,0.74,34,'G')]),
+          longer_pattern: p('Sunlit Canopy Cascade', 'Longer pattern', '8-note cascading Harold Budd arpeggiated piano phrase with pedal point.', [s([0,4],[0,1],0,0.78,'G4+D5'), s([2],[1],440,0.66,'B5'), s([1],[1],880,0.62,'A5'), s([4],[1],1320,0.70,'D5'), s([6],[0],1760,0.60,'F5'), s([5],[0],2200,0.64,'E5'), s([2],[0],2640,0.58,'B4'), s([0],[1],3080,0.72,'G5')], [s([0,4],[0,1],0,0.76,'G4+D5'), s([1],[1],420,0.65,'A5'), s([2],[1],840,0.68,'B5'), s([6],[1],1260,0.62,'F6'), s([4],[1],1680,0.70,'D5'), s([3],[0],2100,0.58,'C5'), s([1],[0],2520,0.60,'A4'), s([0],[1],2980,0.74,'G5')])
         }
       },
       reflection: {
-        presetId: 'reflection',
-        scaleId: 'reflection_eb',
-        keyLabel: 'C Lydian',
-        defaultPianoPhraseType: 'chord_progression',
-        defaultChordProgInstrument: 'piano',
-        melodicFallbackType: 'short_motif',
-        altChordInstrument: 'pad',
-        defaultVariationChance: 0.55,
-        defaultSkipChance: 0.15,
-        defaultNoteGate: 0.22,
-        defaultCompletionGate: 0.18,
-        defaultNoteOctaveShiftChance: 0.03,
-        defaultChordOctaveShiftChance: 0.10,
-        trackChords: [
-          {
-            numeral: 'Imaj7',
-            name: 'Cmaj7',
-            degrees: [0, 2, 4, 6],
-            octaves: [0, 0, 0, 0]
-          },
-          {
-            numeral: 'II7',
-            name: 'D7',
-            degrees: [1, 3, 5, 0],
-            octaves: [0, 0, 0, 1]
-          },
-          {
-            numeral: 'vii7',
-            name: 'Bm7',
-            degrees: [6, 1, 3, 5],
-            octaves: [-1, 0, 0, 0]
-          },
-          {
-            numeral: 'Imaj7#11',
-            name: 'Cmaj7(#11)',
-            degrees: [0, 3, 4, 6],
-            octaves: [0, 0, 0, 0]
-          }
-        ],
+        presetId: 'reflection', scaleId: 'reflection_eb', keyLabel: 'C Lydian',
+        defaultPianoPhraseType: 'chord_progression', defaultChordProgInstrument: 'piano',
+        melodicFallbackType: 'short_motif', altChordInstrument: 'pad',
+        defaultVariationChance: 0.55, defaultSkipChance: 0.15, defaultNoteGate: 0.22, defaultCompletionGate: 0.18, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'Imaj7', name: 'Cmaj7', degrees: [0, 2, 4, 6], octaves: [0, 0, 0, 0] }, { numeral: 'II7', name: 'D7', degrees: [1, 3, 5, 0], octaves: [0, 0, 0, 1] }, { numeral: 'vii7', name: 'Bm7', degrees: [6, 1, 3, 5], octaves: [-1, 0, 0, 0] }, { numeral: 'Imaj7#11', name: 'Cmaj7(#11)', degrees: [0, 3, 4, 6], octaves: [0, 0, 0, 0] }],
         phrases: {
-          short_motif: p(
-              'Luminous Cell', 'Short motif',
-              'Intimate modal chime in C Lydian gravitating to the elevated #11 and 9th.',
-              [
-                s([0], [1], 0, 0.72, 'C4'), s([3], [1], 580, 0.65, 'F#4'),
-                s([4], [1], 1120, 0.68, 'G4'), s([1], [1], 1740, 0.60, 'D4')
-              ],
-              [
-                s([0], [1], 0, 0.70, 'C4'), s([3], [1], 540, 0.66, 'F#4'),
-                s([6], [1], 1080, 0.64, 'B4'), s([4], [1], 1680, 0.58, 'G4')
-              ]),
-          chord_progression: p(
-              'Lydian Glass Progression', 'Chord progression',
-              'Lush 4-voice Roger Eno style modal chords moving across Cmaj7, D7, Bm7, and Cmaj7(#11).',
-              [
-                c([0, 2, 4, 6], [0, 0, 0, 0], 0, 0.76, 36, 'Cmaj7'),
-                c([1, 3, 5, 0], [0, 0, 0, 1], 1180, 0.72, 38, 'D7'),
-                c([6, 1, 3, 5], [-1, 0, 0, 0], 2360, 0.68, 40, 'Bm7'),
-                c([0, 3, 4, 6], [0, 0, 0, 0], 3540, 0.74, 35, 'Cmaj7(#11)')
-              ],
-              [
-                c([0, 2, 4, 1], [0, 0, 0, 1], 0, 0.74, 38, 'Cadd9'),
-                c([1, 3, 5, 0], [0, 0, 0, 1], 1220, 0.70, 36, 'D7'),
-                c([5, 0, 2, 4], [-1, 0, 0, 0], 2400, 0.66, 42, 'Am7'),
-                c([0, 3, 4, 6], [0, 0, 0, 0], 3600, 0.72, 35, 'Cmaj7(#11)')
-              ]),
-          longer_pattern: p(
-              'Luminous Arch Phrase', 'Longer pattern',
-              '8-step descending and ascending C Lydian arc hovering around root and fifth.',
-              [
-                s([0, 4], [0, 1], 0, 0.75, 'C3+G4'),
-                s([3], [1], 460, 0.62, 'F#4'), s([2], [1], 920, 0.66, 'E4'),
-                s([1], [1], 1380, 0.64, 'D4'), s([0], [1], 1840, 0.70, 'C4'),
-                s([6], [0], 2300, 0.60, 'B3'), s([4], [0], 2760, 0.65, 'G3'),
-                s([1], [1], 3220, 0.58, 'D4')
-              ],
-              [
-                s([0, 4], [0, 1], 0, 0.72, 'C3+G4'),
-                s([6], [1], 440, 0.60, 'B4'), s([3], [1], 880, 0.64, 'F#4'),
-                s([2], [1], 1320, 0.62, 'E4'), s([1], [1], 1760, 0.68, 'D4'),
-                s([4], [1], 2200, 0.60, 'G4'), s([3], [1], 2640, 0.58, 'F#4'),
-                s([0], [1], 3100, 0.70, 'C4')
-              ])
+          short_motif: p('Luminous Cell', 'Short motif', 'Intimate modal chime in C Lydian gravitating to the elevated #11 and 9th.', [s([0],[1],0,0.72,'C4'), s([3],[1],580,0.65,'F#4'), s([4],[1],1120,0.68,'G4'), s([1],[1],1740,0.60,'D4')], [s([0],[1],0,0.70,'C4'), s([3],[1],540,0.66,'F#4'), s([6],[1],1080,0.64,'B4'), s([4],[1],1680,0.58,'G4')]),
+          chord_progression: p('Lydian Glass Progression', 'Chord progression', 'Lush 4-voice Roger Eno style modal chords moving across Cmaj7, D7, Bm7, and Cmaj7(#11).', [c([0,2,4,6],[0,0,0,0],0,0.76,36,'Cmaj7'), c([1,3,5,0],[0,0,0,1],1180,0.72,38,'D7'), c([6,1,3,5],[-1,0,0,0],2360,0.68,40,'Bm7'), c([0,3,4,6],[0,0,0,0],3540,0.74,35,'Cmaj7(#11)')], [c([0,2,4,1],[0,0,0,1],0,0.74,38,'Cadd9'), c([1,3,5,0],[0,0,0,1],1220,0.70,36,'D7'), c([5,0,2,4],[-1,0,0,0],2400,0.66,42,'Am7'), c([0,3,4,6],[0,0,0,0],3600,0.72,35,'Cmaj7(#11)')]),
+          longer_pattern: p('Luminous Arch Phrase', 'Longer pattern', '8-step descending and ascending C Lydian arc hovering around root and fifth.', [s([0,4],[0,1],0,0.75,'C3+G4'), s([3],[1],460,0.62,'F#4'), s([2],[1],920,0.66,'E4'), s([1],[1],1380,0.64,'D4'), s([0],[1],1840,0.70,'C4'), s([6],[0],2300,0.60,'B3'), s([4],[0],2760,0.65,'G3'), s([1],[1],3220,0.58,'D4')], [s([0,4],[0,1],0,0.72,'C3+G4'), s([6],[1],440,0.60,'B4'), s([3],[1],880,0.64,'F#4'), s([2],[1],1320,0.62,'E4'), s([1],[1],1760,0.68,'D4'), s([4],[1],2200,0.60,'G4'), s([3],[1],2640,0.58,'F#4'), s([0],[1],3100,0.70,'C4')])
         }
       },
-      installations:
-          {
-            presetId: 'installations',
-            scaleId: 'lux_a',
-            keyLabel: 'F Lydian',
-            defaultPianoPhraseType: 'chord_progression',
-            defaultChordProgInstrument: 'piano',
-            melodicFallbackType: 'longer_pattern',
-            altChordInstrument: 'pad',
-            defaultVariationChance: 0.58,
-            defaultSkipChance: 0.16,
-            defaultNoteGate: 0.24,
-            defaultCompletionGate: 0.18,
-            defaultNoteOctaveShiftChance: 0.03,
-            defaultChordOctaveShiftChance: 0.10,
-            trackChords: [
-              {
-                numeral: 'Imaj9',
-                name: 'Fmaj9',
-                degrees: [0, 2, 4, 1],
-                octaves: [0, 0, 0, 1]
-              },
-              {
-                numeral: 'II',
-                name: 'G',
-                degrees: [1, 3, 5, 0],
-                octaves: [0, 0, 0, 1]
-              },
-              {
-                numeral: 'vi',
-                name: 'Dm',
-                degrees: [5, 0, 2, 4],
-                octaves: [-1, 0, 0, 0]
-              },
-              {
-                numeral: 'V',
-                name: 'C',
-                degrees: [4, 6, 1, 3],
-                octaves: [0, 0, 1, 1]
-              }
-            ],
-            phrases: {
-              short_motif: p(
-                  'Cathedral Bell Cell', 'Short motif',
-                  'Ascending high-register chime motif in sparkling F Lydian.',
-                  [
-                    s([0], [1], 0, 0.74, 'F4'), s([2], [1], 540, 0.66, 'A4'),
-                    s([3], [1], 1080, 0.68, 'B4'), s([4], [1], 1660, 0.62, 'C5')
-                  ],
-                  [
-                    s([4], [1], 0, 0.70, 'C5'), s([3], [1], 520, 0.68, 'B4'),
-                    s([1], [1], 1040, 0.64, 'G4'), s([0], [1], 1620, 0.72, 'F4')
-                  ]),
-              chord_progression: p(
-                  'Cathedral Vespers Chords', 'Chord progression',
-                  'Slow expansive F Lydian chords with lush 9th and #11 overtone suspensions.',
-                  [
-                    c([0, 2, 4, 1], [0, 0, 0, 1], 0, 0.78, 38, 'Fmaj9'),
-                    c([1, 3, 5, 0], [0, 0, 0, 1], 1300, 0.72, 40, 'G'),
-                    c([5, 0, 2, 4], [-1, 0, 0, 0], 2600, 0.68, 36, 'Dm'),
-                    c([4, 6, 1, 3], [0, 0, 1, 1], 3900, 0.74, 35, 'C')
-                  ],
-                  [
-                    c([0, 3, 4, 1], [0, 0, 0, 1], 0, 0.76, 38, 'Fmaj9(#11)'),
-                    c([1, 3, 5, 0], [0, 0, 0, 1], 1320, 0.70, 40, 'G'),
-                    c([5, 0, 2, 1], [-1, 0, 0, 0], 2640, 0.66, 36, 'Dmadd4'),
-                    c([0, 2, 4, 6], [0, 0, 0, 0], 3960, 0.74, 34, 'Fmaj7')
-                  ]),
-              longer_pattern: p(
-                  'Gallery Horizon Pattern', 'Longer pattern',
-                  '8-step airy F Lydian sequence echoing through high cathedral vaults.',
-                  [
-                    s([0], [1], 0, 0.75, 'F4'), s([1], [1], 450, 0.62, 'G4'),
-                    s([3], [1], 900, 0.66, 'B4'), s([4], [1], 1350, 0.70, 'C5'),
-                    s([6], [1], 1800, 0.64, 'E5'),
-                    s([4], [1], 2250, 0.68, 'C5'),
-                    s([2], [1], 2700, 0.60, 'A4'), s([0], [1], 3150, 0.72, 'F4')
-                  ],
-                  [
-                    s([0], [1], 0, 0.74, 'F4'), s([4], [1], 440, 0.68, 'C5'),
-                    s([3], [1], 880, 0.65, 'B4'), s([2], [1], 1320, 0.62, 'A4'),
-                    s([1], [1], 1760, 0.66, 'G4'),
-                    s([0], [1], 2200, 0.70, 'F4'),
-                    s([6], [0], 2640, 0.58, 'E4'), s([4], [0], 3080, 0.64, 'C4')
-                  ])
-            }
-          },
-      apollo_shimmer: {
-        presetId: 'apollo_shimmer',
-        scaleId: 'airports_db',
-        keyLabel: 'C Major',
-        defaultPianoPhraseType: 'longer_pattern',
-        defaultChordProgInstrument: 'pad',
-        melodicFallbackType: 'longer_pattern',
-        altChordInstrument: 'pad',
-        defaultVariationChance: 0.60,
-        defaultSkipChance: 0.16,
-        defaultNoteGate: 0.24,
-        defaultCompletionGate: 0.20,
-        defaultNoteOctaveShiftChance: 0.03,
-        defaultChordOctaveShiftChance: 0.10,
-        trackChords: [
-          {
-            numeral: 'Imaj7',
-            name: 'Cmaj7',
-            degrees: [0, 2, 4, 6],
-            octaves: [0, 0, 0, 0]
-          },
-          {
-            numeral: 'vi7',
-            name: 'Am7',
-            degrees: [5, 0, 2, 4],
-            octaves: [-1, 0, 0, 0]
-          },
-          {
-            numeral: 'IVmaj7',
-            name: 'Fmaj7',
-            degrees: [3, 5, 0, 2],
-            octaves: [0, 0, 1, 1]
-          },
-          {
-            numeral: 'V7',
-            name: 'G7',
-            degrees: [4, 6, 1, 3],
-            octaves: [0, 0, 1, 1]
-          }
-        ],
+      installations: {
+        presetId: 'installations', scaleId: 'lux_a', keyLabel: 'F Lydian', defaultPianoPhraseType: 'chord_progression',
+        defaultChordProgInstrument: 'piano', melodicFallbackType: 'longer_pattern', altChordInstrument: 'pad',
+        defaultVariationChance: 0.58, defaultSkipChance: 0.16, defaultNoteGate: 0.24, defaultCompletionGate: 0.18, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'Imaj9', name: 'Fmaj9', degrees: [0, 2, 4, 1], octaves: [0, 0, 0, 1] }, { numeral: 'II', name: 'G', degrees: [1, 3, 5, 0], octaves: [0, 0, 0, 1] }, { numeral: 'vi', name: 'Dm', degrees: [5, 0, 2, 4], octaves: [-1, 0, 0, 0] }, { numeral: 'V', name: 'C', degrees: [4, 6, 1, 3], octaves: [0, 0, 1, 1] }],
         phrases: {
-          short_motif: p(
-              'Lunar Horizon Cell', 'Short motif',
-              'Sparse high-altitude piano motif in C Major floating above deep zero-gravity drone.',
-              [
-                s([4], [1], 0, 0.74, 'G4'), s([1], [1], 620, 0.64, 'D4'),
-                s([2], [1], 1240, 0.68, 'E4'), s([0], [1], 1900, 0.76, 'C4')
-              ],
-              [
-                s([6], [1], 0, 0.70, 'B4'), s([4], [1], 580, 0.66, 'G4'),
-                s([1], [1], 1180, 0.62, 'D4'), s([0], [1], 1820, 0.74, 'C4')
-              ]),
-          chord_progression: p(
-              'Weightless Floating Chords', 'Chord progression',
-              'Expansive C Major-seventh chords blossoming into octave-shifted shimmer reverb.',
-              [
-                c([0, 2, 4, 6], [0, 0, 0, 0], 0, 0.78, 38, 'Cmaj7'),
-                c([5, 0, 2, 4], [-1, 0, 0, 0], 1350, 0.70, 40, 'Am7'),
-                c([3, 5, 0, 2], [0, 0, 1, 1], 2700, 0.72, 36, 'Fmaj7'),
-                c([4, 6, 1, 3], [0, 0, 1, 1], 4050, 0.68, 35, 'G7')
-              ],
-              [
-                c([0, 2, 4, 1], [0, 0, 0, 1], 0, 0.76, 38, 'Cadd9'),
-                c([5, 0, 2, 4], [-1, 0, 0, 0], 1380, 0.68, 40, 'Am7'),
-                c([3, 5, 1, 2], [0, 0, 1, 1], 2740, 0.70, 36, 'Fadd9'),
-                c([0, 2, 4, 6], [0, 0, 0, 0], 4100, 0.75, 34, 'Cmaj7')
-              ]),
-          longer_pattern: p(
-              'Tranquility Base Sequence', 'Longer pattern',
-              '8-step weightless Roger Eno piano phrase ascending in slow orbital arc.',
-              [
-                s([0, 4], [0, 1], 0, 0.78, 'C3+G4'),
-                s([1], [1], 460, 0.64, 'D4'), s([2], [1], 920, 0.68, 'E4'),
-                s([4], [1], 1380, 0.72, 'G4'), s([5], [1], 1840, 0.66, 'A4'),
-                s([4], [1], 2300, 0.70, 'G4'), s([2], [1], 2760, 0.62, 'E4'),
-                s([0], [1], 3220, 0.76, 'C4')
-              ],
-              [
-                s([0, 4], [0, 1], 0, 0.76, 'C3+G4'),
-                s([6], [1], 440, 0.62, 'B4'), s([5], [1], 880, 0.68, 'A4'),
-                s([4], [1], 1320, 0.70, 'G4'), s([2], [1], 1760, 0.64, 'E4'),
-                s([1], [1], 2200, 0.60, 'D4'), s([2], [1], 2640, 0.66, 'E4'),
-                s([0], [1], 3100, 0.74, 'C4')
-              ])
+          short_motif: p('Cathedral Bell Cell', 'Short motif', 'Ascending high-register chime motif in sparkling F Lydian.', [s([0],[1],0,0.74,'F4'), s([2],[1],540,0.66,'A4'), s([3],[1],1080,0.68,'B4'), s([4],[1],1660,0.62,'C5')], [s([4],[1],0,0.70,'C5'), s([3],[1],520,0.68,'B4'), s([1],[1],1040,0.64,'G4'), s([0],[1],1620,0.72,'F4')]),
+          chord_progression: p('Cathedral Vespers Chords', 'Chord progression', 'Slow expansive F Lydian chords with lush 9th and #11 overtone suspensions.', [c([0,2,4,1],[0,0,0,1],0,0.78,38,'Fmaj9'), c([1,3,5,0],[0,0,0,1],1300,0.72,40,'G'), c([5,0,2,4],[-1,0,0,0],2600,0.68,36,'Dm'), c([4,6,1,3],[0,0,1,1],3900,0.74,35,'C')], [c([0,3,4,1],[0,0,0,1],0,0.76,38,'Fmaj9(#11)'), c([1,3,5,0],[0,0,0,1],1320,0.70,40,'G'), c([5,0,2,1],[-1,0,0,0],2640,0.66,36,'Dmadd4'), c([0,2,4,6],[0,0,0,0],3960,0.74,34,'Fmaj7')]),
+          longer_pattern: p('Gallery Horizon Pattern', 'Longer pattern', '8-step airy F Lydian sequence echoing through high cathedral vaults.', [s([0],[1],0,0.75,'F4'), s([1],[1],450,0.62,'G4'), s([3],[1],900,0.66,'B4'), s([4],[1],1350,0.70,'C5'), s([6],[1],1800,0.64,'E5'), s([4],[1],2250,0.68,'C5'), s([2],[1],2700,0.60,'A4'), s([0],[1],3150,0.72,'F4')], [s([0],[1],0,0.74,'F4'), s([4],[1],440,0.68,'C5'), s([3],[1],880,0.65,'B4'), s([2],[1],1320,0.62,'A4'), s([1],[1],1760,0.66,'G4'), s([0],[1],2200,0.70,'F4'), s([6],[0],2640,0.58,'E4'), s([4],[0],3080,0.64,'C4')])
+        }
+      },
+      apollo_shimmer: {
+        presetId: 'apollo_shimmer', scaleId: 'airports_db', keyLabel: 'C Major', defaultPianoPhraseType: 'longer_pattern',
+        defaultChordProgInstrument: 'pad', melodicFallbackType: 'longer_pattern', altChordInstrument: 'pad',
+        defaultVariationChance: 0.60, defaultSkipChance: 0.16, defaultNoteGate: 0.24, defaultCompletionGate: 0.20, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'Imaj7', name: 'Cmaj7', degrees: [0, 2, 4, 6], octaves: [0, 0, 0, 0] }, { numeral: 'vi7', name: 'Am7', degrees: [5, 0, 2, 4], octaves: [-1, 0, 0, 0] }, { numeral: 'IVmaj7', name: 'Fmaj7', degrees: [3, 5, 0, 2], octaves: [0, 0, 1, 1] }, { numeral: 'V7', name: 'G7', degrees: [4, 6, 1, 3], octaves: [0, 0, 1, 1] }],
+        phrases: {
+          short_motif: p('Lunar Horizon Cell', 'Short motif', 'Sparse high-altitude piano motif in C Major floating above deep zero-gravity drone.', [s([4],[1],0,0.74,'G4'), s([1],[1],620,0.64,'D4'), s([2],[1],1240,0.68,'E4'), s([0],[1],1900,0.76,'C4')], [s([6],[1],0,0.70,'B4'), s([4],[1],580,0.66,'G4'), s([1],[1],1180,0.62,'D4'), s([0],[1],1820,0.74,'C4')]),
+          chord_progression: p('Weightless Floating Chords', 'Chord progression', 'Expansive C Major-seventh chords blossoming into octave-shifted shimmer reverb.', [c([0,2,4,6],[0,0,0,0],0,0.78,38,'Cmaj7'), c([5,0,2,4],[-1,0,0,0],1350,0.70,40,'Am7'), c([3,5,0,2],[0,0,1,1],2700,0.72,36,'Fmaj7'), c([4,6,1,3],[0,0,1,1],4050,0.68,35,'G7')], [c([0,2,4,1],[0,0,0,1],0,0.76,38,'Cadd9'), c([5,0,2,4],[-1,0,0,0],1380,0.68,40,'Am7'), c([3,5,1,2],[0,0,1,1],2740,0.70,36,'Fadd9'), c([0,2,4,6],[0,0,0,0],4100,0.75,34,'Cmaj7')]),
+          longer_pattern: p('Tranquility Base Sequence', 'Longer pattern', '8-step weightless Roger Eno piano phrase ascending in slow orbital arc.', [s([0,4],[0,1],0,0.78,'C3+G4'), s([1],[1],460,0.64,'D4'), s([2],[1],920,0.68,'E4'), s([4],[1],1380,0.72,'G4'), s([5],[1],1840,0.66,'A4'), s([4],[1],2300,0.70,'G4'), s([2],[1],2760,0.62,'E4'), s([0],[1],3220,0.76,'C4')], [s([0,4],[0,1],0,0.76,'C3+G4'), s([6],[1],440,0.62,'B4'), s([5],[1],880,0.68,'A4'), s([4],[1],1320,0.70,'G4'), s([2],[1],1760,0.64,'E4'), s([1],[1],2200,0.60,'D4'), s([2],[1],2640,0.66,'E4'), s([0],[1],3100,0.74,'C4')])
         }
       },
       mixing_colours: {
-        presetId: 'mixing_colours',
-        scaleId: 'mixing_c',
-        keyLabel: 'G Dorian',
-        defaultPianoPhraseType: 'short_motif',
-        defaultChordProgInstrument: 'pad',
-        melodicFallbackType: 'short_motif',
-        altChordInstrument: 'pad',
-        defaultVariationChance: 0.52,
-        defaultSkipChance: 0.14,
-        defaultNoteGate: 0.20,
-        defaultCompletionGate: 0.18,
-        defaultNoteOctaveShiftChance: 0.03,
-        defaultChordOctaveShiftChance: 0.10,
-        trackChords: [
-          {
-            numeral: 'i7',
-            name: 'Gm7',
-            degrees: [0, 2, 4, 6],
-            octaves: [0, 0, 0, 0]
-          },
-          {
-            numeral: 'IV7',
-            name: 'C7',
-            degrees: [3, 5, 0, 2],
-            octaves: [0, 0, 1, 1]
-          },
-          {
-            numeral: '♭VII',
-            name: 'F',
-            degrees: [6, 1, 3, 5],
-            octaves: [-1, 0, 0, 0]
-          },
-          {
-            numeral: 'v7',
-            name: 'Dm7',
-            degrees: [4, 6, 1, 3],
-            octaves: [0, 0, 1, 1]
-          }
-        ],
+        presetId: 'mixing_colours', scaleId: 'mixing_c', keyLabel: 'G Dorian', defaultPianoPhraseType: 'short_motif',
+        defaultChordProgInstrument: 'pad', melodicFallbackType: 'short_motif', altChordInstrument: 'pad',
+        defaultVariationChance: 0.52, defaultSkipChance: 0.14, defaultNoteGate: 0.20, defaultCompletionGate: 0.18, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'i7', name: 'Gm7', degrees: [0, 2, 4, 6], octaves: [0, 0, 0, 0] }, { numeral: 'IV7', name: 'C7', degrees: [3, 5, 0, 2], octaves: [0, 0, 1, 1] }, { numeral: '♭VII', name: 'F', degrees: [6, 1, 3, 5], octaves: [-1, 0, 0, 0] }, { numeral: 'v7', name: 'Dm7', degrees: [4, 6, 1, 3], octaves: [0, 0, 1, 1] }],
         phrases: {
-          short_motif:
-              p('Winter Bell Cell', 'Short motif',
-                '4-note minimalist felt piano miniature in nostalgic G Dorian.',
-                [
-                  s([0], [1], 0, 0.78, 'G4'), s([2], [1], 540, 0.68, 'B♭4'),
-                  s([1], [1], 1100, 0.62, 'A4'), s([4], [0], 1720, 0.74, 'D4')
-                ],
-                [
-                  s([0], [1], 0, 0.75, 'G4'), s([6], [0], 520, 0.64, 'F4'),
-                  s([2], [1], 1080, 0.66, 'B♭4'), s([1], [1], 1680, 0.70, 'A4')
-                ]),
-          chord_progression: p(
-              'Dorian Felt Chords', 'Chord progression',
-              'Intimate felt piano minor chords softly rolling across Gm7, C7, F, and Dm7.',
-              [
-                c([0, 2, 4, 6], [0, 0, 0, 0], 0, 0.76, 36, 'Gm7'),
-                c([3, 5, 0, 2], [0, 0, 1, 1], 1150, 0.70, 38, 'C7'),
-                c([6, 1, 3, 5], [-1, 0, 0, 0], 2300, 0.68, 35, 'F'),
-                c([4, 6, 1, 3], [0, 0, 1, 1], 3450, 0.72, 36, 'Dm7')
-              ],
-              [
-                c([0, 2, 4, 1], [0, 0, 0, 1], 0, 0.74, 36, 'Gm9'),
-                c([3, 5, 0, 2], [0, 0, 1, 1], 1180, 0.68, 38, 'C7'),
-                c([6, 1, 3, 0], [-1, 0, 0, 1], 2360, 0.66, 35, 'Fadd9'),
-                c([0, 2, 4, 6], [0, 0, 0, 0], 3500, 0.74, 36, 'Gm7')
-              ]),
-          longer_pattern: p(
-              'Mist & Memory Sequence', 'Longer pattern',
-              '7-step contemplative G Dorian melody drifting through cold acoustic space.',
-              [
-                s([0], [1], 0, 0.76, 'G4'), s([1], [1], 480, 0.64, 'A4'),
-                s([2], [1], 960, 0.70, 'B♭4'), s([4], [1], 1440, 0.72, 'D5'),
-                s([3], [1], 1920, 0.66, 'C5'), s([1], [1], 2400, 0.60, 'A4'),
-                s([0], [1], 2880, 0.74, 'G4')
-              ],
-              [
-                s([4], [0], 0, 0.72, 'D4'), s([0], [1], 460, 0.74, 'G4'),
-                s([1], [1], 920, 0.62, 'A4'), s([2], [1], 1380, 0.68, 'B♭4'),
-                s([5], [1], 1840, 0.65, 'E5'), s([4], [1], 2300, 0.70, 'D5'),
-                s([2], [1], 2780, 0.66, 'B♭4')
-              ])
+          short_motif: p('Winter Bell Cell', 'Short motif', '4-note minimalist felt piano miniature in nostalgic G Dorian.', [s([0],[1],0,0.78,'G4'), s([2],[1],540,0.68,'B♭4'), s([1],[1],1100,0.62,'A4'), s([4],[0],1720,0.74,'D4')], [s([0],[1],0,0.75,'G4'), s([6],[0],520,0.64,'F4'), s([2],[1],1080,0.66,'B♭4'), s([1],[1],1680,0.70,'A4')]),
+          chord_progression: p('Dorian Felt Chords', 'Chord progression', 'Intimate felt piano minor chords softly rolling across Gm7, C7, F, and Dm7.', [c([0,2,4,6],[0,0,0,0],0,0.76,36,'Gm7'), c([3,5,0,2],[0,0,1,1],1150,0.70,38,'C7'), c([6,1,3,5],[-1,0,0,0],2300,0.68,35,'F'), c([4,6,1,3],[0,0,1,1],3450,0.72,36,'Dm7')], [c([0,2,4,1],[0,0,0,1],0,0.74,36,'Gm9'), c([3,5,0,2],[0,0,1,1],1180,0.68,38,'C7'), c([6,1,3,0],[-1,0,0,1],2360,0.66,35,'Fadd9'), c([0,2,4,6],[0,0,0,0],3500,0.74,36,'Gm7')]),
+          longer_pattern: p('Mist & Memory Sequence', 'Longer pattern', '7-step contemplative G Dorian melody drifting through cold acoustic space.', [s([0],[1],0,0.76,'G4'), s([1],[1],480,0.64,'A4'), s([2],[1],960,0.70,'B♭4'), s([4],[1],1440,0.72,'D5'), s([3],[1],1920,0.66,'C5'), s([1],[1],2400,0.60,'A4'), s([0],[1],2880,0.74,'G4')], [s([4],[0],0,0.72,'D4'), s([0],[1],460,0.74,'G4'), s([1],[1],920,0.62,'A4'), s([2],[1],1380,0.68,'B♭4'), s([5],[1],1840,0.65,'E5'), s([4],[1],2300,0.70,'D5'), s([2],[1],2780,0.66,'B♭4')])
         }
       },
       discreet_loops: {
-        presetId: 'discreet_loops',
-        scaleId: 'onland_f',
-        keyLabel: 'D Aeolian',
-        defaultPianoPhraseType: 'short_motif',
-        defaultChordProgInstrument: 'tape',
-        melodicFallbackType: 'short_motif',
-        altChordInstrument: 'tape',
-        defaultVariationChance: 0.55,
-        defaultSkipChance: 0.15,
-        defaultNoteGate: 0.22,
-        defaultCompletionGate: 0.18,
-        defaultNoteOctaveShiftChance: 0.03,
-        defaultChordOctaveShiftChance: 0.10,
-        trackChords: [
-          {
-            numeral: 'i7',
-            name: 'Dm7',
-            degrees: [0, 2, 4, 6],
-            octaves: [0, 0, 0, 0]
-          },
-          {
-            numeral: '♭VI',
-            name: 'B♭',
-            degrees: [5, 0, 2, 4],
-            octaves: [-1, 0, 0, 0]
-          },
-          {
-            numeral: '♭III',
-            name: 'F',
-            degrees: [2, 4, 6, 1],
-            octaves: [0, 0, 0, 1]
-          },
-          {
-            numeral: '♭VII',
-            name: 'C',
-            degrees: [6, 1, 3, 5],
-            octaves: [-1, 0, 0, 0]
-          }
-        ],
+        presetId: 'discreet_loops', scaleId: 'onland_f', keyLabel: 'D Aeolian', defaultPianoPhraseType: 'short_motif',
+        defaultChordProgInstrument: 'tape', melodicFallbackType: 'short_motif', altChordInstrument: 'tape',
+        defaultVariationChance: 0.55, defaultSkipChance: 0.15, defaultNoteGate: 0.22, defaultCompletionGate: 0.18, defaultNoteOctaveShiftChance: 0.03, defaultChordOctaveShiftChance: 0.10,
+        trackChords: [{ numeral: 'i7', name: 'Dm7', degrees: [0, 2, 4, 6], octaves: [0, 0, 0, 0] }, { numeral: '♭VI', name: 'B♭', degrees: [5, 0, 2, 4], octaves: [-1, 0, 0, 0] }, { numeral: '♭III', name: 'F', degrees: [2, 4, 6, 1], octaves: [0, 0, 0, 1] }, { numeral: '♭VII', name: 'C', degrees: [6, 1, 3, 5], octaves: [-1, 0, 0, 0] }],
         phrases: {
-          short_motif: p(
-              'Discreet Tape Fragment', 'Short motif',
-              '4-note haunted minor fragment modeled on 1975 tape-delayed felt piano in D Aeolian.',
-              [
-                s([0], [1], 0, 0.76, 'D4'), s([2], [1], 520, 0.66, 'F4'),
-                s([4], [1], 1040, 0.70, 'A4'), s([1], [1], 1620, 0.62, 'E4')
-              ],
-              [
-                s([0], [1], 0, 0.74, 'D4'), s([5], [0], 500, 0.64, 'B♭3'),
-                s([2], [1], 1020, 0.68, 'F4'), s([4], [1], 1580, 0.72, 'A4')
-              ]),
-          chord_progression: p(
-              'Moss & Tape Chords', 'Chord progression',
-              'Somber resonant natural minor triads in D Aeolian looping through revox tape heads.',
-              [
-                c([0, 2, 4, 6], [0, 0, 0, 0], 0, 0.76, 36, 'Dm7'),
-                c([5, 0, 2, 4], [-1, 0, 0, 0], 1180, 0.70, 38, 'B♭'),
-                c([2, 4, 6, 1], [0, 0, 0, 1], 2360, 0.68, 35, 'F'),
-                c([6, 1, 3, 5], [-1, 0, 0, 0], 3540, 0.72, 36, 'C')
-              ],
-              [
-                c([0, 2, 4, 1], [0, 0, 0, 1], 0, 0.74, 36, 'Dm9'),
-                c([5, 0, 2, 4], [-1, 0, 0, 0], 1200, 0.68, 38, 'B♭'),
-                c([2, 4, 6, 0], [0, 0, 0, 1], 2400, 0.66, 35, 'Fmaj7'),
-                c([0, 2, 4, 6], [0, 0, 0, 0], 3600, 0.74, 36, 'Dm7')
-              ]),
-          longer_pattern: p(
-              'Earth & Overgrowth Arc', 'Longer pattern',
-              '7-step dark D Aeolian sequence echoing across rustic ambient tape loops.',
-              [
-                s([0], [1], 0, 0.76, 'D4'), s([1], [1], 460, 0.62, 'E4'),
-                s([2], [1], 920, 0.68, 'F4'), s([4], [1], 1380, 0.72, 'A4'),
-                s([3], [1], 1840, 0.64, 'G4'), s([1], [1], 2300, 0.60, 'E4'),
-                s([0], [1], 2760, 0.74, 'D4')
-              ],
-              [
-                s([4], [0], 0, 0.70, 'A3'), s([0], [1], 440, 0.74, 'D4'),
-                s([2], [1], 880, 0.66, 'F4'), s([5], [1], 1320, 0.62, 'B♭4'),
-                s([4], [1], 1760, 0.70, 'A4'), s([2], [1], 2200, 0.65, 'F4'),
-                s([0], [1], 2680, 0.72, 'D4')
-              ])
+          short_motif: p('Discreet Tape Fragment', 'Short motif', '4-note haunted minor fragment modeled on 1975 tape-delayed felt piano in D Aeolian.', [s([0],[1],0,0.76,'D4'), s([2],[1],520,0.66,'F4'), s([4],[1],1040,0.70,'A4'), s([1],[1],1620,0.62,'E4')], [s([0],[1],0,0.74,'D4'), s([5],[0],500,0.64,'B♭3'), s([2],[1],1020,0.68,'F4'), s([4],[1],1580,0.72,'A4')]),
+          chord_progression: p('Moss & Tape Chords', 'Chord progression', 'Somber resonant natural minor triads in D Aeolian looping through revox tape heads.', [c([0,2,4,6],[0,0,0,0],0,0.76,36,'Dm7'), c([5,0,2,4],[-1,0,0,0],1180,0.70,38,'B♭'), c([2,4,6,1],[0,0,0,1],2360,0.68,35,'F'), c([6,1,3,5],[-1,0,0,0],3540,0.72,36,'C')], [c([0,2,4,1],[0,0,0,1],0,0.74,36,'Dm9'), c([5,0,2,4],[-1,0,0,0],1200,0.68,38,'B♭'), c([2,4,6,0],[0,0,0,1],2400,0.66,35,'Fmaj7'), c([0,2,4,6],[0,0,0,0],3600,0.74,36,'Dm7')]),
+          longer_pattern: p('Earth & Overgrowth Arc', 'Longer pattern', '7-step dark D Aeolian sequence echoing across rustic ambient tape loops.', [s([0],[1],0,0.76,'D4'), s([1],[1],460,0.62,'E4'), s([2],[1],920,0.68,'F4'), s([4],[1],1380,0.72,'A4'), s([3],[1],1840,0.64,'G4'), s([1],[1],2300,0.60,'E4'), s([0],[1],2760,0.74,'D4')], [s([4],[0],0,0.70,'A3'), s([0],[1],440,0.74,'D4'), s([2],[1],880,0.66,'F4'), s([5],[1],1320,0.62,'B♭4'), s([4],[1],1760,0.70,'A4'), s([2],[1],2200,0.65,'F4'), s([0],[1],2680,0.72,'D4')])
         }
       }
     };
@@ -577,55 +127,34 @@ class PhraseEngine {
     if (typeof midi !== 'number' || isNaN(midi)) return false;
     const pc = ((Math.round(midi) % 12) + 12) % 12;
     if (this.getAllowedPitchClasses(scaleId).includes(pc)) return true;
-    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ?
-        window.enoAutoCycler :
-        null;
-    if (ac && typeof ac.isMidiInBlendedScales === 'function' &&
-        ac.isMidiInBlendedScales(midi))
-      return true;
+    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ? window.enoAutoCycler : null;
+    if (ac && typeof ac.isMidiInBlendedScales === 'function' && ac.isMidiInBlendedScales(midi)) return true;
     return false;
   }
 
   quantizeMidiToKey(midi, scaleId = this.scaleId) {
     if (typeof midi !== 'number' || isNaN(midi)) return 60;
-    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ?
-        window.enoAutoCycler :
-        null;
-    if (ac && typeof ac.snapMidiToSharedModalPivot === 'function' &&
-        ac.isTransitioning && ac.isTransitioning()) {
-      return ac.snapMidiToSharedModalPivot(midi);
-    }
-    const rounded = Math.round(midi),
-          allowed = this.getAllowedPitchClasses(scaleId);
+    const rounded = Math.round(midi), allowed = this.getAllowedPitchClasses(scaleId);
     const pc = ((rounded % 12) + 12) % 12;
     if (allowed.includes(pc)) return Math.max(0, Math.min(127, rounded));
     let bestMidi = rounded, minDiff = Infinity;
     for (let delta = -2; delta <= 2; delta++) {
       if (delta === 0) continue;
       const candidate = rounded + delta, cPc = ((candidate % 12) + 12) % 12;
-      if (allowed.includes(cPc) && Math.abs(delta) < minDiff) {
-        minDiff = Math.abs(delta);
-        bestMidi = candidate;
-      }
+      if (allowed.includes(cPc) && Math.abs(delta) < minDiff) { minDiff = Math.abs(delta); bestMidi = candidate; }
     }
     return Math.max(0, Math.min(127, bestMidi));
   }
 
   degreeToMidi(degreeIndex, octaveOffset = 0, scaleId = this.scaleId) {
-    const sc = this.getScale(scaleId),
-          ivs = Array.isArray(sc.intervals) ? sc.intervals :
-                                              [0, 2, 4, 6, 7, 9, 11];
-    const len = ivs.length, oct = Math.floor(degreeIndex / len) + octaveOffset,
-          idx = ((degreeIndex % len) + len) % len;
-    return this.quantizeMidiToKey(
-        Math.max(0, Math.min(127, sc.rootMidi + oct * 12 + ivs[idx])), scaleId);
+    const sc = this.getScale(scaleId), ivs = Array.isArray(sc.intervals) ? sc.intervals : [0, 2, 4, 6, 7, 9, 11];
+    const len = ivs.length, oct = Math.floor(degreeIndex / len) + octaveOffset, idx = ((degreeIndex % len) + len) % len;
+    return this.quantizeMidiToKey(Math.max(0, Math.min(127, sc.rootMidi + oct * 12 + ivs[idx])), scaleId);
   }
 
   getDiatonicFifthMidi(midi, scaleId = this.scaleId) {
-    const quantized = this.quantizeMidiToKey(midi, scaleId),
-          sc = this.getScale(scaleId), ivs = sc.intervals;
-    const pc = ((quantized % 12) + 12) % 12, rootPc = sc.rootMidi % 12,
-          relSemi = ((pc - rootPc) % 12 + 12) % 12;
+    const quantized = this.quantizeMidiToKey(midi, scaleId), sc = this.getScale(scaleId), ivs = sc.intervals;
+    const pc = ((quantized % 12) + 12) % 12, rootPc = sc.rootMidi % 12, relSemi = ((pc - rootPc) % 12 + 12) % 12;
     let degIdx = ivs.indexOf(relSemi);
     if (degIdx === -1) degIdx = 0;
     const octOfMidi = Math.floor((quantized - sc.rootMidi) / 12);
@@ -646,50 +175,33 @@ class PhraseEngine {
     if (typeof pat.defaultSkipChance === 'number') this.phraseSkipChance = pat.defaultSkipChance;
     if (typeof pat.defaultNoteGate === 'number') this.phraseNoteGate = pat.defaultNoteGate;
     if (typeof pat.defaultCompletionGate === 'number') this.phraseCompletionGate = pat.defaultCompletionGate;
-    this.noteOctaveShiftChance =
-        typeof pat.defaultNoteOctaveShiftChance === 'number' ?
-        pat.defaultNoteOctaveShiftChance :
-        0.03;
-    this.chordOctaveShiftChance =
-        typeof pat.defaultChordOctaveShiftChance === 'number' ?
-        pat.defaultChordOctaveShiftChance :
-        0.10;
+    this.noteOctaveShiftChance = typeof pat.defaultNoteOctaveShiftChance === 'number' ? pat.defaultNoteOctaveShiftChance : 0.03;
+    this.chordOctaveShiftChance = typeof pat.defaultChordOctaveShiftChance === 'number' ? pat.defaultChordOctaveShiftChance : 0.10;
 
     if (this.probEngine && Array.isArray(this.probEngine.voices)) {
       this.probEngine.voices.forEach((v) => {
-        if (typeof v.noteOctaveShiftProb !== 'number')
-          v.noteOctaveShiftProb = this.noteOctaveShiftChance;
-        if (typeof v.chordOctaveShiftProb !== 'number')
-          v.chordOctaveShiftProb = this.chordOctaveShiftChance;
+        if (typeof v.noteOctaveShiftProb !== 'number') v.noteOctaveShiftProb = this.noteOctaveShiftChance;
+        if (typeof v.chordOctaveShiftProb !== 'number') v.chordOctaveShiftProb = this.chordOctaveShiftChance;
       });
       const pv = this.probEngine.voices.find(v => v.id === 'piano');
-      if (pv) {
-        this.phraseGateProb = pv.prob;
-        this.phraseLoopCycle = pv.cycle;
-      }
+      if (pv) { this.phraseGateProb = pv.prob; this.phraseLoopCycle = pv.cycle; }
       const cv = this.probEngine.voices.find(v => v.id === this.chordProgInstrument);
-      if (cv) {
-        this.chordProgGate = cv.prob;
-        this.chordProgCycle = cv.cycle;
-      }
+      if (cv) { this.chordProgGate = cv.prob; this.chordProgCycle = cv.cycle; }
     }
     this.syncUI();
   }
 
   rollNoteOctaveShift(options = {}) {
     if (options && options.disableVariations) return 0;
-    const rawProb = (options && typeof options.prob === 'number') ?
-        options.prob :
-        (typeof this.noteOctaveShiftChance === 'number' ?
-             this.noteOctaveShiftChance :
-             0.03);
+    const rawProb = (options && typeof options.prob === 'number')
+      ? options.prob
+      : (typeof this.noteOctaveShiftChance === 'number' ? this.noteOctaveShiftChance : 0.03);
     const p = Math.max(0, Math.min(1, rawProb));
     if (p <= 0) return 0;
     const r = typeof options.r === 'number' ? options.r : Math.random();
     if (r < p) {
       this.noteOctaveShiftedCount++;
-      const dirRoll =
-          typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
+      const dirRoll = typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
       return dirRoll < 0.5 ? 1 : -1;
     }
     return 0;
@@ -697,21 +209,13 @@ class PhraseEngine {
 
   rollChordOctaveShift(options = {}) {
     if (options && options.disableVariations) return 0;
-    const rawProb = (options && typeof options.chordProb === 'number') ?
-        options.chordProb :
-        (typeof this.chordOctaveShiftChance === 'number' ?
-             this.chordOctaveShiftChance :
-             0.10);
+    const rawProb = (options && typeof options.chordProb === 'number') ? options.chordProb : (typeof this.chordOctaveShiftChance === 'number' ? this.chordOctaveShiftChance : 0.10);
     const p = Math.max(0, Math.min(1, rawProb));
-    if (p <= 0) {
-      this.lastChordOctaveShift = 0;
-      return 0;
-    }
+    if (p <= 0) { this.lastChordOctaveShift = 0; return 0; }
     const r = typeof options.r === 'number' ? options.r : Math.random();
     if (r < p) {
       this.chordOctaveShiftedCount++;
-      const dirRoll =
-          typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
+      const dirRoll = typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
       const shift = dirRoll < 0.5 ? 1 : -1;
       this.lastChordOctaveShift = shift;
       return shift;
@@ -721,28 +225,22 @@ class PhraseEngine {
   }
 
   setPianoPhraseType(phraseType) {
-    if (!['short_motif', 'chord_progression', 'longer_pattern'].includes(
-            phraseType))
-      return;
+    if (!['short_motif', 'chord_progression', 'longer_pattern'].includes(phraseType)) return;
     const pat = this.TRACK_PATTERNS[this.activePresetId] || this.TRACK_PATTERNS.reflection;
     if (phraseType === 'chord_progression') {
       this.pianoPhraseType = 'chord_progression';
       this.chordProgInstrument = 'piano';
     } else {
       this.pianoPhraseType = phraseType;
-      if (this.chordProgInstrument === 'piano')
-        this.chordProgInstrument = pat.altChordInstrument || 'pad';
+      if (this.chordProgInstrument === 'piano') this.chordProgInstrument = pat.altChordInstrument || 'pad';
     }
-    this.pianoCycleCount = 0;
-    this.activeStepIndex = 0;
-    this.lastPhraseOutcome = 'full_phrase';
+    this.pianoCycleCount = 0; this.activeStepIndex = 0; this.lastPhraseOutcome = 'full_phrase';
     this.clearPhraseTimers();
     this.syncUI();
   }
 
   setChordProgInstrument(voiceId) {
-    if (!['piano', 'pad', 'choir', 'tape', 'bell', 'none'].includes(voiceId))
-      return;
+    if (!['piano', 'pad', 'choir', 'tape', 'bell', 'none'].includes(voiceId)) return;
     const pat = this.TRACK_PATTERNS[this.activePresetId] || this.TRACK_PATTERNS.reflection;
     this.chordProgInstrument = voiceId;
     if (voiceId === 'piano') {
@@ -784,17 +282,9 @@ class PhraseEngine {
     } else {
       elapsedSec = Math.max(0, (Date.now() - (this.lfoStartTimeMs || Date.now())) / 1000);
     }
-    const periodSec = lfoCfg.periodSec || 180,
-          minRatio =
-              typeof lfoCfg.minRatio === 'number' ? lfoCfg.minRatio : 0.50,
-          maxRatio =
-              typeof lfoCfg.maxRatio === 'number' ? lfoCfg.maxRatio : 1.00;
-    const phase =
-              (((elapsedSec % periodSec) + periodSec) % periodSec) / periodSec,
-          wave = 0.5 * (1 + Math.cos(2 * Math.PI * phase));
-    const lengthRatio = minRatio + (maxRatio - minRatio) * wave,
-          minSteps = Math.min(
-              totalSteps, Math.max(1, Math.round(totalSteps * minRatio)));
+    const periodSec = lfoCfg.periodSec || 180, minRatio = typeof lfoCfg.minRatio === 'number' ? lfoCfg.minRatio : 0.50, maxRatio = typeof lfoCfg.maxRatio === 'number' ? lfoCfg.maxRatio : 1.00;
+    const phase = (((elapsedSec % periodSec) + periodSec) % periodSec) / periodSec, wave = 0.5 * (1 + Math.cos(2 * Math.PI * phase));
+    const lengthRatio = minRatio + (maxRatio - minRatio) * wave, minSteps = Math.min(totalSteps, Math.max(1, Math.round(totalSteps * minRatio)));
     const curtailedLength = Math.max(minSteps, Math.min(totalSteps, Math.round(totalSteps * lengthRatio)));
     return { enabled: true, periodSec, minRatio, maxRatio, elapsedSec, phase, wave, lengthRatio, curtailedLength };
   }
@@ -873,12 +363,9 @@ class PhraseEngine {
     }
     this.lastStepStates = stepStates;
 
-    const roundShift = typeof options.roundOctaveShift === 'number' ?
-        options.roundOctaveShift :
-        ((voice && typeof voice.roundOctaveShift === 'number' &&
-          !options.disableVariations) ?
-             voice.roundOctaveShift :
-             0);
+    const roundShift = typeof options.roundOctaveShift === 'number'
+      ? options.roundOctaveShift
+      : ((voice && typeof voice.roundOctaveShift === 'number' && !options.disableVariations) ? voice.roundOctaveShift : 0);
 
     let firstMidi = 60;
     let firstNoteName = '—';
@@ -890,36 +377,20 @@ class PhraseEngine {
       const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
       const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
 
-      const isChordStep =
-          (stepDegrees.length > 1 ||
-           this.pianoPhraseType === 'chord_progression');
-      const chordProb = typeof options.chordProb === 'number' ?
-          options.chordProb :
-          ((voice && typeof voice.chordOctaveShiftProb === 'number') ?
-               voice.chordOctaveShiftProb :
-               this.chordOctaveShiftChance);
-      const chordOctShift = (!options.disableVariations && isChordStep) ?
-          this.rollChordOctaveShift({...options, chordProb}) :
-          0;
+      const isChordStep = (stepDegrees.length > 1 || this.pianoPhraseType === 'chord_progression');
+      const chordProb = typeof options.chordProb === 'number' ? options.chordProb : ((voice && typeof voice.chordOctaveShiftProb === 'number') ? voice.chordOctaveShiftProb : this.chordOctaveShiftChance);
+      const chordOctShift = (!options.disableVariations && isChordStep) ? this.rollChordOctaveShift({ ...options, chordProb }) : 0;
 
       const stepMidis = stepDegrees.map((deg, dIdx) => {
-        const noteProb = typeof options.prob === 'number' ?
-            options.prob :
-            ((voice && typeof voice.noteOctaveShiftProb === 'number') ?
-                 voice.noteOctaveShiftProb :
-                 this.noteOctaveShiftChance);
-        const noteOctShift = (!options.disableVariations) ?
-            this.rollNoteOctaveShift({...options, prob: noteProb}) :
-            0;
-        const oct = (stepOctaves[dIdx] || 0) + vOct + roundShift + cOct +
-            chordOctShift + noteOctShift;
+        const noteProb = typeof options.prob === 'number' ? options.prob : ((voice && typeof voice.noteOctaveShiftProb === 'number') ? voice.noteOctaveShiftProb : this.noteOctaveShiftChance);
+        const noteOctShift = (!options.disableVariations) ? this.rollNoteOctaveShift({ ...options, prob: noteProb }) : 0;
+        const oct = (stepOctaves[dIdx] || 0) + vOct + roundShift + cOct + chordOctShift + noteOctShift;
         return this.degreeToMidi(deg, oct, this.scaleId);
       });
 
-      const m2n = (window.ENO_DATA &&
-                   typeof window.ENO_DATA.midiToNoteName === 'function') ?
-          window.ENO_DATA.midiToNoteName :
-          (m) => `M${m}`;
+      const m2n = (window.ENO_DATA && typeof window.ENO_DATA.midiToNoteName === 'function')
+        ? window.ENO_DATA.midiToNoteName
+        : (m) => `M${m}`;
       let stepNoteLabel = step.label || firstNoteName;
       if (stepMidis.length === 1) {
         stepNoteLabel = m2n(stepMidis[0]);
@@ -953,8 +424,7 @@ class PhraseEngine {
             }, rollDelay * 1000);
           }
         });
-        if (window.aurora)
-          window.aurora.pulse(sIdx === 0 ? 0.62 : 0.38, {voiceId: 'piano'});
+        if (window.aurora) window.aurora.pulse(sIdx === 0 ? 0.62 : 0.38, { voiceId: 'piano' });
 
         if (window.EnsoMotion) {
           window.EnsoMotion.setBadgeText('voice-note-piano', stepNoteLabel);
@@ -988,24 +458,16 @@ class PhraseEngine {
         if (this.lastPhraseOutcome === 'skipped_whole_phrase') {
           metaText = `Whole phrase skipped · Cycle ${this.pianoCycleCount}`;
         } else if (this.lastPhraseOutcome === 'lfo_curtailed') {
-          metaText = `3m LFO length: ${lfoCutoffIndex}/${steps.length} notes (${
-              Math.round(
-                  lfoRaw.lengthRatio * 100)}%) · Cycle ${this.pianoCycleCount}`;
+          metaText = `3m LFO length: ${lfoCutoffIndex}/${steps.length} notes (${Math.round(lfoRaw.lengthRatio * 100)}%) · Cycle ${this.pianoCycleCount}`;
         } else if (this.lastPhraseOutcome === 'start_only') {
           const lfoExtra = lfoCutoffIndex < steps.length ? ` · LFO ${lfoCutoffIndex}/${steps.length}` : '';
-          metaText = `Start-only dice: ${cutoffIndex}/${
-              lfoCutoffIndex} notes (2+) · Cycle ${this.pianoCycleCount}${
-              lfoExtra}`;
+          metaText = `Start-only dice: ${cutoffIndex}/${lfoCutoffIndex} notes (2+) · Cycle ${this.pianoCycleCount}${lfoExtra}`;
         } else if (this.lastPhraseOutcome === 'notes_omitted') {
           const omittedCount = stepStates.filter(s => s === 'omitted').length;
           const lfoExtra = lfoCutoffIndex < steps.length ? ` · LFO ${lfoCutoffIndex}/${steps.length}` : '';
-          metaText =
-              `${omittedCount} note${omittedCount > 1 ? 's' : ''} omitted (${
-                  playedCount}/${lfoCutoffIndex} played) · Cycle ${
-                  this.pianoCycleCount}${lfoExtra}`;
+          metaText = `${omittedCount} note${omittedCount > 1 ? 's' : ''} omitted (${playedCount}/${lfoCutoffIndex} played) · Cycle ${this.pianoCycleCount}${lfoExtra}`;
         } else {
-          metaText = `Phrase plays (${steps.length}/${
-              steps.length} notes) · Cycle ${this.pianoCycleCount}`;
+          metaText = `Phrase plays (${steps.length}/${steps.length} notes) · Cycle ${this.pianoCycleCount}`;
         }
         if (window.EnsoMotion) {
           window.EnsoMotion.setBadgeText(metaBadge, metaText);
@@ -1045,12 +507,9 @@ class PhraseEngine {
 
     const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
     const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const roundShift =
-        (options && typeof options.roundOctaveShift === 'number') ?
-        options.roundOctaveShift :
-        ((voice && typeof voice.roundOctaveShift === 'number') ?
-             voice.roundOctaveShift :
-             0);
+    const roundShift = (options && typeof options.roundOctaveShift === 'number')
+      ? options.roundOctaveShift
+      : ((voice && typeof voice.roundOctaveShift === 'number') ? voice.roundOctaveShift : 0);
 
     let degrees = chord.degrees;
     let octaves = chord.octaves;
@@ -1060,28 +519,12 @@ class PhraseEngine {
       octaves = octaves.filter((_, i) => i !== omitIdx);
     }
 
-    const chordProb = typeof options.chordProb === 'number' ?
-        options.chordProb :
-        ((voice && typeof voice.chordOctaveShiftProb === 'number') ?
-             voice.chordOctaveShiftProb :
-             this.chordOctaveShiftChance);
-    const chordOctShift = (!options.disableVariations) ?
-        this.rollChordOctaveShift({...options, chordProb}) :
-        0;
-    const noteProb = typeof options.prob === 'number' ?
-        options.prob :
-        ((voice && typeof voice.noteOctaveShiftProb === 'number') ?
-             voice.noteOctaveShiftProb :
-             this.noteOctaveShiftChance);
+    const chordProb = typeof options.chordProb === 'number' ? options.chordProb : ((voice && typeof voice.chordOctaveShiftProb === 'number') ? voice.chordOctaveShiftProb : this.chordOctaveShiftChance);
+    const chordOctShift = (!options.disableVariations) ? this.rollChordOctaveShift({ ...options, chordProb }) : 0;
+    const noteProb = typeof options.prob === 'number' ? options.prob : ((voice && typeof voice.noteOctaveShiftProb === 'number') ? voice.noteOctaveShiftProb : this.noteOctaveShiftChance);
     const midiNotes = degrees.map((deg, idx) => {
-      const noteOctShift = (!options.disableVariations) ?
-          this.rollNoteOctaveShift({...options, prob: noteProb}) :
-          0;
-      return this.degreeToMidi(
-          deg,
-          (octaves[idx] || 0) + vOct + roundShift + cOct + chordOctShift +
-              noteOctShift,
-          this.scaleId);
+      const noteOctShift = (!options.disableVariations) ? this.rollNoteOctaveShift({ ...options, prob: noteProb }) : 0;
+      return this.degreeToMidi(deg, (octaves[idx] || 0) + vOct + roundShift + cOct + chordOctShift + noteOctShift, this.scaleId);
     });
     const noteNames = midiNotes.map((m) => (window.ENO_DATA && window.ENO_DATA.midiToNoteName) ? window.ENO_DATA.midiToNoteName(m) : `M${m}`);
     const vel = 0.65, pan = (Math.random() * 2 - 1) * 0.35, gain = (voice && typeof voice.gain === 'number') ? voice.gain : 0.70;
@@ -1089,18 +532,9 @@ class PhraseEngine {
     if (this.audioEngine) {
       midiNotes.forEach((m, idx) => setTimeout(() => this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68), idx * 28));
     }
-    if (window.aurora)
-      window.aurora.pulse(0.72, {voiceId: voice ? voice.id : 'choir'});
+    if (window.aurora) window.aurora.pulse(0.72, { voiceId: voice ? voice.id : 'choir' });
 
-    this.currentChord = {
-      numeral: chord.numeral,
-      name: chord.name,
-      notes: midiNotes,
-      noteNames,
-      degrees: chord.degrees,
-      voiceId: voice.id,
-      chordOctaveShift: chordOctShift
-    };
+    this.currentChord = { numeral: chord.numeral, name: chord.name, notes: midiNotes, noteNames, degrees: chord.degrees, voiceId: voice.id, chordOctaveShift: chordOctShift };
     this._highlightChordStep((this.chordStepIndex - 1 + chords.length) % chords.length);
     const freq = (window.ENO_DATA && window.ENO_DATA.midiToFreq) ? Number(window.ENO_DATA.midiToFreq(midiNotes[0]).toFixed(2)) : 440;
     return {
@@ -1117,13 +551,9 @@ class PhraseEngine {
   }
 
   selectKeyLockedSinglePitch(voice, circadian, probEngine) {
-    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ?
-        window.enoAutoCycler :
-        null;
-    if (ac && typeof ac.selectBlendedSinglePitch === 'function' &&
-        ac.isTransitioning()) {
-      const blended =
-          ac.selectBlendedSinglePitch(this, voice, circadian, probEngine);
+    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ? window.enoAutoCycler : null;
+    if (ac && typeof ac.selectBlendedSinglePitch === 'function' && ac.isTransitioning()) {
+      const blended = ac.selectBlendedSinglePitch(this, voice, circadian, probEngine);
       if (blended) return blended;
     }
     const sc = this.getScale(this.scaleId);
@@ -1146,11 +576,8 @@ class PhraseEngine {
 
     const vOct = (voice && typeof voice.octaveOffset === 'number') ? voice.octaveOffset : 0;
     const cOct = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ?
-        voice.roundOctaveShift :
-        0;
-    const midi =
-        this.degreeToMidi(chosenDegree, vOct + cOct + roundShift, this.scaleId);
+    const roundShift = (voice && typeof voice.roundOctaveShift === 'number') ? voice.roundOctaveShift : 0;
+    const midi = this.degreeToMidi(chosenDegree, vOct + cOct + roundShift, this.scaleId);
     const noteName = (window.ENO_DATA && window.ENO_DATA.midiToNoteName) ? window.ENO_DATA.midiToNoteName(midi) : `M${midi}`;
     const freq = (window.ENO_DATA && window.ENO_DATA.midiToFreq) ? Number(window.ENO_DATA.midiToFreq(midi).toFixed(2)) : 440;
     return { midi, noteName, freq, degreeIdx: chosenDegree };
@@ -1196,8 +623,7 @@ class PhraseEngine {
     const phraseMeta = document.getElementById('piano-phrase-meta');
     if (phraseMeta && phrase) {
       const n = phrase.primarySteps.length;
-      const txt =
-          `Phrase plays (${n}/${n} notes) · Cycle ${this.pianoCycleCount || 1}`;
+      const txt = `Phrase plays (${n}/${n} notes) · Cycle ${this.pianoCycleCount || 1}`;
       if (typeof window !== 'undefined' && window.EnsoMotion) {
         window.EnsoMotion.setBadgeText(phraseMeta, txt);
       } else {
@@ -1262,8 +688,7 @@ class PhraseEngine {
       });
     }
 
-    if (typeof window !== 'undefined' && window.EnsoMotion &&
-        window.EnsoMotion.syncVoiceHarmonyCards) {
+    if (typeof window !== 'undefined' && window.EnsoMotion && window.EnsoMotion.syncVoiceHarmonyCards) {
       window.EnsoMotion.syncVoiceHarmonyCards(this, phrase);
     }
 
@@ -1273,32 +698,16 @@ class PhraseEngine {
       if (l) l.textContent = fmt(v);
     };
     const pct = (v) => `${Math.round(v * 100)}%`, sec1 = (v) => `${v.toFixed(1)} s`;
-    [[
-      'phrase-variation-chance', 'val-phrase-variation-chance',
-      this.phraseVariationChance, pct
-    ],
+    [['phrase-variation-chance', 'val-phrase-variation-chance', this.phraseVariationChance, pct],
      ['phrase-gate-prob', 'val-phrase-gate-prob', this.phraseGateProb, pct],
      ['phrase-loop-cycle', 'val-phrase-loop-cycle', this.phraseLoopCycle, sec1],
-     [
-       'phrase-skip-chance', 'val-phrase-skip-chance', this.phraseSkipChance,
-       pct
-     ],
+     ['phrase-skip-chance', 'val-phrase-skip-chance', this.phraseSkipChance, pct],
      ['phrase-note-gate', 'val-phrase-note-gate', this.phraseNoteGate, pct],
-     [
-       'phrase-completion-gate', 'val-phrase-completion-gate',
-       this.phraseCompletionGate, pct
-     ],
-     [
-       'phrase-note-octave-shift', 'val-phrase-note-octave-shift',
-       this.noteOctaveShiftChance, pct
-     ],
-     [
-       'phrase-chord-octave-shift', 'val-phrase-chord-octave-shift',
-       this.chordOctaveShiftChance, pct
-     ],
+     ['phrase-completion-gate', 'val-phrase-completion-gate', this.phraseCompletionGate, pct],
+     ['phrase-note-octave-shift', 'val-phrase-note-octave-shift', this.noteOctaveShiftChance, pct],
+     ['phrase-chord-octave-shift', 'val-phrase-chord-octave-shift', this.chordOctaveShiftChance, pct],
      ['chord-prog-gate', 'val-chord-prog-gate', this.chordProgGate, pct],
-     ['chord-prog-cycle', 'val-chord-prog-cycle', this.chordProgCycle, sec1]]
-        .forEach(([a, b, c, d]) => setSl(a, b, c, d));
+     ['chord-prog-cycle', 'val-chord-prog-cycle', this.chordProgCycle, sec1]].forEach(([a, b, c, d]) => setSl(a, b, c, d));
   }
 
   bindUI() {
@@ -1350,30 +759,16 @@ class PhraseEngine {
         this[paramKey] = v;
         ['piano', this.chordProgInstrument].forEach((inst) => {
           if (!inst || inst === 'none' || !this.probEngine) return;
-          this.probEngine.setVoiceParam(
-              inst,
-              paramKey === 'chordOctaveShiftChance' ? 'chordOctaveShiftProb' :
-                                                      'noteOctaveShiftProb',
-              v);
-          const prefix = paramKey === 'chordOctaveShiftChance' ?
-              'voice-chord-octave-shift' :
-              'voice-note-octave-shift';
-          const sl = document.getElementById(`${prefix}-${inst}`),
-                vl = document.getElementById(`val-${prefix}-${inst}`);
-          if (sl) {
-            sl.value = v.toFixed(2);
-            sl.dispatchEvent(new Event('change'));
-          }
+          this.probEngine.setVoiceParam(inst, paramKey === 'chordOctaveShiftChance' ? 'chordOctaveShiftProb' : 'noteOctaveShiftProb', v);
+          const prefix = paramKey === 'chordOctaveShiftChance' ? 'voice-chord-octave-shift' : 'voice-note-octave-shift';
+          const sl = document.getElementById(`${prefix}-${inst}`), vl = document.getElementById(`val-${prefix}-${inst}`);
+          if (sl) { sl.value = v.toFixed(2); sl.dispatchEvent(new Event('change')); }
           if (vl) vl.textContent = pct(v);
         });
       });
     };
-    bOct(
-        'phrase-note-octave-shift', 'val-phrase-note-octave-shift',
-        'noteOctaveShiftChance');
-    bOct(
-        'phrase-chord-octave-shift', 'val-phrase-chord-octave-shift',
-        'chordOctaveShiftChance');
+    bOct('phrase-note-octave-shift', 'val-phrase-note-octave-shift', 'noteOctaveShiftChance');
+    bOct('phrase-chord-octave-shift', 'val-phrase-chord-octave-shift', 'chordOctaveShiftChance');
     b('chord-prog-gate', 'val-chord-prog-gate', pct, (v) => { this.chordProgGate = v; syncProb(this.chordProgInstrument, v); });
     b('chord-prog-cycle', 'val-chord-prog-cycle', sec1, (v) => { this.chordProgCycle = v; syncCyc(this.chordProgInstrument, v); });
   }

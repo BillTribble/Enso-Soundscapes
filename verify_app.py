@@ -54,8 +54,10 @@ def check_http_server():
       '/js/voice-cards.js',
       '/js/app.js',
       '/js/pwa-media.js',
+      '/js/patch-randomizer.js',
       '/js/patch-storage.js',
       '/js/mixer-dials.js',
+      '/js/selftest-runner.js',
       '/saved-patches.json',
       '/api/patches',
       '/fonts/GoogleSymbols.ttf',
@@ -63,8 +65,8 @@ def check_http_server():
       '/fonts/GoogleSansCode.ttf',
       '/samples/piano/manifest.json',
       '/samples/piano/C4v1.flac',
-      '/samples/piano/C4v3.flac',
-      '/samples/piano/C4v5.flac',
+      '/samples/piano/C5v1.flac',
+      '/samples/piano/C6v1.flac',
       '/samples/piano/A3v1.flac',
       '/samples/piano/Ds4v1.flac',
       '/samples/piano/Fs4v1.flac',
@@ -89,7 +91,7 @@ def check_http_server():
         assert data[:4] == b'fLaC', f'Invalid FLAC header for {path}'
 
   flac_files = sorted(glob.glob(os.path.join(APP_DIR, 'samples/piano/*.flac')))
-  assert len(flac_files) >= 90, f'Expected >=90 Salamander FLAC files, found {len(flac_files)}'
+  assert len(flac_files) >= 35, f'Expected >=35 Salamander FLAC files, found {len(flac_files)}'
   for fp in flac_files:
     with open(fp, 'rb') as f:
       hdr = f.read(4)
@@ -218,6 +220,7 @@ def run_browser_selftest():
   assert payload.get('topBarBadgeRemoved') is True, f'Expected top-bar album badge removed: {payload}'
   assert payload.get('topBarTabsLabels') == ['Studio', 'Scale', 'Methods'], f'Expected top-bar tabs [Studio, Scale, Methods]: {payload}'
   assert payload.get('topBarPickerCentered') is True, f'Expected top-bar picker centered horizontally: {payload}'
+  assert payload.get('topBarScrollBgVerified') is True, f'Expected top-bar scroll background verified: {payload}'
   assert payload.get('bloomHintDelayMs') == 20000, f'Expected 20000ms (20s) bloom hint timeout: {payload}'
   assert payload.get('bloomHintDisappearsVerified') is True, f'Expected bloom hint pill to disappear after timeout: {payload}'
   assert payload.get('studioCardTitles') == [
@@ -233,6 +236,8 @@ def run_browser_selftest():
   assert payload.get('brandTitleText') == 'Enso Soundscapes', f'Expected brandTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('documentTitleText') == 'Enso Soundscapes', f'Expected documentTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('researchBadgesRemoved') is True, f'Expected research homage badges removed: {payload}'
+  assert payload.get('researchCardBadgesMatchPresets') is True, f'Expected research card badges to match preset names: {payload}'
+  assert payload.get('researchCardBadges') == ['Luminous Drift', 'Sunlit Atrium', 'Cathedral Glass', 'Weightless Orbit', 'Felt & Mist', 'Moss & Reel'], f'Unexpected research card badges: {payload}'
   assert payload.get('sparkleIconRemoved') is True, f'Expected sparkle icon removed: {payload}'
   assert 'Aleatoric' not in payload.get('brandTitleText', ''), f'Expected Aleatoric removed from brand-title: {payload}'
   assert 'Aleatoric' not in payload.get('documentTitleText', ''), f'Expected Aleatoric removed from document.title: {payload}'
@@ -247,8 +252,10 @@ def run_browser_selftest():
   assert payload.get('mobileZeroHorizontalOverflow') is True, f'Expected mobileZeroHorizontalOverflow=True: {payload}'
   assert payload.get('patchSaveBtnPresent') is True, f'Expected patchSaveBtnPresent=True: {payload}'
   assert payload.get('newPatchBtnPresent') is True, f'Expected newPatchBtnPresent=True: {payload}'
+  assert payload.get('newPatchBtnIcon') == 'shuffle', f'Expected newPatchBtnIcon=="shuffle": {payload}'
   assert payload.get('patchStorageRoundtripVerified') is True, f'Expected patchStorageRoundtripVerified=True: {payload}'
   assert payload.get('customPatchCreationVerified') is True, f'Expected customPatchCreationVerified=True: {payload}'
+  assert payload.get('patchRandomizerVerified') is True, f'Expected patchRandomizerVerified=True: {payload}'
   assert payload.get('topBarVolumeDialPresent') is True, f'Expected topBarVolumeDialPresent=True: {payload}'
   assert payload.get('topBarVolumeSyncVerified') is True, f'Expected topBarVolumeSyncVerified=True: {payload}'
   assert (
@@ -339,6 +346,8 @@ def capture_screenshots():
       ('enso_settings_crossfade_dark.png', 'bloom=1&theme=dark&settings=open', 1440, 940),
       ('enso_soundscapes_methods.png', 'bloom=1&tab=research', 1440, 940),
       ('enso_new_patch_modal.png', 'bloom=1&modal=newpatch', 1440, 940),
+      ('enso_randomized_user_patches.png', 'bloom=1&demo=userpatches', 1440, 940),
+      ('enso_delete_patch_dialog.png', 'bloom=1&modal=deletepatch', 1440, 940),
       ('enso_voices_octave_light.png', 'bloom=1&scroll=voices', 1440, 1080),
       ('enso_voices_octave_dark.png', 'bloom=1&theme=dark&scroll=voices', 1440, 1080),
       ('enso_voices_octave_mobile.png', 'bloom=1&scroll=voices', 375, 920),

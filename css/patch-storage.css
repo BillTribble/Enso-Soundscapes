@@ -188,3 +188,86 @@
     justify-content: flex-start;
   }
 }
+
+/* User Patch Pills & Delete Badge */
+.m3-pill-tabs.gm3-connected-dsp .m3-pill-tab.user-patch-pill,
+.m3-pill-tab.user-patch-pill {
+  position: relative;
+  padding-right: 22px;
+}
+
+.user-patch-label {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.user-patch-delete-btn {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.user-patch-delete-icon {
+  font-size: 11px;
+  line-height: 1;
+}
+
+@media (hover: hover) {
+  .m3-pill-tab.user-patch-pill:hover .user-patch-delete-btn,
+  .m3-pill-tab.user-patch-pill:focus-within .user-patch-delete-btn {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+  .user-patch-delete-btn:hover {
+    opacity: 1;
+    background-color: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+  }
+}
+
+@media (hover: none) {
+  .m3-pill-tab.user-patch-pill .user-patch-delete-btn {
+    opacity: 0.85;
+    pointer-events: auto;
+  }
+}
+
+.m3-pill-tabs.gm3-connected-dsp .m3-pill-tab.user-patch-pill.active::before {
+  content: '';
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  margin-right: 2px;
+}
+
+.patch-delete-confirm-text {
+  font-family: var(--md-ref-typeface-plain);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+}
+
+.btn-delete-danger {
+  background-color: var(--md-sys-color-error) !important;
+  color: var(--md-sys-color-on-error) !important;
+}
+
+@media (hover: hover) {
+  .btn-delete-danger:hover {
+    filter: brightness(0.92);
+  }
+}

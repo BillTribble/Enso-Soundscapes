@@ -394,7 +394,24 @@ if (typeof window !== 'undefined') {
   window.AURORA_PALETTES = AURORA_PALETTES;
   window.createAurora = createAurora;
 
+  const syncTopBarScroll = () => {
+    const topBar = document.querySelector('.top-app-bar');
+    const q = `${window.location.search || ''}&${(window.location.hash || '').replace(/^#/, '')}`;
+    const scrollTop = window.scrollY || window.pageYOffset ||
+        (document.documentElement && document.documentElement.scrollTop) ||
+        (document.body && document.body.scrollTop) || 0;
+    const isScrolled = scrollTop > 8 || q.includes('scroll=topbar') ||
+        q.includes('scroll=cards') || q.includes('scroll=voices');
+    if (topBar) topBar.classList.toggle('is-scrolled', isScrolled);
+    if (document.body) document.body.classList.toggle('is-scrolled', isScrolled);
+    return isScrolled;
+  };
+  window.syncTopBarScroll = syncTopBarScroll;
+
   const initAurora = () => {
+    syncTopBarScroll();
+    window.addEventListener('scroll', syncTopBarScroll, {passive: true});
+    document.addEventListener('scroll', syncTopBarScroll, {passive: true, capture: true});
     const el = document.getElementById('aurora');
     if (!el || (window.aurora && typeof window.aurora.setDark === 'function'))
       return;

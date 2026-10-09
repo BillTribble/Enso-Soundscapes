@@ -303,7 +303,12 @@ class ProbabilityEngine {
     if (passed) {
       const pe = this.phraseEngine || window.enoPhraseEngine || null;
       const panSpread = typeof voice.panSpread === 'number' ? voice.panSpread : 0.40;
-      const pan = (Math.random() * 2 - 1) * panSpread;
+      const styleProf = this.audioEngine && this.audioEngine.getTrackStyleProfile ? this.audioEngine.getTrackStyleProfile() : null;
+      const genRules = (styleProf && styleProf.generativeRules) || null;
+      let pan = (Math.random() * 2 - 1) * panSpread;
+      if (genRules && genRules.stereoFixedPans && typeof genRules.stereoFixedPans[voice.id] === 'number') {
+        pan = Math.max(-0.85, Math.min(0.85, genRules.stereoFixedPans[voice.id] + (Math.random() - 0.5) * 0.08));
+      }
       const velocity = 0.55 + Math.random() * 0.35;
       const roundShift = this.evaluateRoundOctaveShift(voice);
 
@@ -342,6 +347,18 @@ class ProbabilityEngine {
         }
         if (this.audioEngine && typeof this.audioEngine.triggerVoice === 'function') {
           this.audioEngine.triggerVoice(voice.id, pitchData.midi, velocity, pan, voice.gain);
+          if (genRules && genRules.scripterEchoProb > 0 && voice.id !== 'drone' && Math.random() < genRules.scripterEchoProb) {
+            const echoVoice = genRules.scripterEchoVoice || voice.id;
+            const echoDelay = genRules.scripterEchoDelayMs || 650;
+            const echoDegs = Array.isArray(genRules.scripterEchoDegrees) ? genRules.scripterEchoDegrees : [4, 2];
+            const shiftSemitones = (echoDegs.length > 0 ? (echoDegs[Math.floor(Math.random() * echoDegs.length)] * 2) : 7);
+            const echoMidi = pitchData.midi + shiftSemitones;
+            setTimeout(() => {
+              if (this.isRunning && this.audioEngine) {
+                this.audioEngine.triggerVoice(echoVoice, echoMidi, velocity * 0.62, -pan * 0.8, voice.gain);
+              }
+            }, echoDelay);
+          }
         }
       }
 
@@ -398,9 +415,19 @@ class ProbabilityEngine {
       ? this.degreeWeights
       : (scale.defaultWeights || intervals.map(() => 0.7));
 
-    // Dynamic Markov consonance preference based on noteHistory memory buffer
+    const styleProf = this.audioEngine && this.audioEngine.getTrackStyleProfile ? this.audioEngine.getTrackStyleProfile() : null;
+    const gravity = styleProf && styleProf.generativeRules && styleProf.generativeRules.markovGravity;
+
+    // Dynamic Markov consonance preference based on noteHistory memory buffer and track style gravity
     const adjWeights = intervals.map((interval, i) => {
       let w = Math.max(0.01, baseWeights[i] !== undefined ? baseWeights[i] : 0.5);
+      if (gravity) {
+        if (Array.isArray(gravity) && typeof gravity[i % gravity.length] === 'number') {
+          w *= gravity[i % gravity.length];
+        } else if (typeof gravity === 'object' && typeof gravity[i] === 'number') {
+          w *= gravity[i];
+        }
+      }
       if (this.noteHistory.length > 0 && Math.random() >= this.mutationRate) {
         const lastDegree = this.noteHistory[0];
         const lastInterval = intervals[lastDegree] !== undefined ? intervals[lastDegree] : 0;

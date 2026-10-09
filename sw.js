@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'enso-soundscapes-v12';
+const CACHE_NAME = 'enso-soundscapes-v15';
 const APP_SHELL = [
   './',
   'index.html',
@@ -20,18 +20,24 @@ const APP_SHELL = [
   'js/presets.js',
   'js/audio-engine.js',
   'js/piano-sampler.js',
+  'js/track-styles.js',
   'js/probability-engine.js',
+  'js/phrase-patterns.js',
   'js/phrase-engine.js',
+  'js/phrase-ui.js',
   'js/octave-and-motion.js',
   'js/aurora.js',
   'js/visualizer.js',
   'js/voice-cards.js',
   'js/app.js',
   'js/slider-styles.js',
+  'js/patch-modal.js',
   'js/patch-storage.js',
   'js/mixer-dials.js',
+  'js/selftest-suite.js',
   'js/pwa-media.js',
   'js/auto-cycler.js',
+  'js/auto-cycler-sim.js',
   'icons/icon.svg',
   'icons/icon-192.png',
   'icons/icon-512.png',

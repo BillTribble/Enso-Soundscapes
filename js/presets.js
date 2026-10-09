@@ -48,7 +48,7 @@ const ENO_DATA = (function() {
         'Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Aug 4th (#11)', 'Perfect 5th',
         'Maj 6th (13)', 'Maj 7th'
       ],
-      defaultWeights: [0.95, 0.70, 0.55, 0.40, 0.85, 0.60, 0.35],
+      defaultWeights: [0.98, 0.86, 0.42, 0.78, 0.92, 0.48, 0.32],
       description:
           'Luminous C Lydian mode (parent G Major 1♯) with an elevated #11 avoiding tonic cadence closure.'
     },
@@ -156,7 +156,7 @@ const ENO_DATA = (function() {
     {
       id: 'piano',
       name: 'Felt Piano',
-      role: 'Salamander C5 multi-sample + 3-stage wool-felt EQ & key noise',
+      role: 'Damped Felt Piano + Shimmer',
       badgeHue: 'teal',
       octaveOffset: 0,
       defaultOctave: 0,
@@ -320,60 +320,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.90, 0.75, 0.60, 0.30, 0.80, 0.50, 0.40]
       },
       voices: {
-        pad: {
-          prob: 0.68,
-          cycle: 19.1,
-          gain: 0.65,
-          release: 8.0,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.76,
-          cycle: 6.7,
-          gain: 2.00,
-          release: 4.2,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.40,
-          cycle: 13.1,
-          gain: 0.50,
-          release: 4.8,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        choir: {
-          prob: 0.92,
-          cycle: 10.7,
-          gain: 0.56,
-          release: 9.2,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        tape: {
-          prob: 0.50,
-          cycle: 17.9,
-          gain: 0.58,
-          release: 5.8,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.70,
-          cycle: 37.3,
-          gain: 0.62,
-          release: 10.5,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.68, cycle: 19.1, gain: 0.65, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.76, cycle: 6.7, gain: 2.00, release: 4.2, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.40, cycle: 13.1, gain: 0.50, release: 4.8, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.92, cycle: 10.7, gain: 0.56, release: 9.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.50, cycle: 17.9, gain: 0.58, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.70, cycle: 37.3, gain: 0.62, release: 10.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     reflection: {
@@ -424,63 +376,15 @@ const ENO_DATA = (function() {
         densityBias: 0.0,
         mutationRate: 0.15,
         timeStretch: 1.0,
-        degreeWeights: [0.95, 0.70, 0.55, 0.40, 0.85, 0.60, 0.35]
+        degreeWeights: [0.98, 0.86, 0.42, 0.78, 0.92, 0.48, 0.32]
       },
       voices: {
-        pad: {
-          prob: 0.74,
-          cycle: 17.3,
-          gain: 0.72,
-          release: 9.5,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.62,
-          cycle: 7.9,
-          gain: 2.00,
-          release: 4.8,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.46,
-          cycle: 11.3,
-          gain: 0.54,
-          release: 5.5,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        choir: {
-          prob: 0.52,
-          cycle: 23.9,
-          gain: 0.60,
-          release: 10.5,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        tape: {
-          prob: 0.60,
-          cycle: 13.7,
-          gain: 0.64,
-          release: 6.5,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.82,
-          cycle: 31.1,
-          gain: 0.70,
-          release: 12.0,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.74, cycle: 17.3, gain: 0.72, release: 9.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.62, cycle: 7.9, gain: 2.00, release: 4.8, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.46, cycle: 11.3, gain: 0.54, release: 5.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.52, cycle: 23.9, gain: 0.60, release: 10.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.60, cycle: 13.7, gain: 0.64, release: 6.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.82, cycle: 31.1, gain: 0.70, release: 12.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     installations: {
@@ -512,14 +416,14 @@ const ENO_DATA = (function() {
         resonance: 1.8,
         filterType: 'lowpass',
         filterDrift: 0.45,
-        reverbMix: 0.65,
-        reverbDecay: 15.0,
-        reverbShimmer: 0.28,
+        reverbMix: 0.90,
+        reverbDecay: 16.5,
+        reverbShimmer: 0.42,
         reverbDamping: 4800,
-        delayMix: 0.42,
-        delayTime: 1.15,
-        delayFeedback: 0.64,
-        delayWow: 0.35,
+        delayMix: 0.34,
+        delayTime: 0.89,
+        delayFeedback: 0.52,
+        delayWow: 0.38,
         masterVolume: 0.78,
         pianoCrossfade: -0.62
       },
@@ -534,60 +438,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.85, 0.75, 0.70, 0.50, 0.90, 0.60, 0.35]
       },
       voices: {
-        pad: {
-          prob: 0.78,
-          cycle: 23.3,
-          gain: 0.75,
-          release: 12.0,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.68,
-          cycle: 11.7,
-          gain: 2.00,
-          release: 6.0,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.58,
-          cycle: 17.1,
-          gain: 0.60,
-          release: 7.2,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        choir: {
-          prob: 0.66,
-          cycle: 31.7,
-          gain: 0.70,
-          release: 13.5,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        tape: {
-          prob: 0.62,
-          cycle: 19.9,
-          gain: 0.68,
-          release: 8.5,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.88,
-          cycle: 43.1,
-          gain: 0.75,
-          release: 15.0,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.78, cycle: 23.9, gain: 0.75, release: 12.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.68, cycle: 11.3, gain: 2.00, release: 6.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.58, cycle: 7.9, gain: 0.60, release: 7.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.66, cycle: 31.1, gain: 0.70, release: 13.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.62, cycle: 17.3, gain: 0.68, release: 8.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.88, cycle: 43.1, gain: 0.75, release: 15.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     apollo_shimmer: {
@@ -619,14 +475,14 @@ const ENO_DATA = (function() {
         resonance: 1.5,
         filterType: 'lowpass',
         filterDrift: 0.30,
-        reverbMix: 0.72,
-        reverbDecay: 16.0,
-        reverbShimmer: 0.45,
+        reverbMix: 0.92,
+        reverbDecay: 17.5,
+        reverbShimmer: 0.94,
         reverbDamping: 6800,
-        delayMix: 0.45,
-        delayTime: 0.75,
+        delayMix: 0.48,
+        delayTime: 0.82,
         delayFeedback: 0.68,
-        delayWow: 0.22,
+        delayWow: 0.24,
         masterVolume: 0.76,
         pianoCrossfade: -0.62
       },
@@ -641,60 +497,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.90, 0.82, 0.65, 0.20, 0.85, 0.70, 0.30]
       },
       voices: {
-        pad: {
-          prob: 0.82,
-          cycle: 21.1,
-          gain: 0.78,
-          release: 12.5,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.72,
-          cycle: 8.9,
-          gain: 2.00,
-          release: 5.8,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.65,
-          cycle: 14.9,
-          gain: 0.62,
-          release: 7.5,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        choir: {
-          prob: 0.70,
-          cycle: 27.7,
-          gain: 0.72,
-          release: 14.0,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        tape: {
-          prob: 0.58,
-          cycle: 16.3,
-          gain: 0.60,
-          release: 8.0,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.85,
-          cycle: 37.9,
-          gain: 0.74,
-          release: 15.5,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.82, cycle: 21.1, gain: 0.78, release: 12.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.72, cycle: 8.9, gain: 2.00, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.65, cycle: 14.9, gain: 0.62, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.70, cycle: 27.7, gain: 0.72, release: 14.0, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.58, cycle: 16.3, gain: 0.60, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.85, cycle: 37.9, gain: 0.74, release: 15.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     mixing_colours: {
@@ -722,18 +530,18 @@ const ENO_DATA = (function() {
         release: 6.5,
         sustain: 0.60,
         envelopeMode: 'override',
-        cutoff: 1750,
+        cutoff: 2400,
         resonance: 1.2,
         filterType: 'lowpass',
         filterDrift: 0.25,
-        reverbMix: 0.48,
-        reverbDecay: 8.5,
-        reverbShimmer: 0.10,
+        reverbMix: 0.36,
+        reverbDecay: 6.2,
+        reverbShimmer: 0.08,
         reverbDamping: 4200,
-        delayMix: 0.30,
-        delayTime: 0.54,
-        delayFeedback: 0.45,
-        delayWow: 0.28,
+        delayMix: 0.16,
+        delayTime: 0.52,
+        delayFeedback: 0.28,
+        delayWow: 0.12,
         masterVolume: 0.84,
         pianoCrossfade: -0.62
       },
@@ -748,60 +556,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.95, 0.70, 0.80, 0.35, 0.85, 0.65, 0.45]
       },
       voices: {
-        pad: {
-          prob: 0.55,
-          cycle: 13.9,
-          gain: 0.60,
-          release: 7.2,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.88,
-          cycle: 5.3,
-          gain: 2.00,
-          release: 3.8,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.35,
-          cycle: 11.3,
-          gain: 0.45,
-          release: 4.2,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        choir: {
-          prob: 0.42,
-          cycle: 23.1,
-          gain: 0.52,
-          release: 8.0,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        tape: {
-          prob: 0.72,
-          cycle: 9.7,
-          gain: 0.70,
-          release: 5.2,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.65,
-          cycle: 29.3,
-          gain: 0.62,
-          release: 9.0,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.55, cycle: 13.9, gain: 0.60, release: 7.2, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.88, cycle: 5.3, gain: 2.00, release: 3.8, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.35, cycle: 11.3, gain: 0.45, release: 4.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.42, cycle: 23.1, gain: 0.52, release: 8.0, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.72, cycle: 9.7, gain: 0.70, release: 5.2, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.65, cycle: 29.3, gain: 0.62, release: 9.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     discreet_loops: {
@@ -829,18 +589,18 @@ const ENO_DATA = (function() {
         release: 5.8,
         sustain: 0.60,
         envelopeMode: 'override',
-        cutoff: 1150,
+        cutoff: 1950,
         resonance: 3.2,
         filterType: 'lowpass',
         filterDrift: 0.45,
-        reverbMix: 0.42,
-        reverbDecay: 7.5,
-        reverbShimmer: 0.08,
+        reverbMix: 0.58,
+        reverbDecay: 9.8,
+        reverbShimmer: 0.12,
         reverbDamping: 3200,
-        delayMix: 0.68,
-        delayTime: 1.18,
-        delayFeedback: 0.78,
-        delayWow: 0.56,
+        delayMix: 0.72,
+        delayTime: 1.22,
+        delayFeedback: 0.82,
+        delayWow: 0.64,
         masterVolume: 0.87,
         pianoCrossfade: -0.62
       },
@@ -867,60 +627,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.90, 0.50, 0.75, 0.45, 0.85, 0.60, 0.40]
       },
       voices: {
-        pad: {
-          prob: 0.66,
-          cycle: 13.7,
-          gain: 0.64,
-          release: 7.9,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        piano: {
-          prob: 0.97,
-          cycle: 11.7,
-          gain: 2.00,
-          release: 3.6,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        bell: {
-          prob: 0.45,
-          cycle: 11.3,
-          gain: 0.48,
-          release: 0.2,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: true
-        },
-        choir: {
-          prob: 0.48,
-          cycle: 23.9,
-          gain: 0.56,
-          release: 7.5,
-          octave: 1,
-          octaveShiftProb: 0.10,
-          muted: true
-        },
-        tape: {
-          prob: 0.84,
-          cycle: 8.9,
-          gain: 0.86,
-          release: 8.0,
-          octave: 0,
-          octaveShiftProb: 0.10,
-          muted: false
-        },
-        drone: {
-          prob: 0.74,
-          cycle: 19.3,
-          gain: 0.74,
-          release: 9.5,
-          octave: -1,
-          octaveShiftProb: 0.10,
-          muted: false
-        }
+        pad: { prob: 0.66, cycle: 13.7, gain: 0.64, release: 7.9, octave: 0, octaveShiftProb: 0.10, muted: false },
+        piano: { prob: 0.97, cycle: 11.7, gain: 2.00, release: 3.6, octave: 0, octaveShiftProb: 0.10, muted: false },
+        bell: { prob: 0.45, cycle: 11.3, gain: 0.48, release: 0.2, octave: 1, octaveShiftProb: 0.10, muted: true },
+        choir: { prob: 0.48, cycle: 23.9, gain: 0.56, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: true },
+        tape: { prob: 0.84, cycle: 8.9, gain: 0.86, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.74, cycle: 19.3, gain: 0.74, release: 9.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     }
   };
@@ -931,7 +643,7 @@ const ENO_DATA = (function() {
       title: 'Logic Pro X Scripter Probability Gates (with Peter Chilvers)',
       subtitle: 'Algorithmic state machines powering Luminous Drift',
       era: '2017 - Present',
-      badge: 'Probability Engines',
+      badge: 'Luminous Drift',
       badgeHue: 'blue',
       presetId: 'reflection',
       bullets: [
@@ -945,7 +657,7 @@ const ENO_DATA = (function() {
       title: 'Circadian & Seasonal Generative Rule Shifting',
       subtitle: 'Living acoustic environments responding to diurnal cycles',
       era: '1985 - Present',
-      badge: 'Diurnal Drift',
+      badge: 'Sunlit Atrium',
       badgeHue: 'teal',
       presetId: 'thursday',
       bullets: [
@@ -959,7 +671,7 @@ const ENO_DATA = (function() {
       title: 'Incommensurable Prime-Length Tape Loops',
       subtitle: 'Asynchronous prime loop periods that phase without repeating',
       era: '1975 - 2018',
-      badge: 'Phase Alignment',
+      badge: 'Cathedral Glass',
       badgeHue: 'purple',
       presetId: 'installations',
       bullets: [
@@ -973,7 +685,7 @@ const ENO_DATA = (function() {
       title: 'The Eno / Lanois Octave-Feedback "Shimmer" Reverb Chain',
       subtitle: 'AMS Neve / Eventide pitch transposer looped into Lexicon plate',
       era: '1983 - Present',
-      badge: 'Acoustic Optics',
+      badge: 'Weightless Orbit',
       badgeHue: 'orange',
       presetId: 'apollo_shimmer',
       bullets: [
@@ -984,24 +696,29 @@ const ENO_DATA = (function() {
     },
     {
       id: 'mixing_colours_felt',
-      title: 'Salamander Grand Piano v3 & Felt Piano EQ Architecture',
-      subtitle: 'Multi-sampled Yamaha C5 (v1 ppp) with 240 Hz soundboard warmth & 1.85 kHz silk shelf',
-      era: '2012 - 2020',
-      badge: 'Sampled Felt Piano',
+      trackId: 'mixing_colours',
+      trackName: 'Felt & Mist',
+      title: 'Damped Felt Piano & DX7 FM Glass Miniatures (with Roger Eno)',
+      subtitle: 'Intimate celeste-rail wool felt damping paired with Yamaha DX7 non-integer FM chimes',
+      icon: 'piano',
+      era: '2020',
+      badge: 'Felt & Mist',
       badgeHue: 'green',
       presetId: 'mixing_colours',
       bullets: [
-        { lead: 'Salamander Grand Piano v3 (v1 ppp)', body: 'Selected from 5 evaluated open piano libraries: 97 stereo 24-bit/48kHz FLAC recordings of a Yamaha C5 across 30 minor-third zones (A0–C8), locked to the ultra-delicate v1 ppp velocity layer plus close-mic key release and pedal mechanics.' },
-        { lead: '2-Stage Felt EQ Emulation (No Lowpass)', body: 'Preserves the natural v1 ppp hammer transient without lowpass muffling: Stage 1 boosts 240 Hz soundboard body (+3.2 dB) and Stage 2 applies a -11.5 dB silk high-shelf rolloff above 1.85 kHz.' },
-        { lead: 'DX7 FM Glass Contrast', body: 'Non-integer frequency modulation ratios generate crystalline chimes that float above the warm, close-mic’d felt piano fundamental.' }
-      ]
+        { lead: 'Celeste-Rail Wool Felt Damping', body: 'Interposing a strip of soft wool felt between hammers and strings absorbs upper-partial strike transients while preserving intimate close-mic’d keybed and damper release mechanics.' },
+        { lead: '230 Hz Soundboard Body & 1.35 kHz Silk Cut', body: 'A +4.8 dB low-mid soundboard resonance boost at 230 Hz paired with a -15.5 dB high-shelf roll-off above 1.35 kHz produces the warm, woody intimacy of Mixing Colours (2020).' },
+        { lead: 'Yamaha DX7 Non-Integer FM Glass Chimes', body: 'Pairs the close-mic’d felt piano with custom FM synthesis patches using non-integer carrier-to-modulator ratios (1:2.76 and 1:5.41) for crystalline, bell-like upper partials.' },
+        { lead: 'Minimalist Chamber Proximity', body: 'Shorter 6.2s chamber reverb decay and restrained 36% wet mix keep the felt hammer strike and breathy harmonic bloom right in front of the listener.' }
+      ],
+      citation: 'Ref: Roger Eno & Brian Eno, Mixing Colours (Deutsche Grammophon, 2020); Brian Eno DX7 Patch Archives.'
     },
     {
       id: 'deep_listening',
       title: 'Pauline Oliveros & Brian Eno: Deep Listening & Attention',
       subtitle: 'Acoustic presence: focal attention vs. global ambient awareness',
       era: '1975 - Present',
-      badge: 'Philosophy of Sound',
+      badge: 'Moss & Reel',
       badgeHue: 'yellow',
       presetId: 'discreet_loops',
       bullets: [

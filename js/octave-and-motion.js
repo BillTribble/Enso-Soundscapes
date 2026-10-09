@@ -279,6 +279,11 @@ const EnsoUrlState = {
       app.switchTab('probability');
     else if (q.includes('tab=research'))
       app.switchTab('research');
+    if (q.includes('scroll=topbar')) {
+      const presetCard = document.querySelector('.preset-strip-card');
+      if (presetCard) presetCard.style.marginTop = '-48px';
+      window.syncTopBarScroll?.();
+    }
     if (q.includes('scroll=cards')) {
       document
           .querySelectorAll(
@@ -286,6 +291,7 @@ const EnsoUrlState = {
           .forEach((el) => {
             el.style.display = 'none';
           });
+      window.syncTopBarScroll?.();
     }
     if (q.includes('scroll=voices')) {
       document
@@ -294,6 +300,7 @@ const EnsoUrlState = {
           .forEach((el) => {
             el.style.display = 'none';
           });
+      window.syncTopBarScroll?.();
     }
     if (q.includes('selftest=1')) {
       app.audioEngine.setGlobalAttack(4.5);

@@ -12,20 +12,7 @@
       badgeTone: 'badge-blue',
       origin: 'Self-contained 18px rounded trough filled with light-blue primary-container and a crisp 3px primary leading-edge cursor inside the bar',
       tokens: ['Zero protruding knob', '18px tonal trough', '3px edge indicator', '--md-sys-color-primary-container'],
-      cssSnippet: `/* Contained Tonal Fill Bar (No Protruding Knob) — Studio & BillSkill Default */
-input[type="range"] {
-  -webkit-appearance: none; appearance: none;
-  width: 100%; height: 18px; border-radius: 8px; overflow: hidden;
-  background: linear-gradient(to right,
-    var(--md-sys-color-primary-container) 0%,
-    var(--md-sys-color-primary-container) var(--pct, 50%),
-    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
-    var(--md-sys-color-surface-container-highest) 100%);
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 3px; height: 18px;
-  border-radius: 2px; background: var(--md-sys-color-primary); border: none;
-}`,
+      cssSnippet: 'input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 18px; border-radius: 8px; overflow: hidden; background: linear-gradient(to right, var(--md-sys-color-primary-container) 0%, var(--md-sys-color-primary-container) var(--pct, 50%), var(--md-sys-color-surface-container-highest) var(--pct, 50%), var(--md-sys-color-surface-container-highest) 100%); }\ninput[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 3px; height: 18px; border-radius: 2px; background: var(--md-sys-color-primary); border: none; }',
     },
     {
       id: 'slider-style-gm3-handle-bar',
@@ -34,22 +21,7 @@ input[type="range"]::-webkit-slider-thumb {
       badgeTone: 'badge-teal',
       origin: 'Official Material 3 Expressive slider · 4px × 22px vertical pill handle with a 6px breathing gap separating active and inactive track segments',
       tokens: ['M3 Expressive spec', '4px vertical handle', '6px split track gap', '--md-sys-color-primary'],
-      cssSnippet: `/* GM3 Expressive Vertical Handle Bar + Split Track */
-input[type="range"] {
-  -webkit-appearance: none; appearance: none;
-  width: 100%; height: 6px; border-radius: 9999px;
-  background: linear-gradient(to right,
-    var(--md-sys-color-primary) 0%,
-    var(--md-sys-color-primary) calc(var(--pct) - 6px),
-    transparent calc(var(--pct) - 6px),
-    transparent calc(var(--pct) + 6px),
-    var(--md-sys-color-surface-container-highest) calc(var(--pct) + 6px),
-    var(--md-sys-color-surface-container-highest) 100%);
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 4px; height: 22px;
-  border-radius: 9999px; background: var(--md-sys-color-primary);
-}`,
+      cssSnippet: 'input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 9999px; background: linear-gradient(to right, var(--md-sys-color-primary) 0%, var(--md-sys-color-primary) calc(var(--pct) - 6px), transparent calc(var(--pct) - 6px), transparent calc(var(--pct) + 6px), var(--md-sys-color-surface-container-highest) calc(var(--pct) + 6px), var(--md-sys-color-surface-container-highest) 100%); }\ninput[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 4px; height: 22px; border-radius: 9999px; background: var(--md-sys-color-primary); }',
     },
     {
       id: 'slider-style-gm3-thick-track',

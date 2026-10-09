@@ -23,14 +23,14 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/tokens.css?v=20261009g">
-  <link rel="stylesheet" href="css/styles.css?v=20261009g">
-  <link rel="stylesheet" href="css/phrases.css?v=20261009g">
-  <link rel="stylesheet" href="css/button-styles.css?v=20261009g">
-  <link rel="stylesheet" href="css/slider-styles.css?v=20261009g">
-  <link rel="stylesheet" href="css/mixer-dials.css?v=20261009g">
-  <link rel="stylesheet" href="css/patch-storage.css?v=20261009g">
-  <link rel="stylesheet" href="css/aurora.css?v=20261009g">
+  <link rel="stylesheet" href="css/tokens.css?v=20261009i">
+  <link rel="stylesheet" href="css/styles.css?v=20261009i">
+  <link rel="stylesheet" href="css/phrases.css?v=20261009i">
+  <link rel="stylesheet" href="css/button-styles.css?v=20261009i">
+  <link rel="stylesheet" href="css/slider-styles.css?v=20261009i">
+  <link rel="stylesheet" href="css/mixer-dials.css?v=20261009i">
+  <link rel="stylesheet" href="css/patch-storage.css?v=20261009i">
+  <link rel="stylesheet" href="css/aurora.css?v=20261009i">
 </head>
 <body class="slider-scope slider-style-tonal-fill-bar slider-size-std" data-control-style="dials">
   <canvas id="aurora" aria-hidden="true"></canvas>
@@ -178,7 +178,7 @@
 
           <div class="patch-actions-group" role="group" aria-label="Patch actions">
             <button type="button" id="btn-save-patch" class="btn-tonal patch-action-btn" title="Save edits to current patch (localStorage + disk)"><span id="save-patch-icon" class="material-symbols-outlined">save</span><span id="save-patch-label">Save patch</span></button>
-            <button type="button" id="btn-new-patch" class="btn-tonal patch-action-btn" title="Create a new patch from current settings"><span class="material-symbols-outlined">add</span><span>New patch</span></button>
+            <button type="button" id="btn-new-patch" class="btn-tonal patch-action-btn" title="Randomize a new musical patch following the Circle of Fifths"><span id="new-patch-icon" class="material-symbols-outlined">shuffle</span><span>New patch</span></button>
             <button type="button" id="btn-reset-patch" class="icon-btn patch-reset-btn" aria-label="Reset patch to factory defaults" title="Reset patch to factory defaults"><span id="reset-patch-icon" class="material-symbols-outlined">restart_alt</span></button>
           </div>
         </div>
@@ -706,22 +706,48 @@
         </div>
       </div>
     </div>
+    <!-- GM3 Delete User Patch Modal -->
+    <div id="delete-patch-modal-backdrop" class="patch-modal-backdrop" aria-hidden="true">
+      <div class="patch-modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-patch-modal-title">
+        <div class="card-header-row">
+          <div class="card-title-cluster">
+            <span class="material-symbols-outlined">delete_outline</span>
+            <h2 id="delete-patch-modal-title" class="card-title">Delete user patch?</h2>
+          </div>
+          <button type="button" id="btn-close-delete-modal" class="icon-btn" aria-label="Close modal" title="Close"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="patch-modal-field">
+          <p id="delete-patch-modal-message" class="patch-delete-confirm-text">Are you sure you want to delete this patch? This action cannot be undone.</p>
+        </div>
+        <div class="patch-modal-actions">
+          <button type="button" id="btn-cancel-delete-modal" class="btn-text">Cancel</button>
+          <button type="button" id="btn-confirm-delete-patch" class="btn btn-delete-danger"><span class="material-symbols-outlined">delete</span><span>Delete patch</span></button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script src="js/presets.js?v=20261009g"></script>
-  <script src="js/audio-engine.js?v=20261009g"></script>
-  <script src="js/piano-sampler.js?v=20261009g"></script>
-  <script src="js/probability-engine.js?v=20261009g"></script>
-  <script src="js/phrase-engine.js?v=20261009g"></script>
-  <script src="js/octave-and-motion.js?v=20261009g"></script>
-  <script src="js/aurora.js?v=20261009g"></script>
-  <script src="js/visualizer.js?v=20261009g"></script>
-  <script src="js/voice-cards.js?v=20261009g"></script>
-  <script src="js/auto-cycler.js?v=20261009g"></script>
-  <script src="js/app.js?v=20261009g"></script>
-  <script src="js/slider-styles.js?v=20261009g"></script>
-  <script src="js/pwa-media.js?v=20261009g"></script>
-  <script src="js/patch-storage.js?v=20261009g"></script>
-  <script src="js/mixer-dials.js?v=20261009g"></script>
+  <script src="js/presets.js?v=20261009i"></script>
+  <script src="js/audio-engine.js?v=20261009i"></script>
+  <script src="js/piano-sampler.js?v=20261009i"></script>
+  <script src="js/track-styles.js?v=20261009i"></script>
+  <script src="js/probability-engine.js?v=20261009i"></script>
+  <script src="js/phrase-patterns.js?v=20261009i"></script>
+  <script src="js/phrase-engine.js?v=20261009i"></script>
+  <script src="js/phrase-ui.js?v=20261009i"></script>
+  <script src="js/octave-and-motion.js?v=20261009i"></script>
+  <script src="js/aurora.js?v=20261009i"></script>
+  <script src="js/visualizer.js?v=20261009i"></script>
+  <script src="js/voice-cards.js?v=20261009i"></script>
+  <script src="js/auto-cycler.js?v=20261009i"></script>
+  <script src="js/auto-cycler-sim.js?v=20261009i"></script>
+  <script src="js/app.js?v=20261009i"></script>
+  <script src="js/slider-styles.js?v=20261009i"></script>
+  <script src="js/pwa-media.js?v=20261009i"></script>
+  <script src="js/patch-randomizer.js?v=20261009i"></script>
+  <script src="js/patch-modal.js?v=20261009i"></script>
+  <script src="js/patch-storage.js?v=20261009i"></script>
+  <script src="js/mixer-dials.js?v=20261009i"></script>
+  <script src="js/selftest-runner.js?v=20261009i"></script>
 </body>
 </html>

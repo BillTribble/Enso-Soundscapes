@@ -26,22 +26,8 @@
 
       this.activePresetId = 'thursday';
       this.globalVoiceBalance = -0.62;
-      this.globalVoiceGains = {
-        pad: 0.65,
-        piano: 2.00,
-        bell: 0.50,
-        choir: 0.56,
-        tape: 0.58,
-        drone: 0.62
-      };
-      this.globalVoiceFilters = {
-        pad: {cutoff: 5200, resonance: 1.2},
-        piano: {cutoff: 12000, resonance: 0.8},
-        bell: {cutoff: 9500, resonance: 1.4},
-        choir: {cutoff: 6400, resonance: 1.2},
-        tape: {cutoff: 4200, resonance: 1.6},
-        drone: {cutoff: 1800, resonance: 1.8}
-      };
+      this.globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+      this.globalVoiceFilters = { pad: {cutoff: 5200, resonance: 1.2}, piano: {cutoff: 12000, resonance: 0.8}, bell: {cutoff: 9500, resonance: 1.4}, choir: {cutoff: 6400, resonance: 1.2}, tape: {cutoff: 4200, resonance: 1.6}, drone: {cutoff: 1800, resonance: 1.8} };
       this.xyTarget = 'filter';
       this.logFilterText = '';
       this.researchFilterText = '';
@@ -64,6 +50,9 @@
           new window.EnsoAutoCycler(this) :
           null;
       if (this.autoCycler) window.enoAutoCycler = this.autoCycler;
+      if (this.audioEngine && typeof this.audioEngine.setTrackStyle === 'function') {
+        this.audioEngine.setTrackStyle('thursday');
+      }
       this.applyPreset('thursday', false);
       this.startSchedulerLoop();
     }
@@ -162,11 +151,7 @@
       else
         root.removeAttribute('data-theme');
 
-      const iconMap = {
-        auto: 'brightness_auto',
-        light: 'light_mode',
-        dark: 'dark_mode'
-      };
+      const iconMap = { auto: 'brightness_auto', light: 'light_mode', dark: 'dark_mode' };
       if (icon) icon.textContent = iconMap[mode] || 'brightness_auto';
       if (btn) {
         const label = mode === 'auto' ?
@@ -195,11 +180,23 @@
         presetContainer.innerHTML = '';
         Object.values(data.PRESETS).forEach((preset) => {
           const btn = document.createElement('button'), isActive = preset.id === this.activePresetId;
+          const isUser = preset.custom || !(data.CIRCLE_OF_FIFTHS_ORDER || []).includes(preset.id);
           btn.type = 'button';
-          btn.className = `m3-pill-tab badge-${preset.badgeHue || 'blue'}${isActive ? ' active' : ''}`;
+          btn.className = `m3-pill-tab badge-${preset.badgeHue || 'blue'}${isActive ? ' active' : ''}${isUser ? ' user-patch-pill' : ''}`;
           btn.dataset.presetId = preset.id; btn.setAttribute('role', 'tab');
           btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          btn.innerHTML = `<span>${preset.name}</span>`; btn.title = preset.summary || preset.name;
+          btn.title = preset.summary || preset.name;
+          if (isUser) {
+            btn.innerHTML = `<span class="user-patch-label">${preset.name}</span><span class="user-patch-delete-btn" role="button" tabindex="0" data-delete-preset-id="${preset.id}" aria-label="Delete ${preset.name}" title="Delete ${preset.name}"><span class="material-symbols-outlined user-patch-delete-icon">close</span></span>`;
+            const delBtn = btn.querySelector('.user-patch-delete-btn');
+            if (delBtn) {
+              const handleDel = (e) => { e.stopPropagation(); e.preventDefault(); window.EnsoPatchRandomizer?.promptDeleteUserPatch(preset.id); };
+              delBtn.addEventListener('click', handleDel);
+              delBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') handleDel(e); });
+            }
+          } else {
+            btn.innerHTML = `<span>${preset.name}</span>`;
+          }
           btn.addEventListener('click', () => this.applyPreset(preset.id, true));
           presetContainer.appendChild(btn);
         });
@@ -307,29 +304,21 @@
     renderResearchCards() {
       const container = document.getElementById('research-cards-container');
       if (!container) return;
-      const cards = (window.ENO_DATA && window.ENO_DATA.RESEARCH_CARDS) || [];
+      const data = window.ENO_DATA || {}, cards = data.RESEARCH_CARDS || [], presets = data.PRESETS || {};
       const query = (this.researchFilterText || '').trim().toLowerCase();
-
       container.innerHTML = '';
       cards.forEach((card) => {
-        const searchable = `${card.title} ${card.subtitle || ''} ${card.era || ''} ${card.badge || ''} ${(card.bullets || []).map((b) => `${b.lead} ${b.body}`).join(' ')}`.toLowerCase();
+        const preset = card.presetId ? presets[card.presetId] : null;
+        const badgeLabel = (preset && preset.name) || card.badge || card.era || 'Generative';
+        const badgeHue = (preset && preset.badgeHue) || card.badgeHue || 'blue';
+        const searchable = `${card.title} ${card.subtitle || ''} ${card.era || ''} ${badgeLabel} ${card.badge || ''} ${(card.bullets || []).map((b) => `${b.lead} ${b.body}`).join(' ')}`.toLowerCase();
         if (query && !searchable.includes(query)) return;
         const el = document.createElement('article');
         el.className = 'research-card';
         const bulletsHtml = (card.bullets || []).map((b) => `<li><strong>${b.lead}:</strong> ${b.body}</li>`).join('');
-        el.innerHTML = `
-          <div class="card-header-row">
-            <div class="card-title-cluster"><h3 class="card-title">${card.title}</h3></div>
-            <div class="badge-row">
-              <span class="badge badge-${card.badgeHue || 'blue'}">${card.badge || card.era || 'Generative'}</span>
-              ${card.presetId ? `<button type="button" class="btn-tonal research-try-preset-btn" data-preset-id="${card.presetId}">Load preset</button>` : ''}
-            </div>
-          </div>
-          <ul class="research-bullet-list">${bulletsHtml}</ul>
-        `;
+        el.innerHTML = `<div class="card-header-row"><div class="card-title-cluster"><h3 class="card-title">${card.title}</h3></div><div class="badge-row"><span class="badge badge-${badgeHue}">${badgeLabel}</span>${card.presetId ? `<button type="button" class="btn-tonal research-try-preset-btn" data-preset-id="${card.presetId}">Load preset</button>` : ''}</div></div><ul class="research-bullet-list">${bulletsHtml}</ul>`;
         container.appendChild(el);
       });
-
       container.querySelectorAll('.research-try-preset-btn').forEach((btn) => {
         btn.addEventListener('click', () => { this.applyPreset(btn.dataset.presetId, true); this.switchTab('studio'); });
       });
@@ -571,6 +560,9 @@
     applyPreset(presetId, triggerPreview = false) {
       const preset = ((window.ENO_DATA && window.ENO_DATA.PRESETS) || {})[presetId];
       if (!preset) return;
+      if (this.audioEngine && typeof this.audioEngine.setTrackStyle === 'function') {
+        this.audioEngine.setTrackStyle(presetId);
+      }
       this.activePresetId = presetId;
       document.querySelectorAll('#preset-buttons-container [data-preset-id]').forEach((btn) => {
         const isSelected = btn.dataset.presetId === presetId;
@@ -588,23 +580,7 @@
         if (selCirc) selCirc.value = preset.circadian;
       }
       const g = preset.global || {};
-      const sliderMap = {
-        attack: 'global-attack',
-        release: 'global-release',
-        sustain: 'global-sustain',
-        masterVolume: 'master-volume',
-        cutoff: 'filter-cutoff',
-        resonance: 'filter-resonance',
-        filterDrift: 'filter-drift',
-        reverbMix: 'reverb-mix',
-        reverbShimmer: 'reverb-shimmer',
-        reverbDecay: 'reverb-decay',
-        reverbDamping: 'reverb-damping',
-        delayMix: 'delay-mix',
-        delayTime: 'delay-time',
-        delayFeedback: 'delay-feedback',
-        delayWow: 'delay-wow'
-      };
+      const sliderMap = { attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume', cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift', reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping', delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow' };
       Object.entries(sliderMap).forEach(([k, id]) => {
         if (g[k] !== undefined) this.setSliderAndDispatch(id, g[k]);
       });

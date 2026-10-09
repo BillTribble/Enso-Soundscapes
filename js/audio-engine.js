@@ -16,6 +16,7 @@ const DEFAULT_VOICE_FILTERS = {
 
 class AudioEngine {
   constructor() {
+    this.activeTrackStyle = 'thursday';
     this.params = {
       masterVolume: 0.84,
       attack: 2.4,
@@ -544,7 +545,9 @@ class AudioEngine {
     const noteGainScale = (typeof voiceGain === 'number' && effBusGain > 0.001 && Math.abs(voiceGain - effBusGain) > 0.01 && Math.abs(voiceGain - baseGain) > 0.01)
       ? Math.max(0.2, Math.min(1.5, voiceGain / baseGain))
       : 1.0;
-    const peakGain = Math.max(0.0001, velocity * (busNode ? 0.82 * noteGainScale : effBusGain * noteGainScale * 0.75));
+    const styleProf = this.getTrackStyleProfile ? this.getTrackStyleProfile() : null;
+    const styleTrim = (styleProf && styleProf.voiceTrim && typeof styleProf.voiceTrim[voiceId] === 'number') ? styleProf.voiceTrim[voiceId] : 1.0;
+    const peakGain = Math.max(0.0001, velocity * (busNode ? 0.82 * noteGainScale : effBusGain * noteGainScale * 0.75) * styleTrim);
 
     const envGain = this.ctx.createGain();
     if (isPiano) {
@@ -574,13 +577,14 @@ class AudioEngine {
       envGain.connect(targetDest);
     }
 
-    // Octave-up (+12st) shimmer harmonic into crossfade-aware shimmerBus (scaled by voice baseGain)
+    // Octave-up (+12st) shimmer harmonic into crossfade-aware shimmerBus (scaled by voice baseGain and track shimmerCascade)
     const shimmerTarget = (isPiano ? this.nodes.pianoShimmerCrossfade : this.nodes.otherShimmerCrossfade) || this.nodes.shimmerBus;
     const shimmerOsc = this.ctx.createOscillator();
     shimmerOsc.type = 'sine';
     shimmerOsc.frequency.setValueAtTime(freq * 2, now);
     const shimmerEnvGain = this.ctx.createGain();
-    const shimmerPeak = Math.max(0.0001, peakGain * Math.min(2.5, baseGain) * 0.28);
+    const shimScale = (styleProf && styleProf.shimmerCascade && typeof styleProf.shimmerCascade.baseOctaveGain === 'number') ? (styleProf.shimmerCascade.baseOctaveGain / 0.28) : 1.0;
+    const shimmerPeak = voiceId === 'piano' ? 0 : Math.max(0.0001, peakGain * Math.min(2.5, baseGain) * 0.28 * shimScale);
     shimmerEnvGain.gain.setValueAtTime(0.0001, now);
     shimmerEnvGain.gain.linearRampToValueAtTime(shimmerPeak, Math.min(tSustainEnd, tAttackEnd + 0.3));
     shimmerEnvGain.gain.setValueAtTime(shimmerPeak, tSustainEnd);
@@ -592,7 +596,12 @@ class AudioEngine {
 
     const oscs = [], bufferSources = [], internalNodes = [];
 
-    if (voiceId === 'pad') {
+    if (voiceId !== 'piano' && typeof this._synthesizeTrackVoice === 'function' && this._synthesizeTrackVoice({
+      voiceId, midiNote, freq, velocity, now, tAttackEnd, tSustainEnd, tReleaseEnd,
+      baseGain, peakGain, envGain, shimmerTarget, oscs, bufferSources, internalNodes
+    })) {
+      // Handled by per-track style synthesizer
+    } else if (voiceId === 'pad') {
       const s1 = this._makeOsc('sawtooth', freq, -7, now), s2 = this._makeOsc('sawtooth', freq, 7, now), sub = this._makeOsc('sine', freq * 0.5, 0, now);
       const subG = this.ctx.createGain(); subG.gain.value = 0.4;
       const vFilt = this._makeFilter('lowpass', Math.min(14000, freq * 3.5), 0.2 ? 1.2 : 1.2);
@@ -606,7 +615,10 @@ class AudioEngine {
             now,
             tReleaseEnd,
             baseGain,
+            peakGain,
+            velScale: velocity,
             envGain,
+            voiceNode: targetDest,
             shimmerTarget,
             bufferSources,
             internalNodes
@@ -754,6 +766,9 @@ class AudioEngine {
 }
 
 if (typeof window !== 'undefined') {
+  if (window.EnsoTrackStyles && typeof window.EnsoTrackStyles.attachToAudioEngine === 'function') {
+    window.EnsoTrackStyles.attachToAudioEngine(AudioEngine);
+  }
   window.AudioEngine = AudioEngine;
   if (window.EnsoPianoSampler &&
       typeof window.EnsoPianoSampler.attachToAudioEngine === 'function') {
@@ -761,3 +776,4 @@ if (typeof window !== 'undefined') {
   }
 }
 if (typeof module !== 'undefined' && module.exports) module.exports = AudioEngine;
+

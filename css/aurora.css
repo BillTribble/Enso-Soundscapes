@@ -16,7 +16,6 @@ html {
 
 body,
 .app-shell,
-.top-app-bar,
 #top-bar-volume-row,
 .top-app-bar .control-row.has-rotary-dial {
   background: transparent !important;
@@ -25,6 +24,22 @@ body,
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+.top-app-bar {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: background-color 0.2s ease, backdrop-filter 0.2s ease, -webkit-backdrop-filter 0.2s ease;
+}
+
+.top-app-bar.is-scrolled,
+body.is-scrolled .top-app-bar {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 92%, transparent) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
 }
 
 .preset-strip-card,

@@ -21,84 +21,23 @@
   let globalVoiceFilters = null;
 
   const SLIDER_MAP = {
-    attack: 'global-attack',
-    release: 'global-release',
-    sustain: 'global-sustain',
-    masterVolume: 'master-volume',
-    cutoff: 'filter-cutoff',
-    resonance: 'filter-resonance',
-    filterDrift: 'filter-drift',
-    reverbMix: 'reverb-mix',
-    reverbShimmer: 'reverb-shimmer',
-    reverbDecay: 'reverb-decay',
-    reverbDamping: 'reverb-damping',
-    delayMix: 'delay-mix',
-    delayTime: 'delay-time',
-    delayFeedback: 'delay-feedback',
-    delayWow: 'delay-wow'
+    attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume',
+    cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift',
+    reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping',
+    delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow'
   };
 
   const PHRASE_SLIDERS = [
-    {
-      key: 'phraseVariationChance',
-      id: 'phrase-variation-chance',
-      lblId: 'val-phrase-variation-chance',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'phraseSkipChance',
-      id: 'phrase-skip-chance',
-      lblId: 'val-phrase-skip-chance',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'phraseNoteGate',
-      id: 'phrase-note-gate',
-      lblId: 'val-phrase-note-gate',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'phraseCompletionGate',
-      id: 'phrase-completion-gate',
-      lblId: 'val-phrase-completion-gate',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'phraseGateProb',
-      id: 'phrase-gate-prob',
-      lblId: 'val-phrase-gate-prob',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'phraseLoopCycle',
-      id: 'phrase-loop-cycle',
-      lblId: 'val-phrase-loop-cycle',
-      fmt: (v) => `${Number(v).toFixed(1)} s`
-    },
-    {
-      key: 'noteOctaveShiftChance',
-      id: 'phrase-note-octave-shift',
-      lblId: 'val-phrase-note-octave-shift',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'chordOctaveShiftChance',
-      id: 'phrase-chord-octave-shift',
-      lblId: 'val-phrase-chord-octave-shift',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'chordProgGate',
-      id: 'chord-prog-gate',
-      lblId: 'val-chord-prog-gate',
-      fmt: (v) => `${Math.round(v * 100)}%`
-    },
-    {
-      key: 'chordProgCycle',
-      id: 'chord-prog-cycle',
-      lblId: 'val-chord-prog-cycle',
-      fmt: (v) => `${Number(v).toFixed(1)} s`
-    }
+    { key: 'phraseVariationChance', id: 'phrase-variation-chance', lblId: 'val-phrase-variation-chance', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'phraseSkipChance', id: 'phrase-skip-chance', lblId: 'val-phrase-skip-chance', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'phraseNoteGate', id: 'phrase-note-gate', lblId: 'val-phrase-note-gate', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'phraseCompletionGate', id: 'phrase-completion-gate', lblId: 'val-phrase-completion-gate', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'phraseGateProb', id: 'phrase-gate-prob', lblId: 'val-phrase-gate-prob', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'phraseLoopCycle', id: 'phrase-loop-cycle', lblId: 'val-phrase-loop-cycle', fmt: (v) => `${Number(v).toFixed(1)} s` },
+    { key: 'noteOctaveShiftChance', id: 'phrase-note-octave-shift', lblId: 'val-phrase-note-octave-shift', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'chordOctaveShiftChance', id: 'phrase-chord-octave-shift', lblId: 'val-phrase-chord-octave-shift', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'chordProgGate', id: 'chord-prog-gate', lblId: 'val-chord-prog-gate', fmt: (v) => `${Math.round(v * 100)}%` },
+    { key: 'chordProgCycle', id: 'chord-prog-cycle', lblId: 'val-chord-prog-cycle', fmt: (v) => `${Number(v).toFixed(1)} s` }
   ];
 
   function getApp() {
@@ -124,9 +63,9 @@
     globalParams.envelopeMode = app.audioEngine?.envelopeMode || 'override';
     globalParams.filterType = app.audioEngine?.filterType || 'lowpass';
     const xfEl = document.getElementById('piano-other-crossfade');
-    globalVoiceBalance = typeof app.globalVoiceBalance === 'number' ?
-        app.globalVoiceBalance :
-        (xfEl ? parseFloat(xfEl.value) : globalVoiceBalance);
+    globalVoiceBalance = typeof app.globalVoiceBalance === 'number'
+      ? app.globalVoiceBalance
+      : (xfEl ? parseFloat(xfEl.value) : globalVoiceBalance);
     globalParams.pianoCrossfade = globalVoiceBalance;
 
     const probEngine = app.probEngine || {};
@@ -142,14 +81,7 @@
     };
 
     const voices = {};
-    const defaultGain = {
-      pad: 0.72,
-      piano: 2.00,
-      bell: 0.54,
-      choir: 0.60,
-      tape: 0.64,
-      drone: 0.70
-    };
+    const defaultGain = { pad: 0.72, piano: 2.00, bell: 0.54, choir: 0.60, tape: 0.64, drone: 0.70 };
     const defaultRelease = { pad: 8.5, piano: 4.5, bell: 5.2, choir: 9.5, tape: 6.2, drone: 11.0 };
     const defaultOctave = { pad: 0, piano: 0, bell: 1, choir: 1, tape: 0, drone: -1 };
     if (Array.isArray(probEngine.voices)) {
@@ -161,35 +93,17 @@
           prob: v.prob !== undefined ? v.prob : 0.6,
           cycle: v.cycle !== undefined ? v.cycle : 10.0,
           gain: v.id === 'piano' ? (g || 2.00) : g,
-          release: typeof v.release === 'number' ?
-              v.release :
-              (defaultRelease[v.id] || 7.0),
+          release: typeof v.release === 'number' ? v.release : (defaultRelease[v.id] || 7.0),
           octave: oct,
-          octaveShiftProb: typeof v.octaveShiftProb === 'number' ?
-              v.octaveShiftProb :
-              (v.defaultOctaveShiftProb ?? 0.10),
-          noteOctaveShiftProb: typeof v.noteOctaveShiftProb === 'number' ?
-              v.noteOctaveShiftProb :
-              (v.defaultNoteOctaveShiftProb ?? 0.03),
-          chordOctaveShiftProb: typeof v.chordOctaveShiftProb === 'number' ?
-              v.chordOctaveShiftProb :
-              (v.defaultChordOctaveShiftProb ?? 0.10),
+          octaveShiftProb: typeof v.octaveShiftProb === 'number' ? v.octaveShiftProb : (v.defaultOctaveShiftProb ?? 0.10),
+          noteOctaveShiftProb: typeof v.noteOctaveShiftProb === 'number' ? v.noteOctaveShiftProb : (v.defaultNoteOctaveShiftProb ?? 0.03),
+          chordOctaveShiftProb: typeof v.chordOctaveShiftProb === 'number' ? v.chordOctaveShiftProb : (v.defaultChordOctaveShiftProb ?? 0.10),
           muted: !!v.muted
         };
       });
     }
     if (!voices.piano) {
-      voices.piano = {
-        prob: 0.62,
-        cycle: 7.9,
-        gain: 2.00,
-        release: 4.5,
-        octave: 0,
-        octaveShiftProb: 0.10,
-        noteOctaveShiftProb: 0.03,
-        chordOctaveShiftProb: 0.10,
-        muted: false
-      };
+      voices.piano = { prob: 0.62, cycle: 7.9, gain: 2.00, release: 4.5, octave: 0, octaveShiftProb: 0.10, noteOctaveShiftProb: 0.03, chordOctaveShiftProb: 0.10, muted: false };
     } else if (typeof voices.piano.gain !== 'number' || voices.piano.gain <= 0) {
       voices.piano.gain = 2.00;
     }
@@ -198,18 +112,12 @@
     const phraseParams = {};
     if (pe) {
       PHRASE_SLIDERS.forEach((ps) => {
-        if (typeof pe[ps.key] === 'number') {
-          phraseParams[ps.key] = pe[ps.key];
-        }
+        if (typeof pe[ps.key] === 'number') phraseParams[ps.key] = pe[ps.key];
       });
     }
 
     return {
-      scale,
-      circadian,
-      global: globalParams,
-      probability,
-      voices,
+      scale, circadian, global: globalParams, probability, voices,
       pianoPhraseType: pe?.pianoPhraseType || 'longer_pattern',
       chordProgInstrument: pe?.chordProgInstrument || 'choir',
       phraseParams
@@ -254,21 +162,13 @@
   function persistToLocalStorage() {
     try {
       const payload = {
-        version: 3,
-        globalVoiceBalance,
-        globalVoiceGains,
-        globalVoiceFilters,
-        patchOverrides,
-        customPresets,
-        customTrackPatterns
+        version: 3, globalVoiceBalance, globalVoiceGains, globalVoiceFilters,
+        patchOverrides, customPresets, customTrackPatterns
       };
       localStorage.setItem(LOCAL_STORAGE_PATCHES_KEY, JSON.stringify(payload));
       const app = getApp();
       if (app?.activePresetId) {
-        localStorage.setItem(
-            LOCAL_STORAGE_SESSION_KEY,
-            JSON.stringify(
-                {activePresetId: app.activePresetId, globalVoiceBalance}));
+        localStorage.setItem(LOCAL_STORAGE_SESSION_KEY, JSON.stringify({ activePresetId: app.activePresetId, globalVoiceBalance }));
       }
     } catch (e) {
       console.warn('[patch-storage] localStorage write failed:', e);
@@ -276,24 +176,15 @@
   }
 
   function persistToDisk() {
-    if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') {
-      return;
-    }
+    if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') return;
     const host = window.location.hostname || '';
-    const hasLocalBackend = host === 'localhost' || host === '127.0.0.1' ||
-        host === '::1' || host.endsWith('.googlers.com');
+    const hasLocalBackend = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host.endsWith('.googlers.com');
     if (!hasLocalBackend) return;
 
     const app = getApp();
     const payload = {
-      version: 3,
-      globalVoiceBalance,
-      globalVoiceGains,
-      globalVoiceFilters,
-      patchOverrides,
-      customPresets,
-      customTrackPatterns,
-      activePresetId: app?.activePresetId || null
+      version: 3, globalVoiceBalance, globalVoiceGains, globalVoiceFilters,
+      patchOverrides, customPresets, customTrackPatterns, activePresetId: app?.activePresetId || null
     };
     fetch(API_PATCHES_URL, {
       method: 'POST',
@@ -307,10 +198,8 @@
   function saveGlobalVoiceSettings() {
     const app = getApp();
     if (!app) return;
-    if (app.globalVoiceGains)
-      globalVoiceGains = JSON.parse(JSON.stringify(app.globalVoiceGains));
-    if (app.globalVoiceFilters)
-      globalVoiceFilters = JSON.parse(JSON.stringify(app.globalVoiceFilters));
+    if (app.globalVoiceGains) globalVoiceGains = JSON.parse(JSON.stringify(app.globalVoiceGains));
+    if (app.globalVoiceFilters) globalVoiceFilters = JSON.parse(JSON.stringify(app.globalVoiceFilters));
     persistToLocalStorage();
     persistToDisk();
   }
@@ -349,11 +238,7 @@
     if (!state) return;
 
     const basePreset = window.ENO_DATA?.PRESETS?.[activeId] || {};
-    const updated = {
-      ...basePreset,
-      ...state,
-      id: activeId
-    };
+    const updated = { ...basePreset, ...state, id: activeId };
 
     if (FACTORY_PRESETS && FACTORY_PRESETS[activeId]) {
       patchOverrides[activeId] = state;
@@ -368,7 +253,6 @@
     persistToLocalStorage();
     persistToDisk();
 
-    // Visual button feedback
     const saveBtn = document.getElementById('btn-save-patch');
     const saveIcon = document.getElementById('save-patch-icon');
     const saveLabel = document.getElementById('save-patch-label');
@@ -382,6 +266,34 @@
         if (saveIcon) saveIcon.textContent = 'save';
         if (saveLabel) saveLabel.textContent = 'Save patch';
       }, 1500);
+    }
+    markDirty(false);
+  }
+
+  function registerCustomPatch(presetObj, trackPattern) {
+    if (!presetObj || !presetObj.id) return;
+    customPresets[presetObj.id] = presetObj;
+    if (trackPattern) {
+      customTrackPatterns[presetObj.id] = trackPattern;
+    }
+    persistToLocalStorage();
+    persistToDisk();
+  }
+
+  function deleteCustomPatchById(patchId) {
+    const app = getApp();
+    if (!patchId) return;
+    delete customPresets[patchId];
+    delete customTrackPatterns[patchId];
+    if (window.ENO_DATA?.PRESETS) delete window.ENO_DATA.PRESETS[patchId];
+    if (app?.phraseEngine?.TRACK_PATTERNS) delete app.phraseEngine.TRACK_PATTERNS[patchId];
+    persistToLocalStorage();
+    persistToDisk();
+    if (typeof app?.renderPresetsAndSelects === 'function') {
+      app.renderPresetsAndSelects();
+    }
+    if (app?.activePresetId === patchId) {
+      app.applyPreset('thursday', false);
     }
     markDirty(false);
   }
@@ -447,7 +359,6 @@
     const activeId = app.activePresetId || 'thursday';
 
     if (FACTORY_PRESETS && FACTORY_PRESETS[activeId]) {
-      // Factory preset: revert overrides to pristine defaults
       delete patchOverrides[activeId];
       if (window.ENO_DATA?.PRESETS) {
         window.ENO_DATA.PRESETS[activeId] = JSON.parse(JSON.stringify(FACTORY_PRESETS[activeId]));
@@ -460,22 +371,7 @@
       app.applyPreset(activeId, false);
       markDirty(false);
     } else if (customPresets[activeId]) {
-      // Custom preset: delete and fall back to thursday
-      delete customPresets[activeId];
-      delete customTrackPatterns[activeId];
-      if (window.ENO_DATA?.PRESETS) {
-        delete window.ENO_DATA.PRESETS[activeId];
-      }
-      if (app.phraseEngine?.TRACK_PATTERNS) {
-        delete app.phraseEngine.TRACK_PATTERNS[activeId];
-      }
-      persistToLocalStorage();
-      persistToDisk();
-      if (typeof app.renderPresetsAndSelects === 'function') {
-        app.renderPresetsAndSelects();
-      }
-      app.applyPreset('thursday', false);
-      markDirty(false);
+      deleteCustomPatchById(activeId);
     }
   }
 
@@ -498,11 +394,8 @@
   function markDirty(dirty = true) {
     const saveBtn = document.getElementById('btn-save-patch');
     if (saveBtn) {
-      if (dirty) {
-        saveBtn.classList.add('is-dirty');
-      } else {
-        saveBtn.classList.remove('is-dirty');
-      }
+      if (dirty) saveBtn.classList.add('is-dirty');
+      else saveBtn.classList.remove('is-dirty');
     }
   }
 
@@ -540,19 +433,21 @@
 
   function bindModalAndActions() {
     const saveBtn = document.getElementById('btn-save-patch');
-    if (saveBtn) {
-      saveBtn.addEventListener('click', saveCurrentPatch);
-    }
+    if (saveBtn) saveBtn.addEventListener('click', saveCurrentPatch);
 
     const newBtn = document.getElementById('btn-new-patch');
     if (newBtn) {
-      newBtn.addEventListener('click', openNewPatchModal);
+      newBtn.addEventListener('click', () => {
+        if (window.EnsoPatchRandomizer?.randomizeAndAppendPatch) {
+          window.EnsoPatchRandomizer.randomizeAndAppendPatch();
+        } else {
+          openNewPatchModal();
+        }
+      });
     }
 
     const resetBtn = document.getElementById('btn-reset-patch');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', resetOrDeleteCurrentPatch);
-    }
+    if (resetBtn) resetBtn.addEventListener('click', resetOrDeleteCurrentPatch);
 
     const backdrop = document.getElementById('new-patch-modal-backdrop');
     if (backdrop) {
@@ -570,20 +465,19 @@
     const confirmBtn = document.getElementById('btn-confirm-new-patch');
     const input = document.getElementById('new-patch-name-input');
     if (confirmBtn && input) {
-      confirmBtn.addEventListener('click', () => {
+      const handleCreate = () => {
         const val = input.value.trim() || 'My Soundscape Patch';
         createNewPatch(val);
-      });
+      };
+      confirmBtn.addEventListener('click', handleCreate);
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
-          const val = input.value.trim() || 'My Soundscape Patch';
-          createNewPatch(val);
+          handleCreate();
         }
       });
     }
 
-    // Escape closes modal even when input is focused
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         const bd = document.getElementById('new-patch-modal-backdrop');
@@ -594,15 +488,12 @@
       }
     });
 
-    // Inline clear button on patch name input
     const clearBtn = document.getElementById('btn-clear-patch-name');
     if (input && clearBtn) {
       input.addEventListener('input', () => {
         clearBtn.style.display = input.value ? 'inline-flex' : 'none';
       });
-      clearBtn.addEventListener('mousedown', (e) => {
-        e.preventDefault(); // retain focus
-      });
+      clearBtn.addEventListener('mousedown', (e) => e.preventDefault());
       clearBtn.addEventListener('click', () => {
         input.value = '';
         clearBtn.style.display = 'none';
@@ -610,16 +501,11 @@
       });
     }
 
-    // Mark dirty on control changes (including re-rendered voice cards), except
-    // global Voice balance
-    document
-        .querySelectorAll(
-            '.control-row input, .piano-phrases-card input, .xy-pad-surface')
-        .forEach((el) => {
-          if (el.id === 'piano-other-crossfade') return;
-          el.addEventListener('input', () => markDirty(true));
-          el.addEventListener('change', () => markDirty(true));
-        });
+    document.querySelectorAll('.control-row input, .piano-phrases-card input, .xy-pad-surface').forEach((el) => {
+      if (el.id === 'piano-other-crossfade') return;
+      el.addEventListener('input', () => markDirty(true));
+      el.addEventListener('change', () => markDirty(true));
+    });
     const voicesCont = document.getElementById('voices-cards-container');
     if (voicesCont) {
       voicesCont.addEventListener('input', () => markDirty(true));
@@ -650,49 +536,29 @@
 
   function loadSavedPatchesStartup() {
     const hash = window.location.hash || '';
-    if (hash.includes('selftest=1')) {
-      // In selftest mode, bypass loading overrides to keep baseline test assertions pristine
-      return;
-    }
+    if (hash.includes('selftest=1')) return;
 
-    // 1. Load from localStorage (migrating v1/v2 overrides into v3 factory
-    // defaults)
     try {
       const raw = localStorage.getItem(LOCAL_STORAGE_PATCHES_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if ((parsed.version || 1) < 3) {
           globalVoiceBalance = -0.62;
-          globalVoiceGains = {
-            pad: 0.65,
-            piano: 2.00,
-            bell: 0.50,
-            choir: 0.56,
-            tape: 0.58,
-            drone: 0.62
-          };
+          globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
           patchOverrides = {};
-          if (parsed.globalVoiceFilters)
-            globalVoiceFilters = parsed.globalVoiceFilters;
+          if (parsed.globalVoiceFilters) globalVoiceFilters = parsed.globalVoiceFilters;
           if (parsed.customPresets) customPresets = parsed.customPresets;
-          if (parsed.customTrackPatterns)
-            customTrackPatterns = parsed.customTrackPatterns;
+          if (parsed.customTrackPatterns) customTrackPatterns = parsed.customTrackPatterns;
           persistToLocalStorage();
         } else {
           if (typeof parsed.globalVoiceBalance === 'number') {
-            globalVoiceBalance =
-                Math.max(-1, Math.min(1, parsed.globalVoiceBalance));
+            globalVoiceBalance = Math.max(-1, Math.min(1, parsed.globalVoiceBalance));
           }
-          if (parsed.globalVoiceGains)
-            globalVoiceGains = parsed.globalVoiceGains;
-          if (parsed.globalVoiceFilters)
-            globalVoiceFilters = parsed.globalVoiceFilters;
+          if (parsed.globalVoiceGains) globalVoiceGains = parsed.globalVoiceGains;
+          if (parsed.globalVoiceFilters) globalVoiceFilters = parsed.globalVoiceFilters;
           if (parsed.customPresets) customPresets = parsed.customPresets;
-          if (parsed.customTrackPatterns)
-            customTrackPatterns = parsed.customTrackPatterns;
-          if (parsed.patchOverrides) {
-            patchOverrides = parsed.patchOverrides;
-          }
+          if (parsed.customTrackPatterns) customTrackPatterns = parsed.customTrackPatterns;
+          if (parsed.patchOverrides) patchOverrides = parsed.patchOverrides;
         }
         applyLoadedData();
       }
@@ -700,67 +566,35 @@
       console.warn('[patch-storage] localStorage read failed:', e);
     }
 
-    // 2. Fetch from disk-backed API
     if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
       fetch(API_PATCHES_URL)
-          .then(
-              (res) =>
-                  (res.ok ? res.json() :
-                            fetch(STATIC_PATCHES_URL)
-                                .then((r) => (r.ok ? r.json() : null))))
-          .catch(
-              () => fetch(STATIC_PATCHES_URL)
-                        .then((r) => (r.ok ? r.json() : null))
-                        .catch(() => null))
-          .then((data) => {
-            if (!data) return;
-            if ((data.version || 1) < 3) {
-              globalVoiceBalance = -0.62;
-              globalVoiceGains = {
-                pad: 0.65,
-                piano: 2.00,
-                bell: 0.50,
-                choir: 0.56,
-                tape: 0.58,
-                drone: 0.62
-              };
-              patchOverrides = {};
-              if (data.globalVoiceFilters)
-                globalVoiceFilters = data.globalVoiceFilters;
-              if (data.customPresets)
-                customPresets = {...customPresets, ...data.customPresets};
-              if (data.customTrackPatterns)
-                customTrackPatterns = {
-                  ...customTrackPatterns,
-                  ...data.customTrackPatterns
-                };
-            } else {
-              if (typeof data.globalVoiceBalance === 'number') {
-                globalVoiceBalance =
-                    Math.max(-1, Math.min(1, data.globalVoiceBalance));
-              }
-              if (data.globalVoiceGains)
-                globalVoiceGains = data.globalVoiceGains;
-              if (data.globalVoiceFilters)
-                globalVoiceFilters = data.globalVoiceFilters;
-              if (data.patchOverrides) {
-                patchOverrides = {...patchOverrides, ...data.patchOverrides};
-              }
-              if (data.customPresets)
-                customPresets = {...customPresets, ...data.customPresets};
-              if (data.customTrackPatterns)
-                customTrackPatterns = {
-                  ...customTrackPatterns,
-                  ...data.customTrackPatterns
-                };
+        .then((res) => (res.ok ? res.json() : fetch(STATIC_PATCHES_URL).then((r) => (r.ok ? r.json() : null))))
+        .catch(() => fetch(STATIC_PATCHES_URL).then((r) => (r.ok ? r.json() : null)).catch(() => null))
+        .then((data) => {
+          if (!data) return;
+          if ((data.version || 1) < 3) {
+            globalVoiceBalance = -0.62;
+            globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+            patchOverrides = {};
+            if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
+            if (data.customPresets) customPresets = { ...customPresets, ...data.customPresets };
+            if (data.customTrackPatterns) customTrackPatterns = { ...customTrackPatterns, ...data.customTrackPatterns };
+          } else {
+            if (typeof data.globalVoiceBalance === 'number') {
+              globalVoiceBalance = Math.max(-1, Math.min(1, data.globalVoiceBalance));
             }
-            applyLoadedData();
-            if (data.activePresetId &&
-                window.ENO_DATA?.PRESETS?.[data.activePresetId]) {
-              getApp()?.applyPreset(data.activePresetId, false);
-            }
-          })
-          .catch(() => {});
+            if (data.globalVoiceGains) globalVoiceGains = data.globalVoiceGains;
+            if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
+            if (data.patchOverrides) patchOverrides = { ...patchOverrides, ...data.patchOverrides };
+            if (data.customPresets) customPresets = { ...customPresets, ...data.customPresets };
+            if (data.customTrackPatterns) customTrackPatterns = { ...customTrackPatterns, ...data.customTrackPatterns };
+          }
+          applyLoadedData();
+          if (data.activePresetId && window.ENO_DATA?.PRESETS?.[data.activePresetId]) {
+            getApp()?.applyPreset(data.activePresetId, false);
+          }
+        })
+        .catch(() => {});
     }
   }
 
@@ -769,48 +603,39 @@
     if (!window.ENO_DATA) window.ENO_DATA = {};
     if (!window.ENO_DATA.PRESETS) window.ENO_DATA.PRESETS = {};
 
-    // Apply custom presets
     Object.entries(customPresets).forEach(([id, p]) => {
       window.ENO_DATA.PRESETS[id] = p;
+      if (p.scaleObj && p.scale) {
+        if (!window.ENO_DATA.SCALES) window.ENO_DATA.SCALES = {};
+        window.ENO_DATA.SCALES[p.scale] = p.scaleObj;
+      }
     });
 
-    // Apply custom patterns
     if (app?.phraseEngine?.TRACK_PATTERNS) {
       Object.entries(customTrackPatterns).forEach(([id, pat]) => {
         app.phraseEngine.TRACK_PATTERNS[id] = pat;
       });
     }
 
-    // Apply overrides
     Object.entries(patchOverrides).forEach(([id, over]) => {
       if (window.ENO_DATA.PRESETS[id]) {
         window.ENO_DATA.PRESETS[id] = { ...window.ENO_DATA.PRESETS[id], ...over };
       }
     });
 
-    // Enforce globalVoiceBalance across all tracks and live UI
     Object.values(window.ENO_DATA.PRESETS).forEach((p) => {
       if (p && p.global) p.global.pianoCrossfade = globalVoiceBalance;
     });
     if (app) {
       app.globalVoiceBalance = globalVoiceBalance;
-      if (globalVoiceGains)
-        app.globalVoiceGains = {...app.globalVoiceGains, ...globalVoiceGains};
-      if (globalVoiceFilters)
-        app.globalVoiceFilters = {
-          ...app.globalVoiceFilters,
-          ...globalVoiceFilters
-        };
+      if (globalVoiceGains) app.globalVoiceGains = { ...app.globalVoiceGains, ...globalVoiceGains };
+      if (globalVoiceFilters) app.globalVoiceFilters = { ...app.globalVoiceFilters, ...globalVoiceFilters };
       app.syncVoiceGainSlidersFromCrossfade?.();
       app.syncVoiceFilterSliders?.();
     }
     const xfEl = document.getElementById('piano-other-crossfade');
-    if (xfEl) {
-      xfEl.value = String(globalVoiceBalance);
-    }
-    if (typeof window.syncCrossfadeUI === 'function') {
-      window.syncCrossfadeUI(globalVoiceBalance);
-    }
+    if (xfEl) xfEl.value = String(globalVoiceBalance);
+    if (typeof window.syncCrossfadeUI === 'function') window.syncCrossfadeUI(globalVoiceBalance);
 
     if (typeof app?.renderPresetsAndSelects === 'function') {
       app.renderPresetsAndSelects();
@@ -837,21 +662,30 @@
 
     let patchStorageRoundtripVerified = false;
     let customPatchCreationVerified = false;
+    let patchRandomizerVerified = false;
 
     try {
-      // 1. Save current patch test
       saveCurrentPatch();
       patchStorageRoundtripVerified = true;
 
-      // 2. Create custom patch test
       const testPatchId = createNewPatch('Test Selftest Patch');
       const testBtn = document.querySelector(`[data-preset-id="${testPatchId}"]`);
       customPatchCreationVerified = !!testBtn && window.ENO_DATA?.PRESETS?.[testPatchId]?.name === 'Test Selftest Patch';
 
-      // 3. Reset / delete and restore Thursday
-      resetOrDeleteCurrentPatch();
-      if (app) {
-        app.applyPreset('thursday', false);
+      deleteCustomPatchById(testPatchId);
+      if (app) app.applyPreset('thursday', false);
+
+      // Verify patch randomizer
+      const rndPatchId = window.EnsoPatchRandomizer?.randomizeAndAppendPatch?.();
+      if (rndPatchId) {
+        const rndBtn = document.querySelector(`[data-preset-id="${rndPatchId}"]`);
+        const rndDelBtn = rndBtn?.querySelector('.user-patch-delete-btn');
+        const rndPreset = window.ENO_DATA?.PRESETS?.[rndPatchId];
+        const rndPianoGain = rndPreset?.voices?.piano?.gain;
+        const rndScale = window.ENO_DATA?.SCALES?.[rndPreset?.scale];
+        deleteCustomPatchById(rndPatchId);
+        if (app) app.applyPreset('thursday', false);
+        patchRandomizerVerified = !!rndBtn && !!rndDelBtn && rndPianoGain === 2.00 && !!rndScale;
       }
     } catch (e) {
       console.error('[patch-storage] selftest error:', e);
@@ -859,8 +693,10 @@
 
     data.patchSaveBtnPresent = patchSaveBtnPresent;
     data.newPatchBtnPresent = newPatchBtnPresent;
+    data.newPatchBtnIcon = document.getElementById('new-patch-icon')?.textContent?.trim() || '';
     data.patchStorageRoundtripVerified = patchStorageRoundtripVerified;
     data.customPatchCreationVerified = customPatchCreationVerified;
+    data.patchRandomizerVerified = patchRandomizerVerified;
 
     document.body.setAttribute('data-selftest', JSON.stringify(data));
   }
@@ -886,7 +722,6 @@
       runSelfTestWhenReady();
     }
 
-    // Expose for debugging and inspection
     window.enoPatchStorage = {
       captureCurrentPatchState,
       applyFullPatchState,
@@ -894,6 +729,8 @@
       saveGlobalVoiceBalance,
       saveGlobalVoiceSettings,
       createNewPatch,
+      registerCustomPatch,
+      deleteCustomPatchById,
       resetOrDeleteCurrentPatch,
       openNewPatchModal,
       closeNewPatchModal,

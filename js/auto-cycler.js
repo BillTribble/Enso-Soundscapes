@@ -33,65 +33,29 @@ const STORAGE_KEY = 'enso_auto_cycler_v1';
 const DEFAULT_ENABLED = true;
 const DEFAULT_TRANSITION_MINUTES = 8;
 const DEFAULT_BLEND_SECONDS = 36;
-const NOTE_NAMES =
-    ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
-
-const CIRCLE_ORDER = [
-  'thursday',    // 1. Sunlit Atrium    — G Mixolydian (Parent: C Major 0♯/0♭)
-  'reflection',  // 2. Luminous Drift   — C Lydian     (Parent: G Major 1♯)
-  'installations',   // 3. Cathedral Glass  — F Lydian     (Parent: C Major
-                     // 0♯/0♭)
-  'apollo_shimmer',  // 4. Weightless Orbit — C Major      (Parent: C Major
-                     // 0♯/0♭)
-  'mixing_colours',  // 5. Felt & Mist      — G Dorian     (Parent: F Major 1♭)
-  'discreet_loops'   // 6. Moss & Reel      — D Aeolian    (Parent: F Major 1♭)
-];
-
+const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+const CIRCLE_ORDER = ['thursday', 'reflection', 'installations', 'apollo_shimmer', 'mixing_colours', 'discreet_loops'];
 const GLOBAL_SLIDER_IDS = {
-  attack: 'global-attack',
-  release: 'global-release',
-  sustain: 'global-sustain',
-  masterVolume: 'master-volume',
-  cutoff: 'filter-cutoff',
-  resonance: 'filter-resonance',
-  filterDrift: 'filter-drift',
-  reverbMix: 'reverb-mix',
-  reverbShimmer: 'reverb-shimmer',
-  reverbDecay: 'reverb-decay',
-  reverbDamping: 'reverb-damping',
-  delayMix: 'delay-mix',
-  delayTime: 'delay-time',
-  delayFeedback: 'delay-feedback',
-  delayWow: 'delay-wow'
+  attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume',
+  cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift',
+  reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping',
+  delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow'
 };
 
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
-}
-
-function lerp(a, b, t) {
-  return a + (b - a) * t;
-}
-
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function lerp(a, b, t) { return a + (b - a) * t; }
 function formatMmSs(totalSeconds) {
   const sec = Math.max(0, Math.floor(Number(totalSeconds) || 0));
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
 }
-
 function getCircleFifthsDistance(pcA, pcB) {
   const diff = ((pcB - pcA) % 12 + 12) % 12;
   const steps = [0, 5, 2, 3, 4, 1, 6, 1, 4, 3, 2, 5];
   return steps[diff] ?? 6;
 }
-
 function getIntervalRelationshipLabel(pcA, pcB) {
   const semi = ((pcB - pcA) % 12 + 12) % 12;
-  if (semi === 0) return 'Same tonic';
-  if (semi === 5) return 'P4 tonic (+5 st)';
-  if (semi === 7) return 'P5 tonic (+7 st)';
-  return `${semi} st`;
+  return semi === 0 ? 'Same tonic' : semi === 5 ? 'P4 tonic (+5 st)' : semi === 7 ? 'P5 tonic (+7 st)' : `${semi} st`;
 }
 
 class EnsoAutoCycler {
@@ -123,37 +87,26 @@ class EnsoAutoCycler {
   }
 
   _loadPersistedSettings() {
-    const hash = (typeof window !== 'undefined' && window.location &&
-                  window.location.hash) ||
-        '';
+    const hash = (typeof window !== 'undefined' && window.location && window.location.hash) || '';
     if (hash.includes('selftest=1')) {
-      this.enabled = DEFAULT_ENABLED;
-      this.transitionMinutes = DEFAULT_TRANSITION_MINUTES;
-      return;
+      this.enabled = DEFAULT_ENABLED; this.transitionMinutes = DEFAULT_TRANSITION_MINUTES; return;
     }
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
         if (typeof parsed.enabled === 'boolean') this.enabled = parsed.enabled;
-        if (typeof parsed.transitionMinutes === 'number' &&
-            !isNaN(parsed.transitionMinutes)) {
-          this.transitionMinutes =
-              clamp(Math.round(parsed.transitionMinutes), 1, 30);
+        if (typeof parsed.transitionMinutes === 'number' && !isNaN(parsed.transitionMinutes)) {
+          this.transitionMinutes = clamp(Math.round(parsed.transitionMinutes), 1, 30);
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   _persistSettings() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        enabled: this.enabled,
-        transitionMinutes: this.transitionMinutes
-      }));
-    } catch (e) {
-    }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ enabled: this.enabled, transitionMinutes: this.transitionMinutes }));
+    } catch (e) {}
   }
 
   getOrderedPresetIds() {
@@ -177,14 +130,8 @@ class EnsoAutoCycler {
   getScaleInfo(scaleId) {
     const scales = (window.ENO_DATA && window.ENO_DATA.SCALES) || {};
     return scales[scaleId] || scales.thursday_g || {
-      id: 'thursday_g',
-      tonic: 'G',
-      modeName: 'Mixolydian',
-      parentKeySignature: 'C Major (0♯/0♭)',
-      keySigFifths: 0,
-      keyLabel: 'G Mixolydian',
-      rootMidi: 55,
-      intervals: [0, 2, 4, 5, 7, 9, 10],
+      id: 'thursday_g', tonic: 'G', modeName: 'Mixolydian', parentKeySignature: 'C Major (0♯/0♭)',
+      keySigFifths: 0, keyLabel: 'G Mixolydian', rootMidi: 55, intervals: [0, 2, 4, 5, 7, 9, 10],
       defaultWeights: [0.9, 0.75, 0.6, 0.3, 0.8, 0.5, 0.4]
     };
   }
@@ -233,20 +180,13 @@ class EnsoAutoCycler {
       if (!validStep) allValidModalSteps = false;
 
       transitions.push({
-        fromPresetId: fromId,
-        fromName: fromP.name,
-        fromKey: scA.keyLabel || fromP.keyLabel,
+        fromPresetId: fromId, fromName: fromP.name, fromKey: scA.keyLabel || fromP.keyLabel,
         fromParentKeySig: scA.parentKeySignature || 'C Major (0♯/0♭)',
-        toPresetId: toId,
-        toName: toP.name,
-        toKey: scB.keyLabel || toP.keyLabel,
+        toPresetId: toId, toName: toP.name, toKey: scB.keyLabel || toP.keyLabel,
         toParentKeySig: scB.parentKeySignature || 'C Major (0♯/0♭)',
-        semitones: semi,
-        circleFifthsDistance: fifthsDist,
-        keySigDelta,
+        semitones: semi, circleFifthsDistance: fifthsDist, keySigDelta,
         relationship: getIntervalRelationshipLabel(pcA, pcB),
-        sharedPitchClassesCount: shared.length,
-        sharedNoteNames: shared.map((pc) => NOTE_NAMES[pc]),
+        sharedPitchClassesCount: shared.length, sharedNoteNames: shared.map((pc) => NOTE_NAMES[pc]),
         validStep
       });
     }
@@ -261,19 +201,14 @@ class EnsoAutoCycler {
 
   setEnabled(val, persist = true) {
     this.enabled = Boolean(val);
-    if (!this.enabled && this.blending) {
-      this._cancelBlendAndRestoreCurrent();
-    }
+    if (!this.enabled && this.blending) this._cancelBlendAndRestoreCurrent();
     if (persist) this._persistSettings();
     this.syncUI();
   }
 
   setTransitionMinutes(mins, persist = true) {
-    const m =
-        clamp(Math.round(Number(mins) || DEFAULT_TRANSITION_MINUTES), 1, 30);
-    this.transitionMinutes = m;
-    const totalSec = m * 60;
-    this.blendDurationSec = clamp(Math.round(totalSec * 0.10), 12, 45);
+    this.transitionMinutes = clamp(Math.round(Number(mins) || DEFAULT_TRANSITION_MINUTES), 1, 30);
+    this.blendDurationSec = clamp(Math.round(this.transitionMinutes * 60 * 0.10), 12, 45);
     if (persist) this._persistSettings();
     this.syncUI();
   }
@@ -281,10 +216,7 @@ class EnsoAutoCycler {
   onManualPresetChange(presetId) {
     if (this._internalApplyingPreset) return;
     if (this.blending) {
-      this.blending = false;
-      this.blendElapsedSec = 0;
-      this.blendProgress = 0;
-      this.blendAlpha = 0;
+      this.blending = false; this.blendElapsedSec = 0; this.blendProgress = 0; this.blendAlpha = 0;
     }
     this.trackElapsedSec = 0;
     this.trackStartedAtMs = Date.now();
