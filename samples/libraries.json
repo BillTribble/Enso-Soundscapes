@@ -1,0 +1,657 @@
+{
+  "salamander": {
+    "id": "salamander",
+    "name": "Salamander Grand v3 (Yamaha C5)",
+    "instrument": "Yamaha C5 Concert Grand",
+    "author": "Alexander Holm (CC-BY 3.0)",
+    "format": "24-bit / 48 kHz Stereo FLAC",
+    "filesCount": 97,
+    "sizeMb": 121.0,
+    "layers": "3 soft velocity tiers (v1 ppp, v3 pp, v5 mp of 16) + 7 mechanical pedal/key releases",
+    "character": "Ultra-delicate ppp hammer strike with long, woody soundboard bloom; our top pick for Eno/Chilvers felt piano."
+  },
+  "intimate_c3": {
+    "id": "intimate_c3",
+    "name": "Intimate Piano (Yamaha C3 Close + Decca)",
+    "instrument": "Yamaha C3 Conservatory Grand (Dual-Mic)",
+    "author": "Bengt Nilsson / kinwie",
+    "format": "16-bit / 44.1 kHz Stereo FLAC (Close + Decca Tree)",
+    "filesCount": 60,
+    "sizeMb": 14.5,
+    "layers": "Dual-mic Level 1 pp soft layer (30 Close mic + 30 Decca Tree ambient room mic zones)",
+    "character": "Blends dry close hammers with lush Decca Tree hall air \u2014 the closest architectural cousin to Ivy Audio Piano in 162.",
+    "zones": [
+      {
+        "midi": 21,
+        "close": "samples/intimate_c3/close_21.flac",
+        "decca": "samples/intimate_c3/decca_21.flac"
+      },
+      {
+        "midi": 24,
+        "close": "samples/intimate_c3/close_24.flac",
+        "decca": "samples/intimate_c3/decca_24.flac"
+      },
+      {
+        "midi": 27,
+        "close": "samples/intimate_c3/close_27.flac",
+        "decca": "samples/intimate_c3/decca_27.flac"
+      },
+      {
+        "midi": 30,
+        "close": "samples/intimate_c3/close_30.flac",
+        "decca": "samples/intimate_c3/decca_30.flac"
+      },
+      {
+        "midi": 33,
+        "close": "samples/intimate_c3/close_33.flac",
+        "decca": "samples/intimate_c3/decca_33.flac"
+      },
+      {
+        "midi": 36,
+        "close": "samples/intimate_c3/close_36.flac",
+        "decca": "samples/intimate_c3/decca_36.flac"
+      },
+      {
+        "midi": 39,
+        "close": "samples/intimate_c3/close_39.flac",
+        "decca": "samples/intimate_c3/decca_39.flac"
+      },
+      {
+        "midi": 42,
+        "close": "samples/intimate_c3/close_42.flac",
+        "decca": "samples/intimate_c3/decca_42.flac"
+      },
+      {
+        "midi": 45,
+        "close": "samples/intimate_c3/close_45.flac",
+        "decca": "samples/intimate_c3/decca_45.flac"
+      },
+      {
+        "midi": 48,
+        "close": "samples/intimate_c3/close_48.flac",
+        "decca": "samples/intimate_c3/decca_48.flac"
+      },
+      {
+        "midi": 51,
+        "close": "samples/intimate_c3/close_51.flac",
+        "decca": "samples/intimate_c3/decca_51.flac"
+      },
+      {
+        "midi": 54,
+        "close": "samples/intimate_c3/close_54.flac",
+        "decca": "samples/intimate_c3/decca_54.flac"
+      },
+      {
+        "midi": 57,
+        "close": "samples/intimate_c3/close_57.flac",
+        "decca": "samples/intimate_c3/decca_57.flac"
+      },
+      {
+        "midi": 60,
+        "close": "samples/intimate_c3/close_60.flac",
+        "decca": "samples/intimate_c3/decca_60.flac"
+      },
+      {
+        "midi": 63,
+        "close": "samples/intimate_c3/close_63.flac",
+        "decca": "samples/intimate_c3/decca_63.flac"
+      },
+      {
+        "midi": 66,
+        "close": "samples/intimate_c3/close_66.flac",
+        "decca": "samples/intimate_c3/decca_66.flac"
+      },
+      {
+        "midi": 69,
+        "close": "samples/intimate_c3/close_69.flac",
+        "decca": "samples/intimate_c3/decca_69.flac"
+      },
+      {
+        "midi": 72,
+        "close": "samples/intimate_c3/close_72.flac",
+        "decca": "samples/intimate_c3/decca_72.flac"
+      },
+      {
+        "midi": 75,
+        "close": "samples/intimate_c3/close_75.flac",
+        "decca": "samples/intimate_c3/decca_75.flac"
+      },
+      {
+        "midi": 78,
+        "close": "samples/intimate_c3/close_78.flac",
+        "decca": "samples/intimate_c3/decca_78.flac"
+      },
+      {
+        "midi": 81,
+        "close": "samples/intimate_c3/close_81.flac",
+        "decca": "samples/intimate_c3/decca_81.flac"
+      },
+      {
+        "midi": 84,
+        "close": "samples/intimate_c3/close_84.flac",
+        "decca": "samples/intimate_c3/decca_84.flac"
+      },
+      {
+        "midi": 87,
+        "close": "samples/intimate_c3/close_87.flac",
+        "decca": "samples/intimate_c3/decca_87.flac"
+      },
+      {
+        "midi": 90,
+        "close": "samples/intimate_c3/close_90.flac",
+        "decca": "samples/intimate_c3/decca_90.flac"
+      },
+      {
+        "midi": 93,
+        "close": "samples/intimate_c3/close_93.flac",
+        "decca": "samples/intimate_c3/decca_93.flac"
+      },
+      {
+        "midi": 96,
+        "close": "samples/intimate_c3/close_96.flac",
+        "decca": "samples/intimate_c3/decca_96.flac"
+      },
+      {
+        "midi": 99,
+        "close": "samples/intimate_c3/close_99.flac",
+        "decca": "samples/intimate_c3/decca_99.flac"
+      },
+      {
+        "midi": 102,
+        "close": "samples/intimate_c3/close_102.flac",
+        "decca": "samples/intimate_c3/decca_102.flac"
+      },
+      {
+        "midi": 105,
+        "close": "samples/intimate_c3/close_105.flac",
+        "decca": "samples/intimate_c3/decca_105.flac"
+      },
+      {
+        "midi": 108,
+        "close": "samples/intimate_c3/close_108.flac",
+        "decca": "samples/intimate_c3/decca_108.flac"
+      }
+    ]
+  },
+  "upright_kw": {
+    "id": "upright_kw",
+    "name": "Upright Piano KW (Kawai Upright)",
+    "instrument": "Kawai Acoustic Upright Piano",
+    "author": "FreePats Project (CC0 Public Domain)",
+    "format": "24-bit / 44.1 kHz Stereo FLAC",
+    "filesCount": 30,
+    "sizeMb": 15.8,
+    "layers": "Soft vL velocity layer across all 30 minor-third zones (A0\u2013C8)",
+    "character": "Woody, intimate upright cabinet resonance with shorter, darker decay \u2014 classic Roger & Brian Eno / Nils Frahm felt upright aesthetic.",
+    "zones": [
+      {
+        "midi": 21,
+        "note": "A0",
+        "file": "samples/upright_kw/A0vL.flac"
+      },
+      {
+        "midi": 24,
+        "note": "C1",
+        "file": "samples/upright_kw/C1vL.flac"
+      },
+      {
+        "midi": 27,
+        "note": "Ds1",
+        "file": "samples/upright_kw/Ds1vL.flac"
+      },
+      {
+        "midi": 30,
+        "note": "Fs1",
+        "file": "samples/upright_kw/Fs1vL.flac"
+      },
+      {
+        "midi": 33,
+        "note": "A1",
+        "file": "samples/upright_kw/A1vL.flac"
+      },
+      {
+        "midi": 36,
+        "note": "C2",
+        "file": "samples/upright_kw/C2vL.flac"
+      },
+      {
+        "midi": 39,
+        "note": "Ds2",
+        "file": "samples/upright_kw/Ds2vL.flac"
+      },
+      {
+        "midi": 42,
+        "note": "Fs2",
+        "file": "samples/upright_kw/Fs2vL.flac"
+      },
+      {
+        "midi": 45,
+        "note": "A2",
+        "file": "samples/upright_kw/A2vL.flac"
+      },
+      {
+        "midi": 48,
+        "note": "C3",
+        "file": "samples/upright_kw/C3vL.flac"
+      },
+      {
+        "midi": 51,
+        "note": "Ds3",
+        "file": "samples/upright_kw/Ds3vL.flac"
+      },
+      {
+        "midi": 54,
+        "note": "Fs3",
+        "file": "samples/upright_kw/Fs3vL.flac"
+      },
+      {
+        "midi": 57,
+        "note": "A3",
+        "file": "samples/upright_kw/A3vL.flac"
+      },
+      {
+        "midi": 60,
+        "note": "C4",
+        "file": "samples/upright_kw/C4vL.flac"
+      },
+      {
+        "midi": 63,
+        "note": "Ds4",
+        "file": "samples/upright_kw/Ds4vL.flac"
+      },
+      {
+        "midi": 66,
+        "note": "Fs4",
+        "file": "samples/upright_kw/Fs4vL.flac"
+      },
+      {
+        "midi": 69,
+        "note": "A4",
+        "file": "samples/upright_kw/A4vL.flac"
+      },
+      {
+        "midi": 72,
+        "note": "C5",
+        "file": "samples/upright_kw/C5vL.flac"
+      },
+      {
+        "midi": 75,
+        "note": "Ds5",
+        "file": "samples/upright_kw/Ds5vL.flac"
+      },
+      {
+        "midi": 78,
+        "note": "Fs5",
+        "file": "samples/upright_kw/Fs5vL.flac"
+      },
+      {
+        "midi": 81,
+        "note": "A5",
+        "file": "samples/upright_kw/A5vL.flac"
+      },
+      {
+        "midi": 84,
+        "note": "C6",
+        "file": "samples/upright_kw/C6vL.flac"
+      },
+      {
+        "midi": 87,
+        "note": "Ds6",
+        "file": "samples/upright_kw/Ds6vL.flac"
+      },
+      {
+        "midi": 90,
+        "note": "Fs6",
+        "file": "samples/upright_kw/Fs6vL.flac"
+      },
+      {
+        "midi": 93,
+        "note": "A6",
+        "file": "samples/upright_kw/A6vL.flac"
+      },
+      {
+        "midi": 96,
+        "note": "C7",
+        "file": "samples/upright_kw/C7vL.flac"
+      },
+      {
+        "midi": 99,
+        "note": "Ds7",
+        "file": "samples/upright_kw/Ds7vL.flac"
+      },
+      {
+        "midi": 102,
+        "note": "Fs7",
+        "file": "samples/upright_kw/Fs7vL.flac"
+      },
+      {
+        "midi": 105,
+        "note": "A7",
+        "file": "samples/upright_kw/A7vL.flac"
+      },
+      {
+        "midi": 108,
+        "note": "C8",
+        "file": "samples/upright_kw/C8vL.flac"
+      }
+    ]
+  },
+  "steinway_splendid": {
+    "id": "steinway_splendid",
+    "name": "Splendid Grand (Steinway Model D PP)",
+    "instrument": "Steinway Concert Grand (Akai Master)",
+    "author": "Akai Public Domain / SFZ Instruments",
+    "format": "16-bit / 44.1 kHz Stereo FLAC",
+    "filesCount": 61,
+    "sizeMb": 22.4,
+    "layers": "Softest PP velocity layer across 61 chromatic/whole-tone zones (A0\u2013C8)",
+    "character": "Rich, dark American Steinway low-mid warmth and velvety fundamental sustain.",
+    "zones": [
+      {
+        "midi": 11,
+        "note": "B-1",
+        "file": "samples/steinway_splendid/PP_B-1.flac"
+      },
+      {
+        "midi": 15,
+        "note": "Ds0",
+        "file": "samples/steinway_splendid/PP_Ds0.flac"
+      },
+      {
+        "midi": 17,
+        "note": "F0",
+        "file": "samples/steinway_splendid/PP_F0.flac"
+      },
+      {
+        "midi": 19,
+        "note": "G0",
+        "file": "samples/steinway_splendid/PP_G0.flac"
+      },
+      {
+        "midi": 21,
+        "note": "A0",
+        "file": "samples/steinway_splendid/PP_A0.flac"
+      },
+      {
+        "midi": 23,
+        "note": "B0",
+        "file": "samples/steinway_splendid/PP_B0.flac"
+      },
+      {
+        "midi": 25,
+        "note": "Cs1",
+        "file": "samples/steinway_splendid/PP_Cs1.flac"
+      },
+      {
+        "midi": 26,
+        "note": "D1",
+        "file": "samples/steinway_splendid/PP_D1.flac"
+      },
+      {
+        "midi": 28,
+        "note": "E1",
+        "file": "samples/steinway_splendid/PP_E1.flac"
+      },
+      {
+        "midi": 29,
+        "note": "F1",
+        "file": "samples/steinway_splendid/PP_F1.flac"
+      },
+      {
+        "midi": 31,
+        "note": "G1",
+        "file": "samples/steinway_splendid/PP_G1.flac"
+      },
+      {
+        "midi": 33,
+        "note": "A1",
+        "file": "samples/steinway_splendid/PP_A1.flac"
+      },
+      {
+        "midi": 35,
+        "note": "B1",
+        "file": "samples/steinway_splendid/PP_B1.flac"
+      },
+      {
+        "midi": 36,
+        "note": "C2",
+        "file": "samples/steinway_splendid/PP_C2.flac"
+      },
+      {
+        "midi": 38,
+        "note": "D2",
+        "file": "samples/steinway_splendid/PP_D2.flac"
+      },
+      {
+        "midi": 40,
+        "note": "E2",
+        "file": "samples/steinway_splendid/PP_E2.flac"
+      },
+      {
+        "midi": 41,
+        "note": "F2",
+        "file": "samples/steinway_splendid/PP_F2.flac"
+      },
+      {
+        "midi": 43,
+        "note": "G2",
+        "file": "samples/steinway_splendid/PP_G2.flac"
+      },
+      {
+        "midi": 44,
+        "note": "Gs2",
+        "file": "samples/steinway_splendid/PP_Gs2.flac"
+      },
+      {
+        "midi": 45,
+        "note": "A2",
+        "file": "samples/steinway_splendid/PP_A2.flac"
+      },
+      {
+        "midi": 46,
+        "note": "As2",
+        "file": "samples/steinway_splendid/PP_As2.flac"
+      },
+      {
+        "midi": 47,
+        "note": "B2",
+        "file": "samples/steinway_splendid/PP_B2.flac"
+      },
+      {
+        "midi": 48,
+        "note": "C3",
+        "file": "samples/steinway_splendid/PP_C3.flac"
+      },
+      {
+        "midi": 50,
+        "note": "D3",
+        "file": "samples/steinway_splendid/PP_D3.flac"
+      },
+      {
+        "midi": 52,
+        "note": "E3",
+        "file": "samples/steinway_splendid/PP_E3.flac"
+      },
+      {
+        "midi": 53,
+        "note": "F3",
+        "file": "samples/steinway_splendid/PP_F3.flac"
+      },
+      {
+        "midi": 55,
+        "note": "G3",
+        "file": "samples/steinway_splendid/PP_G3.flac"
+      },
+      {
+        "midi": 57,
+        "note": "A3",
+        "file": "samples/steinway_splendid/PP_A3.flac"
+      },
+      {
+        "midi": 59,
+        "note": "B3",
+        "file": "samples/steinway_splendid/PP_B3.flac"
+      },
+      {
+        "midi": 60,
+        "note": "C4",
+        "file": "samples/steinway_splendid/PP_C4.flac"
+      },
+      {
+        "midi": 62,
+        "note": "D4",
+        "file": "samples/steinway_splendid/PP_D4.flac"
+      },
+      {
+        "midi": 64,
+        "note": "E4",
+        "file": "samples/steinway_splendid/PP_E4.flac"
+      },
+      {
+        "midi": 65,
+        "note": "F4",
+        "file": "samples/steinway_splendid/PP_F4.flac"
+      },
+      {
+        "midi": 67,
+        "note": "G4",
+        "file": "samples/steinway_splendid/PP_G4.flac"
+      },
+      {
+        "midi": 68,
+        "note": "Gs4",
+        "file": "samples/steinway_splendid/PP_Gs4.flac"
+      },
+      {
+        "midi": 69,
+        "note": "A4",
+        "file": "samples/steinway_splendid/PP_A4.flac"
+      },
+      {
+        "midi": 70,
+        "note": "As4",
+        "file": "samples/steinway_splendid/PP_As4.flac"
+      },
+      {
+        "midi": 71,
+        "note": "B4",
+        "file": "samples/steinway_splendid/PP_B4.flac"
+      },
+      {
+        "midi": 73,
+        "note": "Cs5",
+        "file": "samples/steinway_splendid/PP_Cs5.flac"
+      },
+      {
+        "midi": 74,
+        "note": "D5",
+        "file": "samples/steinway_splendid/PP_D5.flac"
+      },
+      {
+        "midi": 75,
+        "note": "Ds5",
+        "file": "samples/steinway_splendid/PP_Ds5.flac"
+      },
+      {
+        "midi": 77,
+        "note": "F5",
+        "file": "samples/steinway_splendid/PP_F5.flac"
+      },
+      {
+        "midi": 78,
+        "note": "Fs5",
+        "file": "samples/steinway_splendid/PP_Fs5.flac"
+      },
+      {
+        "midi": 79,
+        "note": "G5",
+        "file": "samples/steinway_splendid/PP_G5.flac"
+      },
+      {
+        "midi": 80,
+        "note": "Gs5",
+        "file": "samples/steinway_splendid/PP_Gs5.flac"
+      },
+      {
+        "midi": 81,
+        "note": "A5",
+        "file": "samples/steinway_splendid/PP_A5.flac"
+      },
+      {
+        "midi": 82,
+        "note": "As5",
+        "file": "samples/steinway_splendid/PP_As5.flac"
+      },
+      {
+        "midi": 83,
+        "note": "B5",
+        "file": "samples/steinway_splendid/PP_B5.flac"
+      },
+      {
+        "midi": 84,
+        "note": "C6",
+        "file": "samples/steinway_splendid/PP_C6.flac"
+      },
+      {
+        "midi": 85,
+        "note": "Cs6",
+        "file": "samples/steinway_splendid/PP_Cs6.flac"
+      },
+      {
+        "midi": 86,
+        "note": "D6",
+        "file": "samples/steinway_splendid/PP_D6.flac"
+      },
+      {
+        "midi": 87,
+        "note": "Ds6",
+        "file": "samples/steinway_splendid/PP_Ds6.flac"
+      },
+      {
+        "midi": 88,
+        "note": "E6",
+        "file": "samples/steinway_splendid/PP_E6.flac"
+      },
+      {
+        "midi": 89,
+        "note": "F6",
+        "file": "samples/steinway_splendid/PP_F6.flac"
+      },
+      {
+        "midi": 90,
+        "note": "Fs6",
+        "file": "samples/steinway_splendid/PP_Fs6.flac"
+      },
+      {
+        "midi": 91,
+        "note": "G6",
+        "file": "samples/steinway_splendid/PP_G6.flac"
+      },
+      {
+        "midi": 92,
+        "note": "Gs6",
+        "file": "samples/steinway_splendid/PP_Gs6.flac"
+      },
+      {
+        "midi": 93,
+        "note": "A6",
+        "file": "samples/steinway_splendid/PP_A6.flac"
+      },
+      {
+        "midi": 94,
+        "note": "As6",
+        "file": "samples/steinway_splendid/PP_As6.flac"
+      },
+      {
+        "midi": 95,
+        "note": "B6",
+        "file": "samples/steinway_splendid/PP_B6.flac"
+      },
+      {
+        "midi": 96,
+        "note": "C7",
+        "file": "samples/steinway_splendid/PP_C7.flac"
+      }
+    ]
+  }
+}

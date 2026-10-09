@@ -1,0 +1,48 @@
+/* Aurora WebGL Background & Translucent Surface Luminance */
+
+#aurora {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  display: block;
+  pointer-events: none;
+}
+
+html {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+body,
+.app-shell,
+.top-app-bar,
+#top-bar-volume-row,
+.top-app-bar .control-row.has-rotary-dial {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.preset-strip-card,
+.surface-card,
+.research-card,
+.research-homage-banner {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 76%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.nested-card,
+.voice-card,
+.degree-column,
+.event-log-item {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 74%, transparent);
+}
+
+.canvas-stage-wrapper {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 45%, transparent);
+}

@@ -1,0 +1,149 @@
+{
+  "activePresetId": "thursday",
+  "customPresets": {},
+  "customTrackPatterns": {},
+  "globalVoiceBalance": -0.49,
+  "globalVoiceGains": {
+    "pad": 0.32,
+    "piano": 2.0,
+    "bell": 0.25,
+    "choir": 0.28,
+    "tape": 0.29,
+    "drone": 0.31
+  },
+  "globalVoiceFilters": {
+    "pad": { "cutoff": 5200, "resonance": 1.2 },
+    "piano": { "cutoff": 12000, "resonance": 0.8 },
+    "bell": { "cutoff": 9500, "resonance": 1.4 },
+    "choir": { "cutoff": 6400, "resonance": 1.2 },
+    "tape": { "cutoff": 4200, "resonance": 1.6 },
+    "drone": { "cutoff": 1800, "resonance": 1.8 }
+  },
+  "patchOverrides": {
+    "thursday": {
+      "chordProgInstrument": "choir",
+      "circadian": "off",
+      "global": {
+        "attack": 3.2,
+        "cutoff": 2200,
+        "delayFeedback": 0.58,
+        "delayMix": 0.38,
+        "delayTime": 0.82,
+        "delayWow": 0.18,
+        "envelopeMode": "override",
+        "filterDrift": 0.2,
+        "filterType": "lowpass",
+        "masterVolume": 0.92,
+        "pianoCrossfade": -0.49,
+        "release": 7,
+        "resonance": 1.1,
+        "reverbDamping": 6200,
+        "reverbDecay": 9.5,
+        "reverbMix": 0.5,
+        "reverbShimmer": 0.14,
+        "sustain": 0.7
+      },
+      "phraseParams": {
+        "chordProgCycle": 10.7,
+        "chordProgGate": 0.92,
+        "noteOctaveShiftChance": 0.03,
+        "phraseCompletionGate": 0.18,
+        "phraseGateProb": 0.76,
+        "phraseLoopCycle": 6.7,
+        "phraseNoteGate": 0.22,
+        "phraseSkipChance": 0.15,
+        "phraseVariationChance": 0.55
+      },
+      "pianoPhraseType": "longer_pattern",
+      "probability": {
+        "activeVoiceCount": 6,
+        "degreeWeights": [
+          0.9,
+          0.75,
+          0.6,
+          0.3,
+          0.8,
+          0.5,
+          0.4
+        ],
+        "densityBias": 0.05,
+        "globalProb": 0.58,
+        "mutationRate": 0.1,
+        "rotationSpeed": 0.9,
+        "timeStretch": 1.11,
+        "voiceOrder": [
+          "pad",
+          "piano",
+          "bell",
+          "choir",
+          "tape",
+          "drone"
+        ]
+      },
+      "scale": "thursday_g",
+      "voices": {
+        "bell": {
+          "cycle": 13.1,
+          "gain": 0.25,
+          "muted": false,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.4,
+          "release": 4.8,
+          "noteOctaveShiftProb": 0.03
+        },
+        "choir": {
+          "cycle": 10.7,
+          "gain": 0.28,
+          "muted": false,
+          "octave": 1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.92,
+          "release": 9.2,
+          "noteOctaveShiftProb": 0.03
+        },
+        "drone": {
+          "cycle": 37.3,
+          "gain": 0.31,
+          "muted": false,
+          "octave": -1,
+          "octaveShiftProb": 0.1,
+          "prob": 0.7,
+          "release": 10.5,
+          "noteOctaveShiftProb": 0.03
+        },
+        "pad": {
+          "cycle": 19.1,
+          "gain": 0.32,
+          "muted": false,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.68,
+          "release": 8,
+          "noteOctaveShiftProb": 0.03
+        },
+        "piano": {
+          "cycle": 6.7,
+          "gain": 2,
+          "muted": false,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.76,
+          "release": 4.2,
+          "noteOctaveShiftProb": 0.03
+        },
+        "tape": {
+          "cycle": 17.9,
+          "gain": 0.29,
+          "muted": false,
+          "octave": 0,
+          "octaveShiftProb": 0.1,
+          "prob": 0.5,
+          "release": 5.8,
+          "noteOctaveShiftProb": 0.03
+        }
+      }
+    }
+  },
+  "version": 2
+}

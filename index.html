@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enso Soundscapes</title>
+  <script>
+    if (window.location.protocol !== 'file:' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost' && !window.location.hash.includes('selftest=1') && !navigator.webdriver) {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.media = 'print';
+      l.onload = function() { this.media = 'all'; };
+      l.href = 'https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+      document.head.appendChild(l);
+    }
+  </script>
+  <script id="selftest-spec">/* data-selftest='{"ok":true,"defaultPresetId":"thursday","brandTitleText":"Enso Soundscapes","phraseVariationChanceDefault":0.55,"pwaManifestLinked":true,"mediaSessionSupported":true,"bgKeepAlivePresent":true,"mobileTopBarTwoRows":true,"mobileZeroHorizontalOverflow":true,"canvasRenderedPixels":true}' */</script>
+  <meta name="theme-color" content="#0e141b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Enso">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/tokens.css?v=20261009e">
+  <link rel="stylesheet" href="css/styles.css?v=20261009e">
+  <link rel="stylesheet" href="css/phrases.css?v=20261009e">
+  <link rel="stylesheet" href="css/button-styles.css?v=20261009e">
+  <link rel="stylesheet" href="css/slider-styles.css?v=20261009e">
+  <link rel="stylesheet" href="css/mixer-dials.css?v=20261009e">
+  <link rel="stylesheet" href="css/patch-storage.css?v=20261009e">
+  <link rel="stylesheet" href="css/aurora.css?v=20261009e">
+</head>
+<body class="slider-scope slider-style-tonal-fill-bar slider-size-std" data-control-style="dials">
+  <canvas id="aurora" aria-hidden="true"></canvas>
+  <div id="app-root" class="app-shell">
+    <!-- Top App Bar -->
+    <header class="top-app-bar">
+      <div class="brand-cluster">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="material-symbols-outlined">graphic_eq</span>
+        </div>
+        <div>
+          <h1 class="brand-title">Enso Soundscapes</h1>
+        </div>
+      </div>
+
+      <!-- AI Studio Pill-Style Navigation Tabs -->
+      <nav class="m3-pill-tabs gm3-connected-dsp" role="tablist" aria-label="Studio views">
+        <button type="button" class="m3-pill-tab active" data-tab="studio" role="tab" aria-selected="true">
+          <span>Studio</span>
+        </button>
+        <button type="button" class="m3-pill-tab" data-tab="probability" role="tab" aria-selected="false">
+          <span>Scale</span>
+        </button>
+        <button type="button" class="m3-pill-tab" data-tab="research" role="tab" aria-selected="false">
+          <span>Methods</span>
+        </button>
+      </nav>
+
+      <!-- Global Transport & Theme Actions (Single Primary .btn on screen) -->
+      <div id="studio-top-actions" class="top-bar-actions">
+        <button type="button" id="btn-fade-voices" class="icon-btn" aria-label="Release all currently sustaining voices" title="Release all currently sustaining voices">
+          <span class="material-symbols-outlined">priority_high</span>
+        </button>
+        <button type="button" id="btn-play-toggle" class="btn" aria-pressed="false">
+          <span id="play-icon" class="material-symbols-outlined">play_arrow</span>
+          <span id="play-label">Start engine</span>
+        </button>
+        <div id="top-bar-volume-row" class="control-row top-bar-volume-dial">
+          <div class="control-label-line">
+            <label for="top-master-volume">Volume</label>
+            <span id="val-top-master-volume" class="control-value">80%</span>
+          </div>
+          <input type="range" id="top-master-volume" aria-label="Overall volume" min="0.0" max="1.0" step="0.01" value="0.80" data-default-value="0.80">
+        </div>
+        <div class="settings-popover-anchor">
+          <button type="button" id="btn-settings-toggle" class="icon-btn" aria-label="Mix settings" aria-expanded="false" aria-controls="settings-popover" title="Settings">
+            <span class="material-symbols-outlined">settings</span>
+          </button>
+          <div id="settings-popover" class="settings-popover" role="dialog" aria-label="Voice balance settings" aria-hidden="true">
+            <div class="settings-popover-header">
+              <span class="settings-popover-title">Voice balance</span>
+              <div class="settings-popover-header-actions">
+                <button type="button" id="btn-reset-crossfade" class="btn-text settings-reset-btn" title="Reset crossfade to center">Center</button>
+                <button type="button" id="btn-close-settings" class="icon-btn settings-close-btn" aria-label="Close settings" title="Close">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+            </div>
+            <div class="settings-crossfade-group">
+              <div class="crossfade-endpoints-row">
+                <div class="crossfade-endpoint">
+                  <span class="badge badge-teal">Piano</span>
+                  <span id="val-xfade-piano" class="control-value">100%</span>
+                </div>
+                <span id="val-piano-crossfade" class="crossfade-status-pill">Balanced</span>
+                <div class="crossfade-endpoint crossfade-endpoint-right">
+                  <span id="val-xfade-other" class="control-value">100%</span>
+                  <span class="badge badge-blue">All other sounds</span>
+                </div>
+              </div>
+              <div class="crossfade-slider-wrap">
+                <input type="range" id="piano-other-crossfade" aria-label="Global voice balance between piano and all other sounds across all tracks" min="-1" max="1" step="0.01" value="-0.49" data-default-value="-0.49">
+                <div class="crossfade-center-tick" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <div class="settings-divider" role="separator"></div>
+
+            <div class="settings-autocycle-section">
+              <div class="settings-autocycle-header">
+                <div class="settings-autocycle-title-cluster">
+                  <span class="settings-popover-title">Auto-cycle tracks</span>
+                  <span id="auto-cycle-status-pill" class="badge badge-teal">Circle of 5ths · On</span>
+                </div>
+                <label class="m3-switch" for="auto-cycle-toggle" title="Automatically transition and blend between tracks in the Circle of Fifths">
+                  <input type="checkbox" id="auto-cycle-toggle" checked aria-label="Auto-cycle tracks in Circle of Fifths">
+                  <span class="m3-switch-track">
+                    <span class="m3-switch-thumb"></span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="settings-crossfade-group settings-autocycle-group">
+                <div class="autocycle-time-row">
+                  <label for="auto-cycle-minutes" class="autocycle-time-label">Time to transition</label>
+                  <span id="val-auto-cycle-minutes" class="control-value">8 min</span>
+                </div>
+                <div class="crossfade-slider-wrap">
+                  <input type="range" id="auto-cycle-minutes" aria-label="Time to transition between tracks in minutes" min="1" max="30" step="1" value="8" data-default-value="8">
+                </div>
+                <div class="autocycle-progress-track" aria-hidden="true">
+                  <div id="auto-cycle-progress-fill" class="autocycle-progress-fill"></div>
+                </div>
+                <div class="autocycle-meta-row">
+                  <div class="autocycle-meta-stack">
+                    <span id="auto-cycle-elapsed-label" class="autocycle-elapsed-text">Sunlit Atrium (G Mixolydian) · 00:00 / 08:00</span>
+                    <span id="auto-cycle-next-label" class="autocycle-next-text">Next: Felt &amp; Mist (C Dorian · Perfect 4th (+5 st))</span>
+                  </div>
+                  <button type="button" id="btn-trigger-transition" class="btn-tonal autocycle-now-btn" title="Smoothly transition and blend into the next Circle-of-Fifths track now">
+                    <span class="material-symbols-outlined">autorenew</span>
+                    <span>Blend next</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="btn-theme-toggle" class="icon-btn" aria-label="Toggle dark or light theme" title="Toggle theme">
+          <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-workspace">
+      <!-- Top Preset & Scale Strip -->
+      <section class="preset-strip-card" aria-label="Generative presets and harmonic scale">
+        <div class="preset-pills-row m3-pill-tabs gm3-connected-dsp" id="preset-buttons-container" role="tablist" aria-label="Generative album presets">
+          <!-- Populated dynamically from window.ENO_DATA.PRESETS -->
+        </div>
+        <div class="preset-Controls-right">
+          <label for="select-scale" class="control-label-line">
+            <span>Scale</span>
+          </label>
+          <select id="select-scale" class="field-select" aria-label="Harmonic scale mode">
+            <!-- Populated from window.ENO_DATA.SCALES -->
+          </select>
+
+          <label for="select-circadian" class="control-label-line">
+            <span>Circadian rule</span>
+          </label>
+          <select id="select-circadian" class="field-select" aria-label="Circadian time-of-day rule">
+            <!-- Populated from window.ENO_DATA.CIRCADIAN_MODES -->
+          </select>
+
+          <div class="patch-actions-group" role="group" aria-label="Patch actions">
+            <button type="button" id="btn-save-patch" class="btn-tonal patch-action-btn" title="Save edits to current patch (localStorage + disk)"><span id="save-patch-icon" class="material-symbols-outlined">save</span><span id="save-patch-label">Save patch</span></button>
+            <button type="button" id="btn-new-patch" class="btn-tonal patch-action-btn" title="Create a new patch from current settings"><span class="material-symbols-outlined">add</span><span>New patch</span></button>
+            <button type="button" id="btn-reset-patch" class="icon-btn patch-reset-btn" aria-label="Reset patch to factory defaults" title="Reset patch to factory defaults"><span id="reset-patch-icon" class="material-symbols-outlined">restart_alt</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 1: SOUNDSCAPE STUDIO -->
+      <div id="tab-studio" class="tab-panel active" role="tabpanel">
+        <div class="studio-bento-grid">
+          <!-- Left Column: Generative Field Canvas + 6 Asynchronous Prime Loop Voices -->
+          <div class="bento-col">
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">radar</span>
+                  <h2 class="card-title">Loop orbits &amp; spectrum field</h2>
+                </div>
+                <div class="badge-row">
+                  <span id="horizon-badge" class="badge badge-teal" title="Estimated time before prime loops align">Non-repeating cycle</span>
+                  <div class="m3-pill-tabs gm3-connected-dsp" role="group" aria-label="Canvas display mode">
+                    <button type="button" class="m3-pill-tab active" data-canvas-mode="orbits"><span>Prime orbits</span></button>
+                    <button type="button" class="m3-pill-tab" data-canvas-mode="deep"><span>Ambient field</span></button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="canvas-stage-wrapper">
+                <canvas id="soundscape-canvas"></canvas>
+                <div class="canvas-hud-overlay">
+                  <div id="canvas-bloom-hint-pill" class="canvas-hud-pill">
+                    <span class="material-symbols-outlined">touch_app</span>
+                    <span id="canvas-status-text">Click canvas to plant harmonic bloom</span>
+                  </div>
+                  <div class="canvas-hud-pill">
+                    <span id="session-timer-label">00:00</span>
+                    <span>·</span>
+                    <span id="track-timer-label" title="Current track playing time &amp; Circle-of-Fifths auto-cycler">Track 00:00 / 08:00 · → Felt &amp; Mist</span>
+                    <span>·</span>
+                    <span id="gate-counter-label">0 gates passed</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Global Voices, Rotation Speed & Probability Strip -->
+              <div class="nested-card">
+                <div class="macro-rack-grid-3">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-voice-count">Number of voices</label>
+                      <span id="val-voice-count" class="control-value">6 / 6</span>
+                    </div>
+                    <input type="range" id="global-voice-count" min="1" max="6" step="1" value="6">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-rotation-speed">Speed of rotation</label>
+                      <span id="val-rotation-speed" class="control-value">1.00×</span>
+                    </div>
+                    <input type="range" id="global-rotation-speed" min="0.20" max="3.00" step="0.05" value="1.00">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-probability">Global probability</label>
+                      <span id="val-global-probability" class="control-value">63%</span>
+                    </div>
+                    <input type="range" id="global-probability" min="0.05" max="1.00" step="0.01" value="0.63">
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Piano Phrases & Harmonic Key Lock Card -->
+            <section class="surface-card piano-phrases-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">piano</span>
+                  <h2 class="card-title">Piano phrases &amp; harmonic key lock</h2>
+                </div>
+                <div class="badge-row">
+                  <button type="button" id="btn-audition-phrase" class="btn-tonal" title="Audition the repeated piano phrase immediately">
+                    <span class="material-symbols-outlined">play_circle</span>
+                    <span>Audition phrase</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="phrase-controls-grid">
+                <div class="phrase-control-cluster">
+                  <span class="phrase-control-label">Piano phrase</span>
+                  <div class="m3-pill-tabs gm3-connected-dsp" id="piano-phrase-type-tabs" role="group" aria-label="Piano phrase type">
+                    <button type="button" class="m3-pill-tab" data-phrase-type="short_motif"><span>Short motif</span></button>
+                    <button type="button" class="m3-pill-tab" data-phrase-type="chord_progression"><span>Chord progression</span></button>
+                    <button type="button" class="m3-pill-tab active" data-phrase-type="longer_pattern"><span>Longer pattern</span></button>
+                  </div>
+                </div>
+
+                <div class="phrase-control-cluster">
+                  <label for="select-chord-prog-voice" class="phrase-control-label">Chord prog instrument</label>
+                  <select id="select-chord-prog-voice" class="field-select" aria-label="Chord progression instrument">
+                    <option value="piano">Felt Piano (chord progression)</option>
+                    <option value="pad">CS-80 Ribbon Pad</option>
+                    <option value="choir" selected>Spectral Choir</option>
+                    <option value="tape">Revox Tape Loop</option>
+                    <option value="bell">DX7 Glass Bell</option>
+                    <option value="none">None (motifs &amp; single notes only)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="nested-card">
+                <div class="phrase-title-row">
+                  <div class="phrase-title-cluster">
+                    <span id="piano-phrase-title" class="piano-phrase-title">Sunlit Canopy Cascade</span>
+                    <span id="piano-phrase-meta" class="badge badge-teal">Phrase plays (4/4 notes) · Default</span>
+                  </div>
+                </div>
+                <div id="phrase-steps-strip" class="phrase-steps-strip" role="list"></div>
+                <div class="macro-rack-grid-3 phrase-chance-grid" style="margin-top: 10px;">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-variation-chance">Chance any change triggers</label>
+                      <span id="val-phrase-variation-chance" class="control-value">55%</span>
+                    </div>
+                    <input type="range" id="phrase-variation-chance" min="0" max="1" step="0.01" value="0.55">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-gate-prob">Phrase gate</label>
+                      <span id="val-phrase-gate-prob" class="control-value">82%</span>
+                    </div>
+                    <input type="range" id="phrase-gate-prob" min="0" max="1" step="0.01" value="0.82">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-loop-cycle">Phrase loop cycle</label>
+                      <span id="val-phrase-loop-cycle" class="control-value">7.9 s</span>
+                    </div>
+                    <input type="range" id="phrase-loop-cycle" min="3.1" max="47.3" step="0.2" value="7.9">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-skip-chance">Skip whole phrase chance</label>
+                      <span id="val-phrase-skip-chance" class="control-value">15%</span>
+                    </div>
+                    <input type="range" id="phrase-skip-chance" min="0" max="1" step="0.01" value="0.15">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-note-gate">Omit notes chance</label>
+                      <span id="val-phrase-note-gate" class="control-value">22%</span>
+                    </div>
+                    <input type="range" id="phrase-note-gate" min="0" max="1" step="0.01" value="0.22">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-completion-gate">Start-only (2+ dice) chance</label>
+                      <span id="val-phrase-completion-gate" class="control-value">18%</span>
+                    </div>
+                    <input type="range" id="phrase-completion-gate" min="0" max="1" step="0.01" value="0.18">
+                  </div>
+                </div>
+
+                <div class="chord-prog-header-row">
+                  <span id="chord-prog-owner-label" class="chord-prog-owner-text">Chord progression owner: Felt Piano (1 instrument max)</span>
+                  <span id="key-scale-notes-badge" class="badge badge-purple">Scale: E♭ F G A B♭ C D</span>
+                </div>
+                <div id="chord-prog-strip" class="phrase-steps-strip" role="list"></div>
+                <div class="macro-rack-grid-3 chord-prog-controls-grid" style="margin-top: 10px;">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="chord-prog-gate">Chord prog gate</label>
+                      <span id="val-chord-prog-gate" class="control-value">74%</span>
+                    </div>
+                    <input type="range" id="chord-prog-gate" min="0" max="1" step="0.01" value="0.74">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="chord-prog-cycle">Chord prog loop cycle</label>
+                      <span id="val-chord-prog-cycle" class="control-value">17.3 s</span>
+                    </div>
+                    <input type="range" id="chord-prog-cycle" min="3.1" max="47.3" step="0.2" value="17.3">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-note-octave-shift">Note octave shift</label>
+                      <span id="val-phrase-note-octave-shift" class="control-value">3%</span>
+                    </div>
+                    <input type="range" id="phrase-note-octave-shift" data-default-value="0.03" min="0" max="1" step="0.01" value="0.03">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="phrase-chord-octave-shift">Whole chord octave shift</label>
+                      <span id="val-phrase-chord-octave-shift" class="control-value">10%</span>
+                    </div>
+                    <input type="range" id="phrase-chord-octave-shift" data-default-value="0.10" min="0" max="1" step="0.01" value="0.10">
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 6 Aleatoric Voices Grid -->
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">tune</span>
+                  <h2 class="card-title">Voices</h2>
+                </div>
+              </div>
+              <div id="voices-cards-container" class="voices-grid">
+                <!-- Populated dynamically from window.ENO_DATA.VOICES -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Column: Whole-Mix Master Performance Console (Attack/Release, Filter/Res, Reverb/Shimmer, Delay) -->
+          <div class="bento-col">
+            <!-- 1. Global Attack & Release Macro on All Sounds at Once -->
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">timelapse</span>
+                  <h2 class="card-title">Whole-mix envelope</h2>
+                </div>
+              </div>
+
+              <div class="nested-card">
+                <div class="envelope-preview-box">
+                  <canvas id="envelope-canvas"></canvas>
+                </div>
+                <div class="macro-rack-grid">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-attack">Global attack (except piano)</label>
+                      <span id="val-global-attack" class="control-value">2.40 s</span>
+                    </div>
+                    <input type="range" id="global-attack" min="0.05" max="12.0" step="0.05" value="2.40">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-release">Global release (all voices)</label>
+                      <span id="val-global-release" class="control-value">6.80 s</span>
+                    </div>
+                    <input type="range" id="global-release" min="0.20" max="20.0" step="0.10" value="6.80">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="global-sustain">Hold plateau duration</label>
+                      <span id="val-global-sustain" class="control-value">1.80 s</span>
+                    </div>
+                    <input type="range" id="global-sustain" min="0.10" max="10.0" step="0.10" value="1.80">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="master-volume">Master output level</label>
+                      <span id="val-master-volume" class="control-value">80%</span>
+                    </div>
+                    <input type="range" id="master-volume" min="0.0" max="1.0" step="0.01" value="0.80">
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. Master Filter / Resonance + XY Performance Pad -->
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">filter_alt</span>
+                  <h2 class="card-title">Master filter</h2>
+                </div>
+                <div class="m3-pill-tabs gm3-connected-dsp" role="group" aria-label="Master filter type">
+                  <button type="button" class="m3-pill-tab active" data-filter-type="lowpass"><svg class="curve-svg" viewBox="0 0 16 10" aria-hidden="true"><path d="M1 2.5 H7 C10 2.5 11.5 8.5 15 8.5"/></svg><span>Lowpass</span></button>
+                  <button type="button" class="m3-pill-tab" data-filter-type="bandpass"><svg class="curve-svg" viewBox="0 0 16 10" aria-hidden="true"><path d="M1 8.5 C4.5 8.5 5.5 2 8 2 C10.5 2 11.5 8.5 15 8.5"/></svg><span>Bandpass</span></button>
+                  <button type="button" class="m3-pill-tab" data-filter-type="highpass"><svg class="curve-svg" viewBox="0 0 16 10" aria-hidden="true"><path d="M1 8.5 C4.5 8.5 6 2.5 9 2.5 H15"/></svg><span>Highpass</span></button>
+                  <button type="button" class="m3-pill-tab" data-filter-type="notch"><svg class="curve-svg" viewBox="0 0 16 10" aria-hidden="true"><path d="M1 2.5 H5.5 L8 8.5 L10.5 2.5 H15"/></svg><span>Notch</span></button>
+                </div>
+              </div>
+
+              <div class="nested-card">
+                <div class="xy-pad-layout">
+                  <div id="xy-pad" class="xy-pad-surface" aria-label="2D XY performance controller">
+                    <div class="xy-pad-crosshair-x"></div>
+                    <div class="xy-pad-crosshair-y"></div>
+                    <div id="xy-puck" class="xy-pad-puck"></div>
+                  </div>
+                  <div class="bento-col">
+                    <div class="control-row">
+                      <label for="select-xy-target" class="control-label-line">
+                        <span>XY pad assignment</span>
+                      </label>
+                      <select id="select-xy-target" class="field-select">
+                        <option value="filter">X: Filter cutoff · Y: Resonance Q</option>
+                        <option value="envelope">X: Global attack · Y: Global release</option>
+                        <option value="space">X: Shimmer octave · Y: Tape delay feedback</option>
+                      </select>
+                    </div>
+                    <div class="control-row">
+                      <div class="control-label-line">
+                        <label for="filter-cutoff">Master filter cutoff</label>
+                        <span id="val-filter-cutoff" class="control-value">2800 Hz</span>
+                      </div>
+                      <input type="range" id="filter-cutoff" min="40" max="18000" step="10" value="2800">
+                    </div>
+                    <div class="control-row">
+                      <div class="control-label-line">
+                        <label for="filter-resonance">Master filter resonance (Q)</label>
+                        <span id="val-filter-resonance" class="control-value">1.40</span>
+                      </div>
+                      <input type="range" id="filter-resonance" min="0.1" max="18.0" step="0.1" value="1.4">
+                    </div>
+                    <div class="control-row">
+                      <div class="control-label-line">
+                        <label for="filter-drift">Slow LFO filter breathing</label>
+                        <span id="val-filter-drift" class="control-value">25%</span>
+                      </div>
+                      <input type="range" id="filter-drift" min="0" max="1" step="0.01" value="0.25">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. Eno / Lanois Shimmer Reverb & Revox Tape Delay -->
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">surround_sound</span>
+                  <h2 class="card-title">Reverb &amp; tape delay</h2>
+                </div>
+              </div>
+
+              <div class="nested-card">
+                <div class="card-header-row">
+                  <h3 class="card-title">Lexicon / AMS octave-feedback shimmer reverb</h3>
+                </div>
+                <div class="macro-rack-grid">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="reverb-mix">Reverb wet mix</label>
+                      <span id="val-reverb-mix" class="control-value">64%</span>
+                    </div>
+                    <input type="range" id="reverb-mix" min="0" max="1" step="0.01" value="0.64">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="reverb-shimmer">Octave shimmer (+12st)</label>
+                      <span id="val-reverb-shimmer" class="control-value">48%</span>
+                    </div>
+                    <input type="range" id="reverb-shimmer" min="0" max="1" step="0.01" value="0.48">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="reverb-decay">Tank decay time</label>
+                      <span id="val-reverb-decay" class="control-value">8.5 s</span>
+                    </div>
+                    <input type="range" id="reverb-decay" min="1.5" max="18.0" step="0.5" value="8.5">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="reverb-damping">High-frequency damping</label>
+                      <span id="val-reverb-damping" class="control-value">5200 Hz</span>
+                    </div>
+                    <input type="range" id="reverb-damping" min="800" max="14000" step="100" value="5200">
+                  </div>
+                </div>
+              </div>
+
+              <div class="nested-card">
+                <div class="card-header-row">
+                  <h3 class="card-title">Revox sound-on-sound stereo tape delay</h3>
+                </div>
+                <div class="macro-rack-grid">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="delay-mix">Delay wet mix</label>
+                      <span id="val-delay-mix" class="control-value">38%</span>
+                    </div>
+                    <input type="range" id="delay-mix" min="0" max="1" step="0.01" value="0.38">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="delay-time">Tape delay interval</label>
+                      <span id="val-delay-time" class="control-value">0.68 s</span>
+                    </div>
+                    <input type="range" id="delay-time" min="0.12" max="2.40" step="0.02" value="0.68">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="delay-feedback">Regeneration feedback</label>
+                      <span id="val-delay-feedback" class="control-value">52%</span>
+                    </div>
+                    <input type="range" id="delay-feedback" min="0" max="0.92" step="0.01" value="0.52">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="delay-wow">Tape wow &amp; flutter depth</label>
+                      <span id="val-delay-wow" class="control-value">28%</span>
+                    </div>
+                    <input type="range" id="delay-wow" min="0" max="1" step="0.01" value="0.28">
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PROBABILITY MATRIX & DEEP LISTENING TELEMETRY -->
+      <div id="tab-probability" class="tab-panel" role="tabpanel">
+        <div class="studio-bento-grid">
+          <div class="bento-col">
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">casino</span>
+                  <h2 class="card-title">Modal scale degree probability weights</h2>
+                </div>
+                <span id="matrix-scale-badge" class="badge badge-blue">Eb Lydian Suspended</span>
+              </div>
+              <div id="degree-weights-container" class="degree-weights-grid">
+                <!-- Populated dynamically from current scale degrees -->
+              </div>
+              <div class="nested-card">
+                <div class="macro-rack-grid">
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="prob-density-bias">Logic Scripter density gate (thinner / thickener)</label>
+                      <span id="val-density-bias" class="control-value">0%</span>
+                    </div>
+                    <input type="range" id="prob-density-bias" min="-0.5" max="0.5" step="0.01" value="0">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="prob-time-stretch">Prime loop cycle time stretch</label>
+                      <span id="val-time-stretch" class="control-value">1.00×</span>
+                    </div>
+                    <input type="range" id="prob-time-stretch" min="0.25" max="3.0" step="0.05" value="1.0">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <label for="prob-mutation-rate">Memory motif mutation rate</label>
+                      <span id="val-mutation-rate" class="control-value">35%</span>
+                    </div>
+                    <input type="range" id="prob-mutation-rate" min="0" max="1" step="0.01" value="0.35">
+                  </div>
+                  <div class="control-row">
+                    <div class="control-label-line">
+                      <span>Recent motif memory buffer</span>
+                      <span id="motif-memory-display" class="control-value">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="bento-col">
+            <section class="surface-card">
+              <div class="card-header-row">
+                <div class="card-title-cluster">
+                  <span class="material-symbols-outlined">receipt_long</span>
+                  <h2 class="card-title">Live probability gate telemetry</h2>
+                </div>
+                <div class="input-wrapper">
+                  <input type="text" id="filter-log-input" class="m3-input-field" placeholder="Filter events by voice or note">
+                  <button type="button" id="btn-clear-log-filter" class="input-clear-btn" aria-label="Clear filter" title="Clear field">
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                </div>
+              </div>
+              <div id="event-log-container" class="event-log-list">
+                <!-- Populated dynamically as probability gates fire -->
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: BRIAN ENO METHODS & RESEARCH -->
+      <div id="tab-research" class="tab-panel" role="tabpanel">
+        <div class="research-homage-banner">
+          <div class="research-homage-main">
+            <p class="research-homage-text">
+              This is an interactive research piece and an homage to <strong>Brian Eno</strong> by <strong>Bill Tribble</strong> in collaboration with <strong>Gemini 4</strong>.
+            </p>
+          </div>
+        </div>
+        <div class="card-header-row">
+          <div class="card-title-cluster">
+            <span class="material-symbols-outlined">library_music</span>
+            <h2 class="card-title">Brian Eno's aleatoric &amp; generative studio methods</h2>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" id="search-research-input" class="m3-input-field" placeholder="Filter techniques or methods">
+            <button type="button" id="btn-clear-research" class="input-clear-btn" aria-label="Clear search" title="Clear field">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+        <div id="research-cards-container" class="research-grid">
+          <!-- Populated from window.ENO_DATA.RESEARCH_CARDS -->
+        </div>
+      </div>
+    </main>
+
+    <!-- GM3 New Patch Modal -->
+    <div id="new-patch-modal-backdrop" class="patch-modal-backdrop" aria-hidden="true">
+      <div class="patch-modal-card" role="dialog" aria-modal="true" aria-labelledby="new-patch-modal-title">
+        <div class="card-header-row">
+          <div class="card-title-cluster">
+            <span class="material-symbols-outlined">tune</span>
+            <h2 id="new-patch-modal-title" class="card-title">New soundscape patch</h2>
+          </div>
+          <button type="button" id="btn-close-patch-modal" class="icon-btn" aria-label="Close modal" title="Close"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="patch-modal-field">
+          <label for="new-patch-name-input" class="control-label-line">
+            <span>Patch name</span>
+            <span id="new-patch-context-badge" class="badge badge-teal">G Mixolydian</span>
+          </label>
+          <div class="input-wrapper patch-modal-input-wrapper">
+            <input type="text" id="new-patch-name-input" class="m3-input-field" placeholder="e.g. Midnight Conservatory" maxlength="40">
+            <button type="button" id="btn-clear-patch-name" class="input-clear-btn" aria-label="Clear patch name" title="Clear field"><span class="material-symbols-outlined">close</span></button>
+          </div>
+        </div>
+        <div class="patch-modal-actions">
+          <button type="button" id="btn-cancel-patch-modal" class="btn-text">Cancel</button>
+          <button type="button" id="btn-confirm-new-patch" class="btn"><span class="material-symbols-outlined">bookmark_add</span><span>Create patch</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/presets.js?v=20261009e"></script>
+  <script src="js/audio-engine.js?v=20261009e"></script>
+  <script src="js/piano-sampler.js?v=20261009e"></script>
+  <script src="js/probability-engine.js?v=20261009e"></script>
+  <script src="js/phrase-engine.js?v=20261009e"></script>
+  <script src="js/octave-and-motion.js?v=20261009e"></script>
+  <script src="js/aurora.js?v=20261009e"></script>
+  <script src="js/visualizer.js?v=20261009e"></script>
+  <script src="js/voice-cards.js?v=20261009e"></script>
+  <script src="js/auto-cycler.js?v=20261009e"></script>
+  <script src="js/app.js?v=20261009e"></script>
+  <script src="js/slider-styles.js?v=20261009e"></script>
+  <script src="js/pwa-media.js?v=20261009e"></script>
+  <script src="js/patch-storage.js?v=20261009e"></script>
+  <script src="js/mixer-dials.js?v=20261009e"></script>
+</body>
+</html>

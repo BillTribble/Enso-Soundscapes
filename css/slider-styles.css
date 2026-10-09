@@ -1,0 +1,741 @@
+/* GM3 & Modern Audio Slider Style Explorer — Tonal Stylesheet (BillSkill Compliant)
+   - Canonical --md-sys-color-* tokens only (zero hardcoded hex/rgb)
+   - Split layout: Scrollable Style Options on Left + Fixed/Sticky Live Demo Panel on Right
+   - Zero card perimeter borders, zero resting box-shadows
+   - Google Sans Flex for headings/primary CTA, Inter for UI controls (<15px) */
+
+/* ============================================================================
+   SPLIT WORKSPACE LAYOUT: OPTIONS ON LEFT, FIXED DEMO PANEL ON RIGHT
+   ============================================================================ */
+.slider-explorer-workspace {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 8px 24px 36px;
+}
+
+.explorer-split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  gap: 20px;
+  align-items: start;
+  min-width: 0;
+}
+
+.options-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.demo-right-panel {
+  position: sticky;
+  top: 68px;
+  max-height: calc(100vh - 84px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-sys-color-outline-variant) transparent;
+}
+
+.demo-right-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.demo-right-panel::-webkit-scrollbar-thumb {
+  background-color: var(--md-sys-color-outline-variant);
+  border-radius: 9999px;
+}
+
+/* Top Filter & Density Toolbar on Left Column */
+.options-toolbar-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 20px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolbar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   LEFT COLUMN: SLIDER STYLE OPTION CARDS
+   ============================================================================ */
+.slider-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.slider-option-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 24px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0, 0, 0.2, 1), background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .slider-option-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.slider-option-card.is-selected-style {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.option-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.option-title-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.option-name {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.option-origin-meta {
+  font-size: 12.5px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Specimen Box inside each Option Card (mirrors the 2-up Cutoff + Resonance layout) */
+.option-specimen-box {
+  background-color: var(--md-sys-color-surface-container-low);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.slider-option-card.is-selected-style .option-specimen-box {
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+.option-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   RIGHT COLUMN: FIXED / STICKY LIVE DEMO PANEL
+   ============================================================================ */
+.demo-panel-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 24px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.demo-surface-box {
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.demo-surface-box.on-white-surface {
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+.demo-filter-response-box {
+  width: 100%;
+  height: 84px;
+  border-radius: 12px;
+  background-color: var(--md-sys-color-surface-container-low);
+  overflow: hidden;
+  position: relative;
+}
+
+.demo-surface-box:not(.on-white-surface) .demo-filter-response-box {
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+#demo-filter-canvas,
+#demo-envelope-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.demo-pair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.demo-xy-row {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.demo-xy-pad {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  border-radius: 14px;
+  background-color: var(--md-sys-color-surface-container-high);
+  cursor: pointer;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.demo-xy-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.css-recipe-pre {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+/* ============================================================================
+   SHARED SLIDER SIZE TOKENS (.slider-size-compact, .slider-size-std, .slider-size-expressive)
+   ============================================================================ */
+.slider-scope,
+body {
+  --trk-h: 6px;
+  --trk-thick-h: 14px;
+  --trk-bar-h: 18px;
+  --trk-inline-h: 30px;
+  --thumb-bar-h: 22px;
+  --thumb-dot: 16px;
+}
+
+.slider-size-compact {
+  --trk-h: 4px;
+  --trk-thick-h: 10px;
+  --trk-bar-h: 14px;
+  --trk-inline-h: 26px;
+  --thumb-bar-h: 18px;
+  --thumb-dot: 14px;
+}
+
+.slider-size-std {
+  --trk-h: 6px;
+  --trk-thick-h: 14px;
+  --trk-bar-h: 18px;
+  --trk-inline-h: 30px;
+  --thumb-bar-h: 22px;
+  --thumb-dot: 16px;
+}
+
+.slider-size-expressive {
+  --trk-h: 8px;
+  --trk-thick-h: 18px;
+  --trk-bar-h: 22px;
+  --trk-inline-h: 34px;
+  --thumb-bar-h: 26px;
+  --thumb-dot: 18px;
+}
+
+/* Reset base for all custom GM3 slider styles (except legacy baseline) */
+.slider-style-gm3-handle-bar input[type="range"],
+.slider-style-gm3-thick-track input[type="range"],
+.slider-style-aistudio-slim input[type="range"],
+.slider-style-tonal-fill-bar input[type="range"],
+.slider-style-inline-meter-bar input[type="range"],
+.slider-style-gm3-stepped-ticks input[type="range"],
+.slider-style-studio-fader-cap input[type="range"],
+.slider-style-tonal-pill-thumb input[type="range"],
+.slider-style-precision-ring input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  margin: 4px 0;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: transparent;
+}
+
+/* ============================================================================
+   STYLE 01: GM3 Expressive Vertical Handle Bar + Split Track (Recommended)
+   - Official Material 3 Expressive slider: 4px vertical handle bar with 6px
+     breathing gap between active primary track and inactive tonal track
+   ============================================================================ */
+.slider-style-gm3-handle-bar input[type="range"] {
+  height: var(--trk-h);
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary) 0%,
+    var(--md-sys-color-primary) calc(var(--pct, 50%) - 6px),
+    transparent calc(var(--pct, 50%) - 6px),
+    transparent calc(var(--pct, 50%) + 6px),
+    var(--md-sys-color-surface-container-highest) calc(var(--pct, 50%) + 6px),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-gm3-handle-bar input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: var(--thumb-bar-h);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+  transition: transform 0.15s ease, width 0.15s ease;
+}
+
+.slider-style-gm3-handle-bar input[type="range"]:hover::-webkit-slider-thumb,
+.slider-style-gm3-handle-bar input[type="range"]:active::-webkit-slider-thumb {
+  transform: scaleY(1.12);
+  width: 5px;
+}
+
+.slider-style-gm3-handle-bar input[type="range"]::-moz-range-thumb {
+  width: 4px;
+  height: var(--thumb-bar-h);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 02: GM3 Expressive Thick Track (14px) + Split Handle Bar
+   - Bold Material 3 Expressive volume/parameter bar with light-blue active
+     fill (primary-container) and crisp primary vertical bar handle
+   ============================================================================ */
+.slider-style-gm3-thick-track input[type="range"] {
+  height: var(--trk-thick-h);
+  border-radius: 8px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-primary-container) calc(var(--pct, 50%) - 6px),
+    transparent calc(var(--pct, 50%) - 6px),
+    transparent calc(var(--pct, 50%) + 6px),
+    var(--md-sys-color-surface-container-highest) calc(var(--pct, 50%) + 6px),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-gm3-thick-track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: calc(var(--trk-thick-h) + 8px);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+  transition: transform 0.15s ease;
+}
+
+.slider-style-gm3-thick-track input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scaleY(1.1);
+}
+
+.slider-style-gm3-thick-track input[type="range"]::-moz-range-thumb {
+  width: 4px;
+  height: calc(var(--trk-thick-h) + 8px);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 03: Soft Tonal Track + Solid Primary Pill Thumb
+   - Matches the compact tonal pill button aesthetic: light-blue active track
+     (primary-container), soft grey inactive track, compact stadium pill thumb
+   ============================================================================ */
+.slider-style-tonal-pill-thumb input[type="range"] {
+  height: calc(var(--trk-h) + 2px);
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-primary-container) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-tonal-pill-thumb input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 10px;
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+  transition: transform 0.15s ease;
+}
+
+.slider-style-tonal-pill-thumb input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+.slider-style-tonal-pill-thumb input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 10px;
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 04: Contained Tonal Fill Bar (No Protruding Knob — Ableton / Bitwig)
+   - Self-contained 18px pill trough filled with primary-container light blue
+     and a crisp 3px primary edge indicator inside the bar
+   ============================================================================ */
+.slider-style-tonal-fill-bar input[type="range"] {
+  height: var(--trk-bar-h);
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-primary-container) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-tonal-fill-bar input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 3px;
+  height: var(--trk-bar-h);
+  border-radius: 2px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+.slider-style-tonal-fill-bar input[type="range"]::-moz-range-thumb {
+  width: 3px;
+  height: var(--trk-bar-h);
+  border-radius: 2px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 05: Inline Label-Inside Tonal Meter Bar (Single-Row Synth Control)
+   - Merges label ("Filter cutoff") and value ("2800 Hz") directly inside a
+     single 30px draggable tonal bar, cutting vertical height in half
+   ============================================================================ */
+.slider-style-inline-meter-bar .control-row {
+  position: relative;
+  height: var(--trk-inline-h);
+  border-radius: 8px;
+  overflow: hidden;
+  justify-content: center;
+  gap: 0;
+}
+
+.slider-style-inline-meter-bar .control-label-line {
+  position: absolute;
+  inset: 0;
+  padding: 0 12px;
+  z-index: 2;
+  pointer-events: none;
+  color: var(--md-sys-color-on-surface);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.slider-style-inline-meter-bar .control-value {
+  color: var(--md-sys-color-on-primary-container);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.slider-style-inline-meter-bar input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 8px;
+  z-index: 1;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-primary-container) var(--pct, 50%),
+    var(--md-sys-color-surface-container-high) var(--pct, 50%),
+    var(--md-sys-color-surface-container-high) 100%
+  );
+}
+
+.slider-style-inline-meter-bar input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 2px;
+  height: var(--trk-inline-h);
+  background-color: transparent;
+  border: none;
+}
+
+.slider-style-inline-meter-bar input[type="range"]::-moz-range-thumb {
+  width: 2px;
+  height: var(--trk-inline-h);
+  background-color: transparent;
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 06: AI Studio / Material Web Clean Slim Track + Halo Thumb
+   - Borderless 6px tonal track (zero browser outline) with a 16px primary
+     thumb that expands a soft primary-container halo ring on hover
+   ============================================================================ */
+.slider-style-aistudio-slim input[type="range"] {
+  height: var(--trk-h);
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary) 0%,
+    var(--md-sys-color-primary) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-aistudio-slim input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-dot);
+  height: var(--thumb-dot);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: 2px solid var(--md-sys-color-surface-container-lowest);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.slider-style-aistudio-slim input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+  border-color: var(--md-sys-color-primary-container);
+}
+
+.slider-style-aistudio-slim input[type="range"]::-moz-range-thumb {
+  width: var(--thumb-dot);
+  height: var(--thumb-dot);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: 2px solid var(--md-sys-color-surface-container-lowest);
+}
+
+/* ============================================================================
+   STYLE 07: Precision Hairline + Hollow Ring Thumb (Teenage Engineering / OP-1)
+   - Minimal 4px track with a white-centered hollow primary ring thumb
+   ============================================================================ */
+.slider-style-precision-ring input[type="range"] {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary) 0%,
+    var(--md-sys-color-primary) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-precision-ring input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-dot);
+  height: var(--thumb-dot);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 3.5px solid var(--md-sys-color-primary);
+  transition: transform 0.15s ease;
+}
+
+.slider-style-precision-ring input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.slider-style-precision-ring input[type="range"]::-moz-range-thumb {
+  width: var(--thumb-dot);
+  height: var(--thumb-dot);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 3.5px solid var(--md-sys-color-primary);
+}
+
+/* ============================================================================
+   STYLE 08: Studio Hardware Fader Cap (Console / Synth Rack Slider)
+   - Tactile rectangular fader cap with a 2px primary center calibration line
+   ============================================================================ */
+.slider-style-studio-fader-cap input[type="range"] {
+  height: var(--trk-h);
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-primary-container) 0%,
+    var(--md-sys-color-primary-container) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+    var(--md-sys-color-surface-container-highest) 100%
+  );
+}
+
+.slider-style-studio-fader-cap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid var(--md-sys-color-primary);
+  background: linear-gradient(
+    to right,
+    var(--md-sys-color-surface-container-lowest) 0%,
+    var(--md-sys-color-surface-container-lowest) 42%,
+    var(--md-sys-color-primary) 42%,
+    var(--md-sys-color-primary) 58%,
+    var(--md-sys-color-surface-container-lowest) 58%,
+    var(--md-sys-color-surface-container-lowest) 100%
+  );
+  transition: transform 0.15s ease;
+}
+
+.slider-style-studio-fader-cap input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+.slider-style-studio-fader-cap input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+/* ============================================================================
+   STYLE 09: GM3 Discrete Stepped Track + Tick Dots
+   - Material 3 stepped track with subtle 20% interval tick marks along the bar
+   ============================================================================ */
+.slider-style-gm3-stepped-ticks input[type="range"] {
+  height: calc(var(--trk-h) + 2px);
+  border-radius: 9999px;
+  background-image:
+    radial-gradient(circle, var(--md-sys-color-on-surface-variant) 1.5px, transparent 2px),
+    linear-gradient(
+      to right,
+      var(--md-sys-color-primary-container) 0%,
+      var(--md-sys-color-primary-container) var(--pct, 50%),
+      var(--md-sys-color-surface-container-highest) var(--pct, 50%),
+      var(--md-sys-color-surface-container-highest) 100%
+    );
+  background-size: 20% 100%, 100% 100%;
+  background-position: center center, 0 0;
+  background-repeat: repeat-x, no-repeat;
+}
+
+.slider-style-gm3-stepped-ticks input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 6px;
+  height: var(--thumb-bar-h);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+  transition: transform 0.15s ease;
+}
+
+.slider-style-gm3-stepped-ticks input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scaleY(1.12);
+}
+
+.slider-style-gm3-stepped-ticks input[type="range"]::-moz-range-thumb {
+  width: 6px;
+  height: var(--thumb-bar-h);
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-primary);
+  border: none;
+}
+
+/* ============================================================================
+   STYLE 10: Previous Baseline — Native Browser <input type="range">
+   - Shown at bottom of options list for direct side-by-side comparison
+   ============================================================================ */
+.slider-style-legacy-native input[type="range"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  width: 100%;
+  height: 6px;
+  accent-color: var(--md-sys-color-primary);
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1040px) {
+  .explorer-split-layout {
+    grid-template-columns: 1fr;
+  }
+  .demo-right-panel {
+    position: static;
+    max-height: none;
+    order: -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .option-specimen-box,
+  .demo-pair-grid,
+  .demo-xy-row {
+    grid-template-columns: 1fr;
+  }
+}

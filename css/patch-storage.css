@@ -1,0 +1,190 @@
+/* Patch & Settings Storage Styles — Canonical GM3 Tokens
+   Enforces token-only colors, zero hardcoded hex, z-index ladder (1200/1300),
+   and mobile alignment. */
+
+.patch-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.patch-action-btn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+
+.patch-action-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.patch-action-btn.is-dirty {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.patch-action-btn.is-saved {
+  background-color: var(--md-sys-color-green-tonal);
+  color: var(--md-sys-color-on-green-tonal);
+}
+
+.patch-reset-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.patch-reset-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Modal z-index ladder: Backdrop (1200) | Modal Card (1300) */
+.patch-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.patch-modal-backdrop.is-open {
+  display: flex;
+}
+
+.patch-modal-card {
+  position: relative;
+  z-index: 1300;
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  border-radius: 24px;
+  padding: 24px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .patch-modal-card {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
+}
+
+.patch-modal-card .card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.patch-modal-card .card-title-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-on-surface);
+}
+
+.patch-modal-card .card-title {
+  font-family: var(--font-family-display, var(--md-ref-typeface-brand, 'Google Sans Flex', sans-serif));
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+}
+
+.patch-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.patch-modal-field .control-label-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.patch-modal-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.patch-modal-card .m3-input-field {
+  width: 100%;
+  height: 42px;
+  padding: 0 36px 0 14px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.patch-modal-card .m3-input-field:focus {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 1px var(--md-sys-color-primary);
+}
+
+.patch-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.patch-modal-actions .btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.patch-modal-actions .btn-text {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Mobile Top-Bar & Preset Strip responsiveness */
+@media (max-width: 720px) {
+  .preset-Controls-right .patch-actions-group {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

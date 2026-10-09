@@ -1,0 +1,621 @@
+/* Button & Segmented Pill Style Explorer — GM3 Tonal Stylesheet (BillSkill Compliant)
+   - Canonical --md-sys-color-* tokens only (zero hardcoded hex/rgb)
+   - Tonal surface container heights delineate cards (zero card perimeter borders, zero resting shadows)
+   - Google Sans Flex for headings/primary button, Inter for UI controls (<15px) */
+
+.explorer-hero-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 24px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.explorer-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolbar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-right: 2px;
+  white-space: nowrap;
+}
+
+/* Live Context Mockup Strip (Master Filter Card Header + Envelope Header) */
+.live-context-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 16px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.context-preview-box {
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+
+.context-preview-box.on-white-surface {
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+.context-sim-sliders {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 12px;
+  padding-top: 4px;
+  min-width: 0;
+}
+
+/* Gallery Grid of 10 Button Styles */
+.styles-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.style-option-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0, 0, 0.2, 1), background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .style-option-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.style-option-card.is-selected-style {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.style-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.style-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.style-title-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.style-name {
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin: 0;
+}
+
+.style-origin-meta {
+  font-size: 12.5px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Specimen Stage inside each Style Card */
+.specimen-stage {
+  background-color: var(--md-sys-color-surface-container-low);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.style-option-card.is-selected-style .specimen-stage {
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+.specimen-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.specimen-row-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+}
+
+.style-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   SHARED BASE FOR ALL COMPACT BUTTON GROUPS (.pill-group)
+   Size modifiers: .size-micro (24px), .size-compact (26px), .size-dense (28px), .size-std (32px)
+   ============================================================================ */
+.pill-group {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 100%;
+  --btn-h: 26px;
+  --btn-px: 10px;
+  --btn-fs: 12px;
+}
+
+.pill-group.size-micro {
+  --btn-h: 24px;
+  --btn-px: 8px;
+  --btn-fs: 11.5px;
+  gap: 4px;
+}
+
+.pill-group.size-compact {
+  --btn-h: 26px;
+  --btn-px: 10px;
+  --btn-fs: 12px;
+  gap: 5px;
+}
+
+.pill-group.size-dense {
+  --btn-h: 28px;
+  --btn-px: 12px;
+  --btn-fs: 12.5px;
+  gap: 6px;
+}
+
+.pill-group.size-std {
+  --btn-h: 32px;
+  --btn-px: 13px;
+  --btn-fs: 13px;
+  gap: 6px;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-h);
+  padding: 0 var(--btn-px);
+  gap: 5px;
+  font-family: var(--md-ref-typeface-plain);
+  font-size: var(--btn-fs);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s ease, color 0.15s ease, border-radius 0.18s ease, padding 0.15s ease;
+}
+
+.pill-btn .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.pill-btn .curve-svg {
+  width: 14px;
+  height: 10px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ============================================================================
+   STYLE 1: Compact Tonal Stadium Pill (Light Blue Fill / Soft Grey Unfilled)
+   - Bill's Top Candidate: zero borders, full stadium, primary-container active
+   ============================================================================ */
+.style-tonal-stadium .pill-btn {
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-tonal-stadium .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-tonal-stadium .pill-btn.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
+}
+.style-tonal-stadium .pill-btn.active:not(:has(svg, .material-symbols-outlined, .led-dot))::before {
+  content: '';
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   STYLE 2: Compact Squircle Tonal Chip (8px Radius, Light Blue / Grey Unfilled)
+   - GM3 Filter Chip geometry without borders
+   ============================================================================ */
+.style-tonal-squircle .pill-btn {
+  border-radius: 8px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-tonal-squircle .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-tonal-squircle .pill-btn.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   STYLE 3: GM3 Secondary Sky-Blue Chip + Checkmark (md-filter-chip Elevated/Flat)
+   - Official GM3 secondary-container (#C1E7FF) with compact check icon
+   ============================================================================ */
+.style-gm3-secondary-check .pill-btn {
+  border-radius: 8px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-gm3-secondary-check .pill-btn .check-glyph {
+  display: none;
+  font-size: 14px;
+}
+.style-gm3-secondary-check .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-gm3-secondary-check .pill-btn.active {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-weight: 600;
+}
+.style-gm3-secondary-check .pill-btn.active .check-glyph {
+  display: inline-block;
+}
+
+/* ============================================================================
+   STYLE 4: Audio DSP Filter Curve + Compact Tonal Blue Pill (FabFilter / Logic)
+   - Inline SVG filter slope icons + light blue fill / grey unfilled
+   ============================================================================ */
+.style-dsp-curve .pill-btn {
+  border-radius: 8px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-dsp-curve .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-dsp-curve .pill-btn.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   STYLE 5: Micro Synth LED Pill (blue-tonal Fill + 5px Primary Status LED)
+   - Hardware synth / Teenage Engineering / Ableton compact button
+   ============================================================================ */
+.style-micro-led .pill-btn {
+  border-radius: 6px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-micro-led .pill-btn::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-outline-variant);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+.style-micro-led .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-micro-led .pill-btn.active {
+  background-color: var(--md-sys-color-blue-tonal);
+  color: var(--md-sys-color-on-blue-tonal);
+  font-weight: 600;
+}
+.style-micro-led .pill-btn.active::before {
+  background-color: var(--md-sys-color-primary);
+  transform: scale(1.15);
+}
+
+/* ============================================================================
+   STYLE 6 & 6B: GM3 Expressive Connected Button Group (+ DSP Filter Curves & Active Dot Fallback)
+   - Outer ends stadium (9999px), inner adjacent corners 4px, active morphs to full pill
+   - If a button has no icon/SVG, automatically substitutes a 5.5px leading dot when active
+   - Supports GM3 v35.0 toggle color schemes so it never looks like a standalone .btn-tonal
+   ============================================================================ */
+.style-gm3-connected,
+.style-gm3-connected-dsp {
+  gap: 2px;
+  --conn-unselected-bg: var(--md-sys-color-surface-container);
+  --conn-unselected-fg: var(--md-sys-color-on-surface-variant);
+  --conn-hover-bg: var(--md-sys-color-surface-container-high);
+  --conn-active-bg: var(--md-sys-color-blue-tonal);
+  --conn-active-fg: var(--md-sys-color-primary);
+}
+.context-preview-box:not(.on-white-surface) .style-gm3-connected,
+.context-preview-box:not(.on-white-surface) .style-gm3-connected-dsp,
+.explorer-toolbar-row .style-gm3-connected,
+.explorer-toolbar-row .style-gm3-connected-dsp {
+  --conn-unselected-bg: var(--md-sys-color-surface-container-lowest);
+}
+
+/* GM3 Palette 1 (Default): Bright Sky Tint + Vibrant Primary Ink (distinct from dark-navy tonal) */
+body[data-gm3-palette="palette-bright-sky"] .gm3-connected-dsp,
+.palette-bright-sky {
+  --conn-active-bg: var(--md-sys-color-blue-tonal);
+  --conn-active-fg: var(--md-sys-color-primary);
+}
+
+/* GM3 Palette 2: Official GM3 v35.0 Secondary Toggle (_md-comp-button-tonal.scss selected) */
+body[data-gm3-palette="palette-gm3-secondary"] .gm3-connected-dsp,
+.palette-gm3-secondary {
+  --conn-active-bg: var(--md-sys-color-secondary);
+  --conn-active-fg: var(--md-sys-color-on-secondary);
+}
+
+/* GM3 Palette 3: Official GM3 v35.0 Filled Toggle (_md-comp-button-filled.scss selected) */
+body[data-gm3-palette="palette-gm3-primary"] .gm3-connected-dsp,
+.palette-gm3-primary {
+  --conn-active-bg: var(--md-sys-color-primary);
+  --conn-active-fg: var(--md-sys-color-on-primary);
+}
+
+/* GM3 Palette 4: GM3 Expressive Cyan Sky Container + Secondary Ink */
+body[data-gm3-palette="palette-gm3-cyan-sky"] .gm3-connected-dsp,
+.palette-gm3-cyan-sky {
+  --conn-active-bg: var(--md-sys-color-secondary-container);
+  --conn-active-fg: var(--md-sys-color-secondary);
+}
+
+.m3-pill-tabs.gm3-connected-dsp .m3-pill-tab.active:not([class*="badge-"]),
+.m3-pill-tabs.gm3-connected-dsp .m3-pill-tab[aria-selected="true"]:not([class*="badge-"]) {
+  background-color: var(--conn-active-bg, var(--md-sys-color-blue-tonal));
+  color: var(--conn-active-fg, var(--md-sys-color-primary));
+}
+
+.style-gm3-connected .pill-btn,
+.style-gm3-connected-dsp .pill-btn {
+  border-radius: 4px;
+  background-color: var(--conn-unselected-bg);
+  color: var(--conn-unselected-fg);
+}
+.style-gm3-connected .pill-btn:first-child,
+.style-gm3-connected-dsp .pill-btn:first-child {
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px;
+  padding-left: calc(var(--btn-px) + 2px);
+}
+.style-gm3-connected .pill-btn:last-child,
+.style-gm3-connected-dsp .pill-btn:last-child {
+  border-top-right-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+  padding-right: calc(var(--btn-px) + 2px);
+}
+.style-gm3-connected .pill-btn:hover:not(.active),
+.style-gm3-connected-dsp .pill-btn:hover:not(.active) {
+  background-color: var(--conn-hover-bg);
+  color: var(--md-sys-color-on-surface);
+}
+.style-gm3-connected .pill-btn.active,
+.style-gm3-connected-dsp .pill-btn.active {
+  border-radius: 9999px;
+  background-color: var(--conn-active-bg);
+  color: var(--conn-active-fg);
+  font-weight: 600;
+  padding-left: calc(var(--btn-px) + 3px);
+  padding-right: calc(var(--btn-px) + 3px);
+}
+/* Sub in a 5.5px leading dot when active if the button has no icon or SVG */
+.style-gm3-connected .pill-btn.active:not(:has(svg, .material-symbols-outlined))::before,
+.style-gm3-connected-dsp .pill-btn.active:not(:has(svg, .material-symbols-outlined))::before {
+  content: '';
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 9999px;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.gm3-guidance-strip {
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.gm3-guidance-copy {
+  font-size: 12.5px;
+  color: var(--md-sys-color-on-surface-variant);
+  line-height: 1.45;
+  max-width: 65ch;
+}
+.gm3-guidance-copy strong {
+  color: var(--md-sys-color-on-surface);
+}
+.gm3-vs-tonal-cluster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   STYLE 7: Recessed Grey Track + Light-Blue Active Pill (Linear / Radix Track)
+   - Unified grey tray (surface-container-high) with light-blue active pill
+   ============================================================================ */
+.style-recessed-blue-track {
+  background-color: var(--md-sys-color-surface-container-high);
+  padding: 3px;
+  border-radius: 9999px;
+  gap: 2px;
+}
+.style-recessed-blue-track .pill-btn {
+  height: calc(var(--btn-h) - 2px);
+  border-radius: 9999px;
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-recessed-blue-track .pill-btn:hover:not(.active) {
+  color: var(--md-sys-color-on-surface);
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+.style-recessed-blue-track .pill-btn.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   STYLE 8: Recessed Grey Track + White Floating Segment (Apple HIG / Shadcn)
+   - Unified grey tray with crisp white/elevated active pill + primary blue text
+   ============================================================================ */
+.style-recessed-surface-track {
+  background-color: var(--md-sys-color-surface-container-high);
+  padding: 3px;
+  border-radius: 10px;
+  gap: 2px;
+}
+.style-recessed-surface-track .pill-btn {
+  height: calc(var(--btn-h) - 2px);
+  border-radius: 7px;
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-recessed-surface-track .pill-btn:hover:not(.active) {
+  color: var(--md-sys-color-on-surface);
+}
+.style-recessed-surface-track .pill-btn.active {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   STYLE 9: Solid Primary Blue / Soft Grey Unfilled (Vercel Geist / High Contrast)
+   - High-contrast primary blue fill for active, soft grey unfilled for rest
+   ============================================================================ */
+.style-solid-primary .pill-btn {
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.style-solid-primary .pill-btn:hover:not(.active) {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.style-solid-primary .pill-btn.active {
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   STYLE 10: Baseline Comparison — Old Outlined Grey Dot Pill (Current Eno UI)
+   ============================================================================ */
+.style-legacy-baseline .pill-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  color: var(--md-sys-color-on-surface);
+  background-color: var(--md-sys-color-surface-container-lowest);
+  background-image: radial-gradient(circle at 14px center, var(--md-sys-color-on-surface) 3px, transparent 3.4px);
+  background-repeat: no-repeat;
+  background-size: 0px auto;
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+.style-legacy-baseline .pill-btn.active {
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-color: var(--md-sys-color-outline);
+  background-size: 100% auto;
+  padding-left: 26px;
+}
+
+/* CSS Code Drawer / Snippet Box */
+.css-snippet-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-radius: 24px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.css-code-pre {
+  margin: 0;
+  padding: 16px;
+  border-radius: 12px;
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  font-family: monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+@media (max-width: 960px) {
+  .live-context-grid,
+  .styles-gallery-grid,
+  .context-sim-sliders {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GM3 &amp; Modern Segmented Pill Button Style Explorer</title>
+  <script>
+    if (window.location.protocol !== 'file:' && !navigator.webdriver) {
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+      document.head.appendChild(l);
+    }
+  </script>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/button-styles.css">
+</head>
+<body>
+  <div id="app-root" class="app-shell">
+    <!-- Top App Bar -->
+    <header class="top-app-bar">
+      <div class="brand-cluster">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="material-symbols-outlined">tune</span>
+        </div>
+        <div>
+          <h1 class="brand-title">Filter &amp; mode pill selector styles</h1>
+        </div>
+        <span id="active-style-badge" class="badge badge-blue">Compact tonal stadium pill</span>
+      </div>
+
+      <div class="top-bar-actions">
+        <a href="slider-styles.html" class="btn-tonal">
+          <span class="material-symbols-outlined">linear_scale</span>
+          <span class="btn-label-text">Slider styles</span>
+        </a>
+        <a id="btn-apply-to-studio" href="index.html?buttonStyle=style-tonal-stadium&amp;buttonSize=size-compact" class="btn">
+          <span class="material-symbols-outlined">graphic_eq</span>
+          <span class="btn-label-text">Open in Eno Studio</span>
+        </a>
+        <button type="button" id="btn-theme-toggle" class="icon-btn" aria-label="Toggle dark or light theme" title="Toggle theme">
+          <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-workspace">
+      <!-- Live Context Header Preview + Size, Color Scheme & Surface Controls -->
+      <section class="explorer-hero-card" aria-label="Live card header preview and size controls">
+        <div class="explorer-toolbar-row">
+          <div class="toolbar-group">
+            <span class="toolbar-label">Button height</span>
+            <div class="pill-group style-gm3-connected-dsp size-compact" role="group" aria-label="Button size preset">
+              <button type="button" class="pill-btn" data-size-option="size-micro" aria-pressed="false"><span>Micro (24px)</span></button>
+              <button type="button" class="pill-btn active" data-size-option="size-compact" aria-pressed="true"><span>Compact (26px)</span></button>
+              <button type="button" class="pill-btn" data-size-option="size-dense" aria-pressed="false"><span>Dense (28px)</span></button>
+              <button type="button" class="pill-btn" data-size-option="size-std" aria-pressed="false"><span>Standard (32px)</span></button>
+            </div>
+          </div>
+
+          <div class="toolbar-group">
+            <span class="toolbar-label">GM3 connected color</span>
+            <div class="pill-group style-gm3-connected-dsp size-compact" role="group" aria-label="GM3 connected button color scheme">
+              <button type="button" class="pill-btn active" data-palette-option="palette-bright-sky" aria-pressed="true"><span>Bright sky + primary ink</span></button>
+              <button type="button" class="pill-btn" data-palette-option="palette-gm3-secondary" aria-pressed="false"><span>GM3 secondary solid</span></button>
+              <button type="button" class="pill-btn" data-palette-option="palette-gm3-primary" aria-pressed="false"><span>GM3 primary solid</span></button>
+              <button type="button" class="pill-btn" data-palette-option="palette-gm3-cyan-sky" aria-pressed="false"><span>GM3 cyan sky</span></button>
+            </div>
+          </div>
+
+          <div class="toolbar-group">
+            <span class="toolbar-label">Card surface</span>
+            <div class="pill-group style-gm3-connected-dsp size-compact" role="group" aria-label="Preview card surface">
+              <button type="button" class="pill-btn active" data-backdrop-option="card" aria-pressed="true"><span>White card (lowest)</span></button>
+              <button type="button" class="pill-btn" data-backdrop-option="nested" aria-pressed="false"><span>Tonal tray (container)</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="gm3-guidance-strip">
+          <div class="gm3-guidance-copy">
+            <strong>Gmail GM3 color rule:</strong> Reserve <strong>Cyan</strong> (<code>--md-sys-color-secondary-container</code> <code>#C1E7FF</code>) for standalone tonal action buttons (<code>.btn-tonal</code>, like Gmail's <em>Compose</em>), and reserve <strong>Sky Blue</strong> (<code>--md-sys-color-blue-tonal</code> <code>#DBEAFE</code> / <code>--md-sys-color-primary-container</code> <code>#D3E3FD</code>) for tab-buttons and connected mode selectors (<code>.m3-pill-tab</code>, <code>.gm3-connected-dsp</code>, like Gmail's <em>Inbox</em>).
+          </div>
+          <div class="gm3-vs-tonal-cluster">
+            <span class="toolbar-label">Cyan action button (.btn-tonal):</span>
+            <button type="button" class="btn-tonal">
+              <span class="material-symbols-outlined">blur_on</span>
+              <span>Bloom chord</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="live-context-grid">
+          <!-- Context 1: Master Filter Card Header -->
+          <div class="context-preview-box on-white-surface">
+            <div class="card-header-row">
+              <div class="card-title-cluster">
+                <span class="material-symbols-outlined">filter_alt</span>
+                <h2 class="card-title">Master filter, resonance &amp; XY morph pad</h2>
+              </div>
+              <div id="live-context-filter-mount"></div>
+            </div>
+            <div class="context-sim-sliders">
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Filter cutoff</span>
+                  <span class="control-value">2800 Hz</span>
+                </div>
+                <input type="range" min="40" max="18000" value="2800" aria-label="Filter cutoff preview">
+              </div>
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Resonance (Q)</span>
+                  <span class="control-value">1.40</span>
+                </div>
+                <input type="range" min="0.1" max="18" step="0.1" value="1.4" aria-label="Resonance preview">
+              </div>
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Slow LFO drift</span>
+                  <span class="control-value">25%</span>
+                </div>
+                <input type="range" min="0" max="100" value="25" aria-label="LFO drift preview">
+              </div>
+            </div>
+          </div>
+
+          <!-- Context 2: Whole-Mix Envelope Header -->
+          <div class="context-preview-box on-white-surface">
+            <div class="card-header-row">
+              <div class="card-title-cluster">
+                <span class="material-symbols-outlined">timelapse</span>
+                <h2 class="card-title">Whole-mix envelope</h2>
+              </div>
+              <div id="live-context-env-mount"></div>
+            </div>
+            <div class="context-sim-sliders">
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Global attack</span>
+                  <span class="control-value">2.40 s</span>
+                </div>
+                <input type="range" min="0" max="12" step="0.1" value="2.4" aria-label="Global attack preview">
+              </div>
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Global release</span>
+                  <span class="control-value">6.80 s</span>
+                </div>
+                <input type="range" min="0" max="20" step="0.1" value="6.8" aria-label="Global release preview">
+              </div>
+              <div class="control-row">
+                <div class="control-label-line">
+                  <span>Master level</span>
+                  <span class="control-value">80%</span>
+                </div>
+                <input type="range" min="0" max="100" value="80" aria-label="Master level preview">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 Interactive Styles Grid -->
+      <section id="styles-gallery-container" class="styles-gallery-grid" aria-label="Button style options">
+        <!-- Populated dynamically by js/button-styles.js -->
+      </section>
+
+      <!-- Token CSS Recipe Box -->
+      <section class="css-snippet-card" aria-label="Selected button style CSS tokens">
+        <div class="card-header-row">
+          <div class="card-title-cluster">
+            <span class="material-symbols-outlined">code</span>
+            <h2 id="selected-css-title" class="card-title">Token CSS recipe — Compact tonal stadium pill</h2>
+          </div>
+          <button type="button" id="btn-copy-css" class="btn-tonal">
+            <span class="material-symbols-outlined">content_copy</span>
+            <span class="copy-label">Copy CSS tokens</span>
+          </button>
+        </div>
+        <pre id="selected-css-code" class="css-code-pre"></pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/button-styles.js"></script>
+</body>
+</html>

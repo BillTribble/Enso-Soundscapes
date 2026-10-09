@@ -1,0 +1,291 @@
+{
+  "library": "Salamander Grand Piano v3 (Yamaha C5, 48kHz / 24-bit Stereo FLAC)",
+  "author": "Alexander Holm (CC-BY 3.0)",
+  "source": "https://github.com/sfzinstruments/SalamanderGrandPiano",
+  "velocityLayers": [
+    "v1 (ppp ultra-soft)",
+    "v3 (pp soft)",
+    "v5 (mp warm)"
+  ],
+  "notes": [
+    {
+      "note": "A0",
+      "midi": 21,
+      "files": {
+        "v1": "samples/piano/A0v1.flac",
+        "v3": "samples/piano/A0v3.flac",
+        "v5": "samples/piano/A0v5.flac"
+      }
+    },
+    {
+      "note": "C1",
+      "midi": 24,
+      "files": {
+        "v1": "samples/piano/C1v1.flac",
+        "v3": "samples/piano/C1v3.flac",
+        "v5": "samples/piano/C1v5.flac"
+      }
+    },
+    {
+      "note": "D#1",
+      "midi": 27,
+      "files": {
+        "v1": "samples/piano/Ds1v1.flac",
+        "v3": "samples/piano/Ds1v3.flac",
+        "v5": "samples/piano/Ds1v5.flac"
+      }
+    },
+    {
+      "note": "F#1",
+      "midi": 30,
+      "files": {
+        "v1": "samples/piano/Fs1v1.flac",
+        "v3": "samples/piano/Fs1v3.flac",
+        "v5": "samples/piano/Fs1v5.flac"
+      }
+    },
+    {
+      "note": "A1",
+      "midi": 33,
+      "files": {
+        "v1": "samples/piano/A1v1.flac",
+        "v3": "samples/piano/A1v3.flac",
+        "v5": "samples/piano/A1v5.flac"
+      }
+    },
+    {
+      "note": "C2",
+      "midi": 36,
+      "files": {
+        "v1": "samples/piano/C2v1.flac",
+        "v3": "samples/piano/C2v3.flac",
+        "v5": "samples/piano/C2v5.flac"
+      }
+    },
+    {
+      "note": "D#2",
+      "midi": 39,
+      "files": {
+        "v1": "samples/piano/Ds2v1.flac",
+        "v3": "samples/piano/Ds2v3.flac",
+        "v5": "samples/piano/Ds2v5.flac"
+      }
+    },
+    {
+      "note": "F#2",
+      "midi": 42,
+      "files": {
+        "v1": "samples/piano/Fs2v1.flac",
+        "v3": "samples/piano/Fs2v3.flac",
+        "v5": "samples/piano/Fs2v5.flac"
+      }
+    },
+    {
+      "note": "A2",
+      "midi": 45,
+      "files": {
+        "v1": "samples/piano/A2v1.flac",
+        "v3": "samples/piano/A2v3.flac",
+        "v5": "samples/piano/A2v5.flac"
+      }
+    },
+    {
+      "note": "C3",
+      "midi": 48,
+      "files": {
+        "v1": "samples/piano/C3v1.flac",
+        "v3": "samples/piano/C3v3.flac",
+        "v5": "samples/piano/C3v5.flac"
+      }
+    },
+    {
+      "note": "D#3",
+      "midi": 51,
+      "files": {
+        "v1": "samples/piano/Ds3v1.flac",
+        "v3": "samples/piano/Ds3v3.flac",
+        "v5": "samples/piano/Ds3v5.flac"
+      }
+    },
+    {
+      "note": "F#3",
+      "midi": 54,
+      "files": {
+        "v1": "samples/piano/Fs3v1.flac",
+        "v3": "samples/piano/Fs3v3.flac",
+        "v5": "samples/piano/Fs3v5.flac"
+      }
+    },
+    {
+      "note": "A3",
+      "midi": 57,
+      "files": {
+        "v1": "samples/piano/A3v1.flac",
+        "v3": "samples/piano/A3v3.flac",
+        "v5": "samples/piano/A3v5.flac"
+      }
+    },
+    {
+      "note": "C4",
+      "midi": 60,
+      "files": {
+        "v1": "samples/piano/C4v1.flac",
+        "v3": "samples/piano/C4v3.flac",
+        "v5": "samples/piano/C4v5.flac"
+      }
+    },
+    {
+      "note": "D#4",
+      "midi": 63,
+      "files": {
+        "v1": "samples/piano/Ds4v1.flac",
+        "v3": "samples/piano/Ds4v3.flac",
+        "v5": "samples/piano/Ds4v5.flac"
+      }
+    },
+    {
+      "note": "F#4",
+      "midi": 66,
+      "files": {
+        "v1": "samples/piano/Fs4v1.flac",
+        "v3": "samples/piano/Fs4v3.flac",
+        "v5": "samples/piano/Fs4v5.flac"
+      }
+    },
+    {
+      "note": "A4",
+      "midi": 69,
+      "files": {
+        "v1": "samples/piano/A4v1.flac",
+        "v3": "samples/piano/A4v3.flac",
+        "v5": "samples/piano/A4v5.flac"
+      }
+    },
+    {
+      "note": "C5",
+      "midi": 72,
+      "files": {
+        "v1": "samples/piano/C5v1.flac",
+        "v3": "samples/piano/C5v3.flac",
+        "v5": "samples/piano/C5v5.flac"
+      }
+    },
+    {
+      "note": "D#5",
+      "midi": 75,
+      "files": {
+        "v1": "samples/piano/Ds5v1.flac",
+        "v3": "samples/piano/Ds5v3.flac",
+        "v5": "samples/piano/Ds5v5.flac"
+      }
+    },
+    {
+      "note": "F#5",
+      "midi": 78,
+      "files": {
+        "v1": "samples/piano/Fs5v1.flac",
+        "v3": "samples/piano/Fs5v3.flac",
+        "v5": "samples/piano/Fs5v5.flac"
+      }
+    },
+    {
+      "note": "A5",
+      "midi": 81,
+      "files": {
+        "v1": "samples/piano/A5v1.flac",
+        "v3": "samples/piano/A5v3.flac",
+        "v5": "samples/piano/A5v5.flac"
+      }
+    },
+    {
+      "note": "C6",
+      "midi": 84,
+      "files": {
+        "v1": "samples/piano/C6v1.flac",
+        "v3": "samples/piano/C6v3.flac",
+        "v5": "samples/piano/C6v5.flac"
+      }
+    },
+    {
+      "note": "D#6",
+      "midi": 87,
+      "files": {
+        "v1": "samples/piano/Ds6v1.flac",
+        "v3": "samples/piano/Ds6v3.flac",
+        "v5": "samples/piano/Ds6v5.flac"
+      }
+    },
+    {
+      "note": "F#6",
+      "midi": 90,
+      "files": {
+        "v1": "samples/piano/Fs6v1.flac",
+        "v3": "samples/piano/Fs6v3.flac",
+        "v5": "samples/piano/Fs6v5.flac"
+      }
+    },
+    {
+      "note": "A6",
+      "midi": 93,
+      "files": {
+        "v1": "samples/piano/A6v1.flac",
+        "v3": "samples/piano/A6v3.flac",
+        "v5": "samples/piano/A6v5.flac"
+      }
+    },
+    {
+      "note": "C7",
+      "midi": 96,
+      "files": {
+        "v1": "samples/piano/C7v1.flac",
+        "v3": "samples/piano/C7v3.flac",
+        "v5": "samples/piano/C7v5.flac"
+      }
+    },
+    {
+      "note": "D#7",
+      "midi": 99,
+      "files": {
+        "v1": "samples/piano/Ds7v1.flac",
+        "v3": "samples/piano/Ds7v3.flac",
+        "v5": "samples/piano/Ds7v5.flac"
+      }
+    },
+    {
+      "note": "F#7",
+      "midi": 102,
+      "files": {
+        "v1": "samples/piano/Fs7v1.flac",
+        "v3": "samples/piano/Fs7v3.flac",
+        "v5": "samples/piano/Fs7v5.flac"
+      }
+    },
+    {
+      "note": "A7",
+      "midi": 105,
+      "files": {
+        "v1": "samples/piano/A7v1.flac",
+        "v3": "samples/piano/A7v3.flac",
+        "v5": "samples/piano/A7v5.flac"
+      }
+    },
+    {
+      "note": "C8",
+      "midi": 108,
+      "files": {
+        "v1": "samples/piano/C8v1.flac",
+        "v3": "samples/piano/C8v3.flac",
+        "v5": "samples/piano/C8v5.flac"
+      }
+    }
+  ],
+  "mechanical": {
+    "pedalD1": "samples/piano/pedalD1.flac",
+    "pedalU1": "samples/piano/pedalU1.flac",
+    "rel24": "samples/piano/rel24.flac",
+    "rel40": "samples/piano/rel40.flac",
+    "rel56": "samples/piano/rel56.flac",
+    "harmV3C3": "samples/piano/harmV3C3.flac",
+    "harmV3C4": "samples/piano/harmV3C4.flac"
+  }
+}

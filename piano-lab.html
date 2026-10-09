@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Felt Piano &amp; Sample Library Audition Lab — Eno Soundscape Studio</title>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/button-styles.css">
+  <link rel="stylesheet" href="css/slider-styles.css">
+  <style>
+    .lab-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+      gap: 20px;
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .left-column, .right-column {
+      min-width: 0;
+      max-width: 100%;
+    }
+    @media (max-width: 1020px) {
+      .lab-grid { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+    }
+    .keyboard-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .piano-key-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 96px;
+      padding: 12px 8px;
+      border-radius: 12px;
+      border: none;
+      background: var(--md-sys-color-surface-container-highest);
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.12s ease, background-color 0.15s ease;
+    }
+    @media (hover: hover) {
+      .piano-key-btn:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+    }
+    .piano-key-btn.active-strike {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      transform: translateY(2px);
+    }
+    .key-note {
+      font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .key-zone {
+      font-size: 11px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+    .piano-key-btn.active-strike .key-zone {
+      color: var(--md-sys-color-on-primary);
+    }
+    .lib-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    .lib-table th, .lib-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--md-sys-color-surface-container-highest);
+    }
+    .lib-table th {
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body class="slider-scope slider-style-tonal-fill-bar slider-size-std">
+  <div id="app-root" class="app-shell">
+    <header class="top-app-bar">
+      <div class="brand-cluster">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="material-symbols-outlined">piano</span>
+        </div>
+        <div>
+          <h1 class="brand-title">Felt Piano &amp; Sample Library Audition Lab</h1>
+        </div>
+      </div>
+
+      <div class="m3-pill-tabs gm3-connected-dsp" id="engine-mode-tabs" role="tablist" aria-label="Piano Engine Mode">
+        <button class="m3-pill-tab active" data-mode="felt" role="tab" aria-selected="true">Salamander C5 + Felt EQ</button>
+        <button class="m3-pill-tab" data-mode="raw" role="tab" aria-selected="false">Salamander C5 Raw Grand</button>
+        <button class="m3-pill-tab" data-mode="synth" role="tab" aria-selected="false">Legacy Synth (A/B)</button>
+      </div>
+
+      <div class="top-bar-actions">
+        <button class="btn" id="btn-auto-phrase" type="button">
+          <span class="material-symbols-outlined" id="phrase-icon">play_arrow</span>
+          <span id="phrase-label">Auto-play Mixing Colours phrase</span>
+        </button>
+        <a href="/#preset=mixing_colours" class="btn-tonal" style="text-decoration:none;">
+          <span class="material-symbols-outlined">tune</span>
+          <span>Open in Studio</span>
+        </a>
+        <button class="btn-icon" id="btn-theme-toggle" type="button" aria-label="Toggle color theme">
+          <span class="material-symbols-outlined" id="theme-icon">dark_mode</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="lab-grid">
+      <div class="left-column" style="display:flex;flex-direction:column;gap:20px;">
+        <section class="surface-card">
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-title">Interactive Audition Keyboard (C2 – C6)</h2>
+              <p class="body-copy">Switch between <strong>4 real installed piano sample libraries (248 FLAC files · 174 MB total)</strong> below, then click any note or press keys <code>1–9</code> to audition with the 3-stage wool-felt EQ.</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge badge-green" id="sample-status-badge">Loading FLAC samples...</span>
+              <span class="badge badge-teal" id="last-played-badge">Ready</span>
+            </div>
+          </div>
+
+          <div class="badge-row" style="margin-top:8px;">
+            <span class="field-label" style="margin-right:4px;">Installed library:</span>
+            <div class="m3-pill-tabs gm3-connected-dsp" id="library-tabs" role="tablist" aria-label="Installed Piano Sample Library">
+              <button class="m3-pill-tab active" data-lib="salamander" type="button">Salamander C5 Grand (121 MB)</button>
+              <button class="m3-pill-tab" data-lib="intimate_c3" type="button">Intimate C3 Close + Decca (14.5 MB)</button>
+              <button class="m3-pill-tab" data-lib="upright_kw" type="button">Kawai Upright KW (15.8 MB)</button>
+              <button class="m3-pill-tab" data-lib="steinway_splendid" type="button">Steinway Grand PP (22.4 MB)</button>
+            </div>
+          </div>
+
+          <div class="badge-row" style="margin-top:8px;">
+            <span class="field-label" style="margin-right:4px;">Velocity layer:</span>
+            <div class="m3-pill-tabs gm3-connected-dsp" id="velocity-tabs">
+              <button class="m3-pill-tab active" data-layer="v1" data-vel="0.32" type="button">v1 ppp (Default · Ultra-soft)</button>
+              <button class="m3-pill-tab" data-layer="v3" data-vel="0.55" type="button">v3 pp (Soft felt)</button>
+              <button class="m3-pill-tab" data-layer="v5" data-vel="0.78" type="button">v5 mp (Warm)</button>
+            </div>
+            <button class="btn-tonal" id="btn-play-chord" type="button" style="margin-left:auto;">
+              <span class="material-symbols-outlined">music_note</span>
+              <span>Play C Dorian 9th Chord</span>
+            </button>
+          </div>
+
+          <div class="keyboard-strip" id="keyboard-strip"></div>
+        </section>
+
+        <section class="surface-card">
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-title">Free Piano Sample Library Evaluation &amp; Installed Roster</h2>
+              <p class="body-copy">Salamander Grand Piano v3 (<code>v1 ppp</code>) is locked in as our studio default, with 3 additional open-source libraries installed for comparison.</p>
+            </div>
+            <span class="badge badge-blue">248 FLAC files · 173.7 MB installed</span>
+          </div>
+          <table class="lib-table">
+            <thead>
+              <tr>
+                <th>Library</th>
+                <th>Instrument</th>
+                <th>Format &amp; Layers</th>
+                <th>Status &amp; Verdict for Felt Ambient Piano</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Salamander Grand Piano v3</strong></td>
+                <td>Yamaha C5 Grand</td>
+                <td>48 kHz / 24-bit FLAC · 16 vel layers + pedal/key release (121 MB)</td>
+                <td><span class="badge badge-green">Selected Default (v1 ppp)</span> Ultra-delicate <code>v1 ppp</code> + 240 Hz warmth &amp; 1.85 kHz silk shelf</td>
+              </tr>
+              <tr>
+                <td><strong>Intimate Piano (Headroom)</strong></td>
+                <td>Yamaha C3 Grand</td>
+                <td>44.1 kHz FLAC · Dual-Mic Close + Decca Tree Room (60 files · 14.5 MB)</td>
+                <td><span class="badge badge-teal">Installed &amp; Testable</span> Blends dry close hammers + Decca Tree hall air (like Ivy 162)</td>
+              </tr>
+              <tr>
+                <td><strong>Upright Piano KW</strong></td>
+                <td>Kawai Upright</td>
+                <td>44.1 kHz / 24-bit FLAC · Soft <code>vL</code> layer (30 files · 15.8 MB)</td>
+                <td><span class="badge badge-teal">Installed &amp; Testable</span> Woody intimate upright cabinet (classic Eno / Frahm felt upright)</td>
+              </tr>
+              <tr>
+                <td><strong>Splendid Grand Piano</strong></td>
+                <td>Steinway Concert Grand</td>
+                <td>44.1 kHz FLAC · Softest <code>PP</code> layer across 61 zones (22.4 MB)</td>
+                <td><span class="badge badge-teal">Installed &amp; Testable</span> Rich, dark American Steinway low-mid warmth</td>
+              </tr>
+              <tr>
+                <td><strong>Ivy Audio Piano in 162</strong></td>
+                <td>Steinway Model B</td>
+                <td>44.1 kHz / 24-bit FLAC · 5 vel layers (~4.8 GB BitTorrent zip)</td>
+                <td><span class="badge badge-orange">Why Not Installed</span> HTTP download offline on <code>ivyaudio.com</code> (UDP BitTorrent-only magnet blocked on Cloudtop) &amp; 5 vel layers vs Salamander's 16</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+
+      <div class="right-column" style="display:flex;flex-direction:column;gap:20px;">
+        <section class="surface-card">
+          <div class="card-header-row">
+            <div>
+              <h2 class="section-title">Felt Piano EQ &amp; Mechanics (No Lowpass)</h2>
+              <p class="body-copy">Salamander <code>v1 ppp</code> paired with +3.2 dB soundboard warmth at 240 Hz, -11.5 dB silk high-shelf rolloff above 1.85 kHz, and 4.5% close-mic key/damper release noise.</p>
+            </div>
+            <span class="badge badge-teal" id="eq-state-badge">Salamander v1 ppp + Felt EQ</span>
+          </div>
+
+          <div class="controls-grid-2col" style="margin-top:12px;">
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">240 Hz Soundboard Warmth</span>
+                <span class="control-value" id="val-body-gain">+3.2 dB</span>
+              </div>
+              <input type="range" id="felt-body-gain" min="-3" max="9" step="0.2" value="3.2">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">1.85 kHz Silk High-Shelf Cut</span>
+                <span class="control-value" id="val-shelf-cut">-11.5 dB</span>
+              </div>
+              <input type="range" id="felt-shelf-cut" min="-20" max="0" step="0.5" value="-11.5">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">Close-Mic Damper &amp; Key Noise</span>
+                <span class="control-value" id="val-mech-gain">4.5%</span>
+              </div>
+              <input type="range" id="felt-mech-gain" min="0" max="0.20" step="0.005" value="0.045">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">Revox Tape Delay Mix</span>
+                <span class="control-value" id="val-lab-delay">22%</span>
+              </div>
+              <input type="range" id="lab-delay" min="0" max="1.0" step="0.02" value="0.22">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">Note Release Tail</span>
+                <span class="control-value" id="val-lab-release">6.5 s</span>
+              </div>
+              <input type="range" id="lab-release" min="0.8" max="16.0" step="0.2" value="6.5">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">Eno / Lanois Shimmer Reverb</span>
+                <span class="control-value" id="val-lab-reverb">42%</span>
+              </div>
+              <input type="range" id="lab-reverb" min="0" max="1" step="0.02" value="0.42">
+            </div>
+
+            <div class="slider-row">
+              <div class="control-label-row">
+                <span class="control-label">Octave Shimmer Halo (+12st)</span>
+                <span class="control-value" id="val-lab-shimmer">12%</span>
+              </div>
+              <input type="range" id="lab-shimmer" min="0" max="1" step="0.02" value="0.12">
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/presets.js"></script>
+  <script src="js/audio-engine.js"></script>
+  <script src="js/slider-styles.js"></script>
+  <script src="js/piano-lab.js"></script>
+</body>
+</html>
