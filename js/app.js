@@ -382,7 +382,6 @@
       };
       onClick('btn-play-toggle', () => this.toggleTransport());
       onClick('btn-bloom-chord', () => this.triggerAmbientCluster());
-      onClick('btn-fade-voices', () => this.audioEngine.releaseAllVoices(0.5));
       onClick('btn-deep-listening', () => {
         const shell = document.getElementById('app-root');
         if (!shell) return;
@@ -682,6 +681,7 @@
         if (triggerPreview) window.aurora.pulse(0.65);
       }
       this.autoCycler?.onManualPresetChange?.(presetId);
+      window.EnsoPwaMedia?.updateMediaSessionMetadata?.(presetId);
       if (triggerPreview && this.probEngine.isRunning) this.triggerAmbientCluster();
     }
 

@@ -214,11 +214,10 @@
         const studioCardTitles = Array.from(document.querySelectorAll('#tab-studio h2.card-title')).map((el) => el.textContent.trim());
         const studioBadgesText = Array.from(document.querySelectorAll('#tab-studio .badge')).map((el) => el.textContent.trim());
         const removedStudioBadges = !studioBadgesText.includes('Independent prime loop lengths') && !studioBadgesText.includes('+12st octave loop');
-        const fadeBtn = document.getElementById('btn-fade-voices');
-        const releaseAllIconOnly = !!fadeBtn &&
-          fadeBtn.classList.contains('icon-btn') &&
-          !fadeBtn.querySelector('.btn-label-text') &&
-          fadeBtn.textContent.trim() === 'priority_high';
+        const fadeVoicesBtnRemoved = !document.getElementById('btn-fade-voices') &&
+          !Array.from(document.querySelectorAll('.top-app-bar .material-symbols-outlined')).some((el) => el.textContent.trim() === 'priority_high');
+        const bgKeepAliveDurationSec = window.EnsoPwaMedia?.keepAliveDurationSec || 0;
+        const bgAudioBridgeReady = Boolean(window.EnsoPwaMedia?.isKeepAliveReady?.());
         let canvasRenderedPixels = false;
         const scCanvas = document.getElementById('soundscape-canvas');
         if (scCanvas && scCanvas.width > 0 && scCanvas.height > 0) {
@@ -603,7 +602,9 @@
             bloomHintDisappearsVerified,
             studioCardTitles,
             removedStudioBadges,
-            releaseAllIconOnly,
+            fadeVoicesBtnRemoved,
+            bgKeepAliveDurationSec,
+            bgAudioBridgeReady,
             brandTitleText:
                 (document.querySelector('.brand-title')?.textContent ||
                  '').trim(),

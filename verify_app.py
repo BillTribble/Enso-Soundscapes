@@ -232,7 +232,9 @@ def run_browser_selftest():
       'Reverb & tape delay',
   ], f'Unexpected Studio card titles: {payload}'
   assert payload.get('removedStudioBadges') is True, f'Expected Independent prime loop lengths and +12st octave loop badges removed: {payload}'
-  assert payload.get('releaseAllIconOnly') is True, f'Expected #btn-fade-voices to be an "!" (priority_high) icon-only button: {payload}'
+  assert payload.get('fadeVoicesBtnRemoved') is True, f'Expected #btn-fade-voices and priority_high removed: {payload}'
+  assert payload.get('bgKeepAliveDurationSec', 0) >= 25, f'Expected bgKeepAliveDurationSec >= 25: {payload}'
+  assert payload.get('bgAudioBridgeReady') is True, f'Expected bgAudioBridgeReady=True: {payload}'
   assert payload.get('brandTitleText') == 'Enso Soundscapes', f'Expected brandTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('documentTitleText') == 'Enso Soundscapes', f'Expected documentTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('researchBadgesRemoved') is True, f'Expected research homage badges removed: {payload}'

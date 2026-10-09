@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'enso-soundscapes-v15';
+const CACHE_NAME = 'enso-soundscapes-v17';
 const APP_SHELL = [
   './',
   'index.html',
@@ -31,6 +31,7 @@ const APP_SHELL = [
   'js/voice-cards.js',
   'js/app.js',
   'js/slider-styles.js',
+  'js/patch-randomizer.js',
   'js/patch-modal.js',
   'js/patch-storage.js',
   'js/mixer-dials.js',

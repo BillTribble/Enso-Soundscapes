@@ -171,17 +171,20 @@
 
 @media (max-width: 640px) {
   .control-row.has-rotary-dial {
-    padding: 6px 6px;
-    gap: 5px;
+    padding: 5px 4px;
+    gap: 4px;
   }
   .rotary-dial-widget,
   .rotary-dial-svg {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
   .control-row.has-rotary-dial .control-label-line label {
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1.15;
+    letter-spacing: -0.01em;
+    overflow-wrap: normal;
+    word-break: normal;
   }
   .control-row.has-rotary-dial .control-value {
     font-size: 11px;

@@ -4,6 +4,9 @@
  */
 'use strict';
 
+const setBgTimer = (fn, ms) => (window.EnsoPwaMedia?.setBgTimeout ? window.EnsoPwaMedia.setBgTimeout(fn, ms) : setTimeout(fn, ms));
+const clearBgTimer = (id) => (window.EnsoPwaMedia?.clearBgTimeout ? window.EnsoPwaMedia.clearBgTimeout(id) : clearTimeout(id));
+
 class PhraseEngine {
   constructor(audioEngine, probEngine) {
     this.audioEngine = audioEngine || null;
@@ -259,7 +262,7 @@ class PhraseEngine {
   }
 
   clearPhraseTimers() {
-    this.phraseTimers.forEach((t) => clearTimeout(t));
+    this.phraseTimers.forEach((t) => clearBgTimer(t));
     this.phraseTimers = [];
   }
 
@@ -419,7 +422,7 @@ class PhraseEngine {
         stepMidis.forEach((m, noteIdx) => {
           const rollDelay = noteIdx * ((step.rollMs || 35) / 1000);
           if (this.audioEngine) {
-            setTimeout(() => {
+            setBgTimer(() => {
               this.audioEngine.triggerVoice('piano', m, vel, pan, gain);
             }, rollDelay * 1000);
           }
@@ -437,7 +440,7 @@ class PhraseEngine {
       if (options.syncImmediate || delaySec <= 0.005) {
         fireStep();
       } else {
-        const timer = setTimeout(fireStep, delaySec * 1000);
+        const timer = setBgTimer(fireStep, delaySec * 1000);
         this.phraseTimers.push(timer);
       }
     });
@@ -530,7 +533,7 @@ class PhraseEngine {
     const vel = 0.65, pan = (Math.random() * 2 - 1) * 0.35, gain = (voice && typeof voice.gain === 'number') ? voice.gain : 0.70;
 
     if (this.audioEngine) {
-      midiNotes.forEach((m, idx) => setTimeout(() => this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68), idx * 28));
+      midiNotes.forEach((m, idx) => setBgTimer(() => this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68), idx * 28));
     }
     if (window.aurora) window.aurora.pulse(0.72, { voiceId: voice ? voice.id : 'choir' });
 
@@ -647,7 +650,7 @@ class PhraseEngine {
             const midis = (step.degrees || [0]).map((d, i) => this.degreeToMidi(d, (step.octaves ? step.octaves[i] : 0) + (v ? v.octaveOffset : 0), this.scaleId));
             const cScale = midis.length > 1 ? (1 / Math.pow(midis.length, 0.42)) : 1.0;
             midis.forEach((m, mIdx) => {
-              setTimeout(() => this.audioEngine.triggerVoice('piano', m, 0.72 * cScale, 0, v ? v.gain : 2.0), mIdx * 35);
+              setBgTimer(() => this.audioEngine.triggerVoice('piano', m, 0.72 * cScale, 0, v ? v.gain : 2.0), mIdx * 35);
             });
             this._highlightPhraseStep(idx);
           }
@@ -679,7 +682,7 @@ class PhraseEngine {
           const midis = chord.degrees.map((d, i) => this.degreeToMidi(d, (chord.octaves[i] || 0) + (v ? v.octaveOffset : 0), this.scaleId));
           if (this.audioEngine) {
             midis.forEach((m, mIdx) => {
-              setTimeout(() => this.audioEngine.triggerVoice(vId, m, 0.65, 0, v ? v.gain * 0.68 : 0.65), mIdx * 25);
+              setBgTimer(() => this.audioEngine.triggerVoice(vId, m, 0.65, 0, v ? v.gain * 0.68 : 0.65), mIdx * 25);
             });
           }
           this._highlightChordStep(idx);
