@@ -16,52 +16,154 @@ class ProbabilityEngine {
     // Initial staggered phase offsets across the 6 voices to begin unfolding immediately
     const INITIAL_PHASES = [0.15, 0.82, 0.45, 0.30, 0.65, 0.92];
 
-    const sourceVoices = (window.ENO_DATA && Array.isArray(window.ENO_DATA.VOICES))
-      ? window.ENO_DATA.VOICES
-      : [
-          { id: 'pad', name: 'CS-80 Ribbon Pad', role: 'Warm swell', badgeHue: 'blue', octaveOffset: 0, defaultPrimeCycle: 17.3, defaultProb: 0.74, defaultGain: 0.36, defaultCutoff: 5200, defaultResonance: 1.2, panSpread: 0.35 },
-          { id: 'piano', name: 'Felt Piano', role: 'Damped hammer', badgeHue: 'teal', octaveOffset: 0, defaultPrimeCycle: 7.9, defaultProb: 0.62, defaultGain: 2.00, defaultCutoff: 12000, defaultResonance: 0.8, panSpread: 0.45 },
-          { id: 'bell', name: 'DX7 Glass Bell', role: 'FM crystalline', badgeHue: 'purple', octaveOffset: 1, defaultPrimeCycle: 11.3, defaultProb: 0.46, defaultGain: 0.27, defaultCutoff: 9500, defaultResonance: 1.4, panSpread: 0.65 },
-          { id: 'choir', name: 'Spectral Choir', role: 'Harmonic bloom', badgeHue: 'green', octaveOffset: 1, defaultPrimeCycle: 23.9, defaultProb: 0.52, defaultGain: 0.30, defaultCutoff: 6400, defaultResonance: 1.2, panSpread: 0.50 },
-          { id: 'tape', name: 'Revox Tape Loop', role: 'Sound-on-sound', badgeHue: 'orange', octaveOffset: 0, defaultPrimeCycle: 13.7, defaultProb: 0.60, defaultGain: 0.32, defaultCutoff: 4200, defaultResonance: 1.6, panSpread: 0.40 },
-          { id: 'drone', name: 'Sub-Bass Pedal', role: 'Foundational anchor', badgeHue: 'yellow', octaveOffset: -1, defaultPrimeCycle: 31.1, defaultProb: 0.82, defaultGain: 0.35, defaultCutoff: 1800, defaultResonance: 1.8, panSpread: 0.15 }
+    const sourceVoices =
+        (window.ENO_DATA && Array.isArray(window.ENO_DATA.VOICES)) ?
+        window.ENO_DATA.VOICES :
+        [
+          {
+            id: 'pad',
+            name: 'CS-80 Ribbon Pad',
+            role: 'Warm swell',
+            badgeHue: 'blue',
+            octaveOffset: 0,
+            defaultPrimeCycle: 17.3,
+            defaultProb: 0.74,
+            defaultGain: 0.36,
+            defaultCutoff: 5200,
+            defaultResonance: 1.2,
+            panSpread: 0.35
+          },
+          {
+            id: 'piano',
+            name: 'Felt Piano',
+            role: 'Damped hammer',
+            badgeHue: 'teal',
+            octaveOffset: 0,
+            defaultPrimeCycle: 7.9,
+            defaultProb: 0.62,
+            defaultGain: 2.00,
+            defaultCutoff: 12000,
+            defaultResonance: 0.8,
+            panSpread: 0.45
+          },
+          {
+            id: 'bell',
+            name: 'DX7 Glass Bell',
+            role: 'FM crystalline',
+            badgeHue: 'purple',
+            octaveOffset: 1,
+            defaultPrimeCycle: 11.3,
+            defaultProb: 0.46,
+            defaultGain: 0.27,
+            defaultCutoff: 9500,
+            defaultResonance: 1.4,
+            panSpread: 0.65
+          },
+          {
+            id: 'choir',
+            name: 'Spectral Choir',
+            role: 'Harmonic bloom',
+            badgeHue: 'green',
+            octaveOffset: 1,
+            defaultPrimeCycle: 23.9,
+            defaultProb: 0.52,
+            defaultGain: 0.30,
+            defaultCutoff: 6400,
+            defaultResonance: 1.2,
+            panSpread: 0.50
+          },
+          {
+            id: 'tape',
+            name: 'Revox Tape Loop',
+            role: 'Sound-on-sound',
+            badgeHue: 'orange',
+            octaveOffset: 0,
+            defaultPrimeCycle: 13.7,
+            defaultProb: 0.60,
+            defaultGain: 0.32,
+            defaultCutoff: 4200,
+            defaultResonance: 1.6,
+            panSpread: 0.40
+          },
+          {
+            id: 'drone',
+            name: 'Sub-Bass Pedal',
+            role: 'Foundational anchor',
+            badgeHue: 'yellow',
+            octaveOffset: -1,
+            defaultPrimeCycle: 31.1,
+            defaultProb: 0.82,
+            defaultGain: 0.35,
+            defaultCutoff: 1800,
+            defaultResonance: 1.8,
+            panSpread: 0.15
+          }
         ];
 
-    this.voices = sourceVoices.map((v, idx) => ({
-      id: v.id,
-      name: v.name,
-      role: v.role,
-      badgeHue: v.badgeHue,
-      defaultOctave: typeof v.defaultOctave === 'number' ? v.defaultOctave : (typeof v.octaveOffset === 'number' ? v.octaveOffset : 0),
-      octaveOffset: typeof v.octaveOffset === 'number' ? v.octaveOffset : 0,
-      defaultOctaveShiftProb: typeof v.defaultOctaveShiftProb === 'number' ? v.defaultOctaveShiftProb : 0.10,
-      octaveShiftProb: typeof v.defaultOctaveShiftProb === 'number' ? v.defaultOctaveShiftProb : 0.10,
-      defaultNoteOctaveShiftProb: typeof v.defaultNoteOctaveShiftProb === 'number' ? v.defaultNoteOctaveShiftProb : 0.03,
-      noteOctaveShiftProb: typeof v.defaultNoteOctaveShiftProb === 'number' ? v.defaultNoteOctaveShiftProb : 0.03,
-      defaultChordOctaveShiftProb: typeof v.defaultChordOctaveShiftProb === 'number' ? v.defaultChordOctaveShiftProb : 0.10,
-      chordOctaveShiftProb: typeof v.defaultChordOctaveShiftProb === 'number' ? v.defaultChordOctaveShiftProb : 0.10,
-      roundOctaveShift: 0,
-      stayShiftedProb: 0.30,
-      twoOctaveRatio: 0.20,
-      panSpread: typeof v.panSpread === 'number' ? v.panSpread : 0.4,
-      prob: typeof v.defaultProb === 'number' ? v.defaultProb : 0.60,
-      cycle: typeof v.defaultPrimeCycle === 'number' ? v.defaultPrimeCycle : 15.0,
-      baseGain: typeof v.defaultGain === 'number' ? v.defaultGain : 0.70,
-      gain: typeof v.defaultGain === 'number' ? v.defaultGain : 0.70,
-      release: typeof v.defaultRelease === 'number' ? v.defaultRelease : 7.0,
-      defaultCutoff: typeof v.defaultCutoff === 'number' ? v.defaultCutoff : 8000,
-      cutoff: typeof v.defaultCutoff === 'number' ? v.defaultCutoff : 8000,
-      defaultResonance: typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
-      resonance: typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
-      muted: false,
-      solo: false,
-      phase: INITIAL_PHASES[idx % INITIAL_PHASES.length],
-      lastOutcome: 'IDLE',
-      lastNote: '—',
-      lastRoll: null,
-      passCount: 0,
-      restCount: 0
-    }));
+    this.voices = sourceVoices.map(
+        (v, idx) => ({
+          id: v.id,
+          name: v.name,
+          role: v.role,
+          badgeHue: v.badgeHue,
+          defaultOctave: typeof v.defaultOctave === 'number' ?
+              v.defaultOctave :
+              (typeof v.octaveOffset === 'number' ? v.octaveOffset : 0),
+          octaveOffset: typeof v.octaveOffset === 'number' ? v.octaveOffset : 0,
+          defaultOctaveShiftProb: typeof v.defaultOctaveShiftProb === 'number' ?
+              v.defaultOctaveShiftProb :
+              0.10,
+          octaveShiftProb: typeof v.defaultOctaveShiftProb === 'number' ?
+              v.defaultOctaveShiftProb :
+              0.10,
+          defaultNoteOctaveShiftProb:
+              typeof v.defaultNoteOctaveShiftProb === 'number' ?
+              v.defaultNoteOctaveShiftProb :
+              0.03,
+          noteOctaveShiftProb:
+              typeof v.defaultNoteOctaveShiftProb === 'number' ?
+              v.defaultNoteOctaveShiftProb :
+              0.03,
+          defaultChordOctaveShiftProb:
+              typeof v.defaultChordOctaveShiftProb === 'number' ?
+              v.defaultChordOctaveShiftProb :
+              0.10,
+          chordOctaveShiftProb:
+              typeof v.defaultChordOctaveShiftProb === 'number' ?
+              v.defaultChordOctaveShiftProb :
+              0.10,
+          roundOctaveShift: 0,
+          stayShiftedProb: 0.30,
+          twoOctaveRatio: 0.20,
+          panSpread: typeof v.panSpread === 'number' ? v.panSpread : 0.4,
+          prob: typeof v.defaultProb === 'number' ? v.defaultProb : 0.60,
+          cycle: typeof v.defaultPrimeCycle === 'number' ? v.defaultPrimeCycle :
+                                                           15.0,
+          baseGain: typeof v.defaultGain === 'number' ? v.defaultGain : 0.70,
+          gain: typeof v.defaultGain === 'number' ? v.defaultGain : 0.70,
+          balanceGain: v.id === 'piano' ? 1.0 : 0.38,
+          effectiveGain: Number(
+              ((typeof v.defaultGain === 'number' ? v.defaultGain : 0.70) *
+               (v.id === 'piano' ? 1.0 : 0.38))
+                  .toFixed(4)),
+          release: typeof v.defaultRelease === 'number' ? v.defaultRelease :
+                                                          7.0,
+          defaultCutoff: typeof v.defaultCutoff === 'number' ? v.defaultCutoff :
+                                                               8000,
+          cutoff: typeof v.defaultCutoff === 'number' ? v.defaultCutoff : 8000,
+          defaultResonance:
+              typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
+          resonance:
+              typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
+          muted: false,
+          solo: false,
+          phase: INITIAL_PHASES[idx % INITIAL_PHASES.length],
+          lastOutcome: 'IDLE',
+          lastNote: '—',
+          lastRoll: null,
+          passCount: 0,
+          restCount: 0
+        }));
 
     this.isRunning = false;
     this.scaleId = 'reflection_eb';
@@ -142,14 +244,22 @@ class ProbabilityEngine {
 
   evaluateRoundOctaveShift(voice, options = {}) {
     if (!voice) return 0;
-    const p1 = Math.max(0, Math.min(1, typeof voice.octaveShiftProb === 'number' ? voice.octaveShiftProb : 0.10));
+    const p1 = Math.max(
+        0,
+        Math.min(
+            1,
+            typeof voice.octaveShiftProb === 'number' ? voice.octaveShiftProb :
+                                                        0.10));
     if (p1 <= 0) {
       voice.roundOctaveShift = 0;
       return 0;
     }
-    const currentShift = typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
+    const currentShift =
+        typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
     if (currentShift !== 0) {
-      const stayProb = typeof voice.stayShiftedProb === 'number' ? voice.stayShiftedProb : 0.30;
+      const stayProb = typeof voice.stayShiftedProb === 'number' ?
+          voice.stayShiftedProb :
+          0.30;
       const r = typeof options.r === 'number' ? options.r : Math.random();
       if (r < stayProb) {
         return currentShift;
@@ -157,10 +267,12 @@ class ProbabilityEngine {
       voice.roundOctaveShift = 0;
       return 0;
     }
-    const p2Ratio = typeof voice.twoOctaveRatio === 'number' ? voice.twoOctaveRatio : 0.20;
+    const p2Ratio =
+        typeof voice.twoOctaveRatio === 'number' ? voice.twoOctaveRatio : 0.20;
     const p2 = Math.min(Math.max(0, 1 - p1), p1 * p2Ratio);
     const r = typeof options.r === 'number' ? options.r : Math.random();
-    const dirRoll = typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
+    const dirRoll =
+        typeof options.dirRoll === 'number' ? options.dirRoll : Math.random();
     const dir = dirRoll < 0.5 ? 1 : -1;
     let nextShift = 0;
     if (r < p2) {
@@ -196,7 +308,9 @@ class ProbabilityEngine {
       const roundShift = this.evaluateRoundOctaveShift(voice);
 
       if (pe && typeof pe.triggerPianoPhrase === 'function' && voice.id === 'piano') {
-        const phraseRes = pe.triggerPianoPhrase(voice, circadian, { forceFull: forcePass, roundOctaveShift: roundShift });
+        const phraseRes = pe.triggerPianoPhrase(
+            voice, circadian,
+            {forceFull: forcePass, roundOctaveShift: roundShift});
         const freqVal = (window.ENO_DATA && typeof window.ENO_DATA.midiToFreq === 'function')
           ? Number(window.ENO_DATA.midiToFreq(phraseRes.firstMidi).toFixed(2))
           : 440;
@@ -210,7 +324,8 @@ class ProbabilityEngine {
           stepCount: phraseRes.stepCount
         };
       } else if (pe && typeof pe.triggerInstrumentChordProgression === 'function' && voice.id === pe.chordProgInstrument && voice.id !== 'piano') {
-        const chordRes = pe.triggerInstrumentChordProgression(voice, circadian, { roundOctaveShift: roundShift });
+        const chordRes = pe.triggerInstrumentChordProgression(
+            voice, circadian, {roundOctaveShift: roundShift});
         pitchData = {
           midi: chordRes.firstMidi,
           noteName: chordRes.noteName,
@@ -321,7 +436,8 @@ class ProbabilityEngine {
 
     const voiceOctave = typeof voice.octaveOffset === 'number' ? voice.octaveOffset : 0;
     const circOctave = (circadian && typeof circadian.octaveBias === 'number') ? circadian.octaveBias : 0;
-    const octShift = typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
+    const octShift =
+        typeof voice.roundOctaveShift === 'number' ? voice.roundOctaveShift : 0;
 
     const totalOctave = voiceOctave + circOctave + octShift;
     const root = typeof scale.rootMidi === 'number' ? scale.rootMidi : 51;
@@ -481,10 +597,11 @@ class ProbabilityEngine {
 
   applyCrossfadeToVoices(pianoMult = 1.0, otherMult = 1.0) {
     for (const v of this.voices) {
-      const base = typeof v.baseGain === 'number' ? v.baseGain : v.gain;
-      v.baseGain = base;
-      const mult = v.id === 'piano' ? pianoMult : otherMult;
-      v.gain = Number(Math.max(0.0, Math.min(5.0, base * mult)).toFixed(4));
+      v.balanceGain = Number(
+          Math.max(0.0, Math.min(1.0, v.id === 'piano' ? pianoMult : otherMult))
+              .toFixed(4));
+      v.effectiveGain = Number(
+          Math.max(0.0, Math.min(5.0, v.gain * v.balanceGain)).toFixed(4));
     }
   }
 
@@ -494,30 +611,37 @@ class ProbabilityEngine {
     if (key === 'prob') voice.prob = Math.max(0.0, Math.min(1.0, Number(val) || 0));
     else if (key === 'cycle') voice.cycle = Math.max(1.5, Math.min(120.0, Number(val) || 15.0));
     else if (key === 'gain') {
-      const base = Math.max(0.0, Math.min(5.0, Number(val) || 0));
-      voice.baseGain = base;
-      const mult = (this.audioEngine && typeof this.audioEngine.getCrossfadeMultiplier === 'function')
-        ? this.audioEngine.getCrossfadeMultiplier(voiceId)
-        : 1.0;
-      voice.gain = Number(Math.max(0.0, Math.min(5.0, base * mult)).toFixed(4));
+      voice.gain =
+          Number(Math.max(0.0, Math.min(5.0, Number(val) || 0)).toFixed(4));
+      voice.baseGain = voice.gain;
+      voice.effectiveGain = Number(
+          Math.max(0.0, Math.min(5.0, voice.gain * (voice.balanceGain ?? 1.0)))
+              .toFixed(4));
     }
     else if (key === 'release') voice.release = Math.max(0.2, Math.min(20.0, Number(val) || 7.0));
-    else if (key === 'cutoff') voice.cutoff = Math.max(80, Math.min(16000, Number(val) || 8000));
-    else if (key === 'resonance') voice.resonance = Math.max(0.1, Math.min(14.0, Number(val) || 1.0));
+    else if (key === 'cutoff')
+      voice.cutoff = Math.max(80, Math.min(16000, Number(val) || 8000));
+    else if (key === 'resonance')
+      voice.resonance = Math.max(0.1, Math.min(14.0, Number(val) || 1.0));
     else if (key === 'octave' || key === 'octaveOffset') {
       const parsed = Number(val);
       voice.octaveOffset = Math.max(-4, Math.min(4, Math.round(Number.isNaN(parsed) ? 0 : parsed)));
     } else if (key === 'octaveShiftProb' || key === 'octaveShift') {
       voice.octaveShiftProb = Math.max(0, Math.min(1, Number(val)));
       if (voice.octaveShiftProb <= 0) voice.roundOctaveShift = 0;
-    } else if (key === 'noteOctaveShiftProb' || key === 'noteOctaveShift' || key === 'note-octave-shift') {
+    } else if (
+        key === 'noteOctaveShiftProb' || key === 'noteOctaveShift' ||
+        key === 'note-octave-shift') {
       voice.noteOctaveShiftProb = Math.max(0, Math.min(1, Number(val)));
-    } else if (key === 'chordOctaveShiftProb' || key === 'chordOctaveShift' || key === 'chord-octave-shift') {
+    } else if (
+        key === 'chordOctaveShiftProb' || key === 'chordOctaveShift' ||
+        key === 'chord-octave-shift') {
       voice.chordOctaveShiftProb = Math.max(0, Math.min(1, Number(val)));
     } else if (key === 'muted') {
       voice.muted = Boolean(val);
       this.activeVoiceCount = this.voices.filter(v => !v.muted).length;
-    } else if (key === 'solo') voice.solo = Boolean(val);
+    } else if (key === 'solo')
+      voice.solo = Boolean(val);
   }
 
   computeNonRepeatingHorizon() {

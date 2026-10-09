@@ -15,7 +15,10 @@ import time
 import urllib.request
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
-ARTIFACT_DIR = os.environ.get('ARTIFACT_DIR', '/usr/local/google/home/tribble/.gemini/jetski/brain/9cd6620b-dc0d-43d0-8753-ccb0d4dcc75c')
+ARTIFACT_DIR = os.environ.get(
+    'ARTIFACT_DIR',
+    '/usr/local/google/home/tribble/.gemini/jetski/brain/9cd6620b-dc0d-43d0-8753-ccb0d4dcc75c',
+)
 SERVER_URL = 'http://bat.c.googlers.com:8094'
 LOCAL_URL = 'http://127.0.0.1:8094'
 FILE_URL = f'file://{APP_DIR}/index.html'
@@ -56,6 +59,8 @@ def check_http_server():
       '/saved-patches.json',
       '/api/patches',
       '/fonts/GoogleSymbols.ttf',
+      '/fonts/InterVariable.woff2',
+      '/fonts/GoogleSansCode.ttf',
       '/samples/piano/manifest.json',
       '/samples/piano/C4v1.flac',
       '/samples/piano/C4v3.flac',
@@ -113,11 +118,13 @@ def _run_chrome_dom_dump(window_size):
         '--autoplay-policy=no-user-gesture-required',
         '--enable-logging=stderr',
         f'--window-size={window_size}',
-        '--virtual-time-budget=200',
+        '--virtual-time-budget=25',
         '--dump-dom',
         f'{FILE_URL}#selftest=1',
     ]
-    return subprocess.run(cmd, capture_output=True, text=True, timeout=20, check=False)
+    return subprocess.run(
+        cmd, capture_output=True, text=True, timeout=20, check=False
+    )
 
 
 def run_browser_selftest():
@@ -145,12 +152,24 @@ def run_browser_selftest():
   assert payload['eventsLogged'] >= 6, f'Expected >=6 gate events: {payload}'
   assert payload['voicesCount'] == 6, f'Expected 6 prime-cycle voices: {payload}'
   assert payload.get('voiceGainSlidersCount') == 6, f'Expected 6 instrument volume controls: {payload}'
-  assert payload.get('voiceCutoffSlidersCount') == 6, f'Expected 6 per-voice cutoff controls: {payload}'
-  assert payload.get('voiceResonanceSlidersCount') == 6, f'Expected 6 per-voice resonance controls: {payload}'
-  assert payload.get('voiceFiltersConnected') == 6, f'Expected 6 per-voice resonant filters connected: {payload}'
-  assert payload.get('bloomTextRemoved') is True, f'Expected "Bloom" text removed from voice pluck button: {payload}'
-  assert payload.get('envModeToggleRemoved') is True, f'Expected data-env-mode toggle removed: {payload}'
-  assert payload.get('voiceGlobalsPreservedAcrossTracks') is True, f'Expected voice gains and filters preserved across tracks: {payload}'
+  assert (
+      payload.get('voiceCutoffSlidersCount') == 6
+  ), f'Expected 6 per-voice cutoff controls: {payload}'
+  assert (
+      payload.get('voiceResonanceSlidersCount') == 6
+  ), f'Expected 6 per-voice resonance controls: {payload}'
+  assert (
+      payload.get('voiceFiltersConnected') == 6
+  ), f'Expected 6 per-voice resonant filters connected: {payload}'
+  assert (
+      payload.get('bloomTextRemoved') is True
+  ), f'Expected "Bloom" text removed from voice pluck button: {payload}'
+  assert (
+      payload.get('envModeToggleRemoved') is True
+  ), f'Expected data-env-mode toggle removed: {payload}'
+  assert (
+      payload.get('voiceGlobalsPreservedAcrossTracks') is True
+  ), f'Expected voice gains and filters preserved across tracks: {payload}'
   assert payload.get('voiceReleaseSlidersCount') == 6, f'Expected 6 per-voice release controls: {payload}'
   assert payload.get('voiceReleaseSyncVerified') is True, f'Expected per-voice release sync verified: {payload}'
   assert payload.get('voiceOctaveSlidersCount') == 6, f'Expected 6 per-voice octave controls: {payload}'
@@ -160,14 +179,18 @@ def run_browser_selftest():
   assert payload.get('defaultControlStyle') == 'dials', f'Expected default control style to be dials: {payload}'
   assert payload.get('settingsCogPresent') is True, f'Expected Settings cog and crossfade popover present: {payload}'
   assert payload.get('crossfadeWorks') is True, f'Expected Piano vs. All other sounds crossfade to work: {payload}'
-  assert payload.get('voiceBalanceGlobalAcrossTracks') is True, f'Expected Voice balance to be global across all tracks: {payload}'
+  assert (
+      payload.get('voiceBalanceGlobalAcrossTracks') is True
+  ), f'Expected Voice balance to be global across all tracks: {payload}'
   assert payload.get('rotaryDialsCount', 0) >= 34, f'Expected >=34 rotary dial widgets: {payload}'
   assert payload.get('minimalOutsideEncoderOnly') is True, f'Expected minimal outside-encoder-only dials: {payload}'
   assert payload.get('dialSmallAndLabelRight') is True, f'Expected small dials with label to right: {payload}'
   assert abs(payload.get('pianoDefaultGain', 0) - 2.00) < 0.02, f'Expected 200% (2.00) default piano gain: {payload}'
   assert abs(payload.get('pianoSliderMax', 0) - 5.00) < 0.02, f'Expected 500% (5.00) max piano slider: {payload}'
   assert payload.get('allPresetsPiano200') is True, f'Expected all presets to default piano to 200%: {payload}'
-  assert payload.get('allOtherVoicesReduced') is True, f'Expected all other voices reduced to <=0.45: {payload}'
+  assert (
+      payload.get('visibleVoiceLevelsUnDucked') is True
+  ), f'Expected un-ducked visible voice levels: {payload}'
   assert abs(payload.get('pianoBusGain', 0) - 5.00) < 0.02, f'Unexpected pianoBusGain at 500%: {payload}'
   assert abs(payload.get('pianoProbGainMax', 0) - 5.00) < 0.02, f'Unexpected pianoProbGainMax at 500%: {payload}'
   assert payload.get('feltLpRemoved') is True, f'Expected lowpass removed from Felt Piano: {payload}'
@@ -228,10 +251,39 @@ def run_browser_selftest():
   assert payload.get('customPatchCreationVerified') is True, f'Expected customPatchCreationVerified=True: {payload}'
   assert payload.get('topBarVolumeDialPresent') is True, f'Expected topBarVolumeDialPresent=True: {payload}'
   assert payload.get('topBarVolumeSyncVerified') is True, f'Expected topBarVolumeSyncVerified=True: {payload}'
-  assert payload.get('voiceWaveformsCount') == 6, f'Expected 6 per-voice waveform canvases: {payload}'
-  assert payload.get('voiceWaveformsUnderDialsVerified') is True, f'Expected voiceWaveformsUnderDialsVerified=True: {payload}'
-  assert payload.get('voiceWaveformsThemeVerified') is True, f'Expected voiceWaveformsThemeVerified=True: {payload}'
-  assert payload.get('envelopeTopOnlyLightBlueVerified') is True, f'Expected envelopeTopOnlyLightBlueVerified=True: {payload}'
+  assert (
+      payload.get('voiceWaveformsCount') == 6
+  ), f'Expected 6 per-voice waveform canvases: {payload}'
+  assert (
+      payload.get('voiceWaveformsUnderDialsVerified') is True
+  ), f'Expected voiceWaveformsUnderDialsVerified=True: {payload}'
+  assert (
+      payload.get('voiceWaveformsAlignedRowVerified') is True
+  ), f'Expected voiceWaveformsAlignedRowVerified=True: {payload}'
+  assert (
+      payload.get('voiceWaveformsThemeVerified') is True
+  ), f'Expected voiceWaveformsThemeVerified=True: {payload}'
+  assert (
+      payload.get('envelopeTopOnlyLightBlueVerified') is True
+  ), f'Expected envelopeTopOnlyLightBlueVerified=True: {payload}'
+  assert (
+      payload.get('autoThemeModeVerified') is True
+  ), f'Expected autoThemeModeVerified=True: {payload}'
+  assert (
+      payload.get('defaultThemeMode') == 'auto'
+  ), f'Expected defaultThemeMode=="auto": {payload}'
+  assert (
+      payload.get('hudGateCounterRemoved') is True
+  ), f'Expected hudGateCounterRemoved=True: {payload}'
+  assert (
+      payload.get('hudNextTrackRemoved') is True
+  ), f'Expected hudNextTrackRemoved=True: {payload}'
+  assert (
+      payload.get('tabularNumsCssVerified') is True
+  ), f'Expected tabularNumsCssVerified=True: {payload}'
+  assert (
+      payload.get('tabularDigitsEqualWidth') is True
+  ), f'Expected tabularDigitsEqualWidth=True (11:11 == 08:08 width): {payload}'
   # Second self-test pass at 375x812 mobile viewport to verify real mobile geometry
   proc_m = _run_chrome_dom_dump('375,812')
   assert proc_m.returncode == 0, f'Mobile Chrome exited {proc_m.returncode}'
@@ -254,19 +306,21 @@ def capture_one_screenshot(spec):
     filename, fragment = spec
     w, h = 1440, 1480
   out_path = os.path.join(ARTIFACT_DIR, filename)
-  cmd = [
-      CHROME_BIN,
-      '--headless',
-      '--disable-gpu',
-      '--no-sandbox',
-      '--hide-scrollbars',
-      '--virtual-time-budget=200',
-      '--autoplay-policy=no-user-gesture-required',
-      f'--window-size={w},{h}',
-      f'--screenshot={out_path}',
-      f'{FILE_URL}#{fragment}',
-  ]
-  subprocess.run(cmd, capture_output=True, text=True, timeout=20, check=True)
+  with tempfile.TemporaryDirectory() as td:
+    cmd = [
+        CHROME_BIN,
+        '--headless',
+        '--disable-gpu',
+        '--no-sandbox',
+        f'--user-data-dir={td}',
+        '--hide-scrollbars',
+        '--virtual-time-budget=25',
+        '--autoplay-policy=no-user-gesture-required',
+        f'--window-size={w},{h}',
+        f'--screenshot={out_path}',
+        f'{FILE_URL}#{fragment}',
+    ]
+    subprocess.run(cmd, capture_output=True, text=True, timeout=20, check=True)
   assert os.path.exists(out_path) and os.path.getsize(out_path) > 5000, f'Missing {out_path}'
   return out_path
 
@@ -291,7 +345,7 @@ def capture_screenshots():
       ('enso_mobile_top.png', 'bloom=1', 375, 812),
       ('enso_mobile_cards.png', 'bloom=1&scroll=cards', 375, 812),
   ]
-  with ThreadPoolExecutor(max_workers=5) as pool:
+  with ThreadPoolExecutor(max_workers=2) as pool:
     paths = list(pool.map(capture_one_screenshot, specs))
   print(f'3. Captured {len(paths)} live screenshots in {ARTIFACT_DIR}.')
 
@@ -305,4 +359,3 @@ def main():
 
 if __name__ == '__main__':
   sys.exit(main())
-

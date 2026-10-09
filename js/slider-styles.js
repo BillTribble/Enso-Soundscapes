@@ -682,21 +682,47 @@ input[type="range"] {
       });
     }
 
-    // Theme toggle
+    // Theme toggle (auto | light | dark)
+    let themeMode = localStorage.getItem('enso-theme-mode') || 'auto';
+    const applyExplorerTheme = (mode) => {
+      themeMode = (mode === 'light' || mode === 'dark' || mode === 'auto') ?
+          mode :
+          'auto';
+      const sysDark =
+          !!(window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isDark = themeMode === 'dark' || (themeMode === 'auto' && sysDark);
+      document.documentElement.setAttribute('data-theme-mode', themeMode);
+      if (isDark)
+        document.documentElement.setAttribute('data-theme', 'dark');
+      else
+        document.documentElement.removeAttribute('data-theme');
+      const icon = document.getElementById('theme-icon');
+      if (icon)
+        icon.textContent = {
+          auto: 'brightness_auto',
+          light: 'light_mode',
+          dark: 'dark_mode'
+        }[themeMode];
+      drawFilterResponseCanvas();
+      drawEnvelopeCanvas();
+    };
     const themeBtn = document.getElementById('btn-theme-toggle');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isDark) {
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'dark');
+        const order = ['auto', 'light', 'dark'];
+        applyExplorerTheme(order[(order.indexOf(themeMode) + 1) % 3]);
+        try {
+          localStorage.setItem('enso-theme-mode', themeMode);
+        } catch (e) {
         }
-        const icon = document.getElementById('theme-icon');
-        if (icon) icon.textContent = isDark ? 'dark_mode' : 'light_mode';
-        drawFilterResponseCanvas();
-        drawEnvelopeCanvas();
       });
+    }
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener?.('change', () => {
+            if (themeMode === 'auto') applyExplorerTheme('auto');
+          });
     }
 
     window.addEventListener('resize', () => {
@@ -707,11 +733,7 @@ input[type="range"] {
     // Hash / Query URL state & selftest
     const rawParams = `${window.location.search.replace(/^\?/, '')}&${window.location.hash.replace(/^#/, '')}`;
     const params = new URLSearchParams(rawParams);
-    if (params.get('theme') === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = 'light_mode';
-    }
+    applyExplorerTheme(params.get('theme') || themeMode);
     if (params.get('style')) {
       state.selectedStyleId = params.get('style');
     }

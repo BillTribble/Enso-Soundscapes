@@ -10,7 +10,7 @@
       l.rel = 'stylesheet';
       l.media = 'print';
       l.onload = function() { this.media = 'all'; };
-      l.href = 'https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
+      l.href = 'https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400..700&family=Google+Sans+Flex:opsz,wght@6..144,400..700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap';
       document.head.appendChild(l);
     }
   </script>
@@ -23,14 +23,14 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/tokens.css?v=20261009e">
-  <link rel="stylesheet" href="css/styles.css?v=20261009e">
-  <link rel="stylesheet" href="css/phrases.css?v=20261009e">
-  <link rel="stylesheet" href="css/button-styles.css?v=20261009e">
-  <link rel="stylesheet" href="css/slider-styles.css?v=20261009e">
-  <link rel="stylesheet" href="css/mixer-dials.css?v=20261009e">
-  <link rel="stylesheet" href="css/patch-storage.css?v=20261009e">
-  <link rel="stylesheet" href="css/aurora.css?v=20261009e">
+  <link rel="stylesheet" href="css/tokens.css?v=20261009g">
+  <link rel="stylesheet" href="css/styles.css?v=20261009g">
+  <link rel="stylesheet" href="css/phrases.css?v=20261009g">
+  <link rel="stylesheet" href="css/button-styles.css?v=20261009g">
+  <link rel="stylesheet" href="css/slider-styles.css?v=20261009g">
+  <link rel="stylesheet" href="css/mixer-dials.css?v=20261009g">
+  <link rel="stylesheet" href="css/patch-storage.css?v=20261009g">
+  <link rel="stylesheet" href="css/aurora.css?v=20261009g">
 </head>
 <body class="slider-scope slider-style-tonal-fill-bar slider-size-std" data-control-style="dials">
   <canvas id="aurora" aria-hidden="true"></canvas>
@@ -71,9 +71,9 @@
         <div id="top-bar-volume-row" class="control-row top-bar-volume-dial">
           <div class="control-label-line">
             <label for="top-master-volume">Volume</label>
-            <span id="val-top-master-volume" class="control-value">80%</span>
+            <span id="val-top-master-volume" class="control-value">84%</span>
           </div>
-          <input type="range" id="top-master-volume" aria-label="Overall volume" min="0.0" max="1.0" step="0.01" value="0.80" data-default-value="0.80">
+          <input type="range" id="top-master-volume" aria-label="Overall volume" min="0.0" max="1.0" step="0.01" value="0.84" data-default-value="0.84">
         </div>
         <div class="settings-popover-anchor">
           <button type="button" id="btn-settings-toggle" class="icon-btn" aria-label="Mix settings" aria-expanded="false" aria-controls="settings-popover" title="Settings">
@@ -95,14 +95,14 @@
                   <span class="badge badge-teal">Piano</span>
                   <span id="val-xfade-piano" class="control-value">100%</span>
                 </div>
-                <span id="val-piano-crossfade" class="crossfade-status-pill">Balanced</span>
+                <span id="val-piano-crossfade" class="crossfade-status-pill">Piano +62%</span>
                 <div class="crossfade-endpoint crossfade-endpoint-right">
-                  <span id="val-xfade-other" class="control-value">100%</span>
+                  <span id="val-xfade-other" class="control-value">38%</span>
                   <span class="badge badge-blue">All other sounds</span>
                 </div>
               </div>
               <div class="crossfade-slider-wrap">
-                <input type="range" id="piano-other-crossfade" aria-label="Global voice balance between piano and all other sounds across all tracks" min="-1" max="1" step="0.01" value="-0.49" data-default-value="-0.49">
+                <input type="range" id="piano-other-crossfade" aria-label="Global voice balance between piano and all other sounds across all tracks" min="-1" max="1" step="0.01" value="-0.62" data-default-value="-0.62">
                 <div class="crossfade-center-tick" aria-hidden="true"></div>
               </div>
             </div>
@@ -113,10 +113,10 @@
               <div class="settings-autocycle-header">
                 <div class="settings-autocycle-title-cluster">
                   <span class="settings-popover-title">Auto-cycle tracks</span>
-                  <span id="auto-cycle-status-pill" class="badge badge-teal">Circle of 5ths · On</span>
+                  <span id="auto-cycle-status-pill" class="badge badge-teal">Modal 5ths · On</span>
                 </div>
-                <label class="m3-switch" for="auto-cycle-toggle" title="Automatically transition and blend between tracks in the Circle of Fifths">
-                  <input type="checkbox" id="auto-cycle-toggle" checked aria-label="Auto-cycle tracks in Circle of Fifths">
+                <label class="m3-switch" for="auto-cycle-toggle" title="Automatically transition and blend between tracks in the modal Circle of Fifths">
+                  <input type="checkbox" id="auto-cycle-toggle" checked aria-label="Auto-cycle tracks in modal Circle of Fifths">
                   <span class="m3-switch-track">
                     <span class="m3-switch-thumb"></span>
                   </span>
@@ -137,9 +137,9 @@
                 <div class="autocycle-meta-row">
                   <div class="autocycle-meta-stack">
                     <span id="auto-cycle-elapsed-label" class="autocycle-elapsed-text">Sunlit Atrium (G Mixolydian) · 00:00 / 08:00</span>
-                    <span id="auto-cycle-next-label" class="autocycle-next-text">Next: Felt &amp; Mist (C Dorian · Perfect 4th (+5 st))</span>
+                    <span id="auto-cycle-next-label" class="autocycle-next-text">Next: Luminous Drift (C Lydian · 6/7 shared notes · P4 tonic (+5 st))</span>
                   </div>
-                  <button type="button" id="btn-trigger-transition" class="btn-tonal autocycle-now-btn" title="Smoothly transition and blend into the next Circle-of-Fifths track now">
+                  <button type="button" id="btn-trigger-transition" class="btn-tonal autocycle-now-btn" title="Smoothly transition and blend into the next modal Circle-of-Fifths track now">
                     <span class="material-symbols-outlined">autorenew</span>
                     <span>Blend next</span>
                   </button>
@@ -148,8 +148,8 @@
             </div>
           </div>
         </div>
-        <button type="button" id="btn-theme-toggle" class="icon-btn" aria-label="Toggle dark or light theme" title="Toggle theme">
-          <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+        <button type="button" id="btn-theme-toggle" class="icon-btn" aria-label="Theme: Auto (follows system) · Click to switch" title="Theme: Auto (follows system) · Click to switch">
+          <span id="theme-icon" class="material-symbols-outlined">brightness_auto</span>
         </button>
       </div>
     </header>
@@ -214,9 +214,7 @@
                   <div class="canvas-hud-pill">
                     <span id="session-timer-label">00:00</span>
                     <span>·</span>
-                    <span id="track-timer-label" title="Current track playing time &amp; Circle-of-Fifths auto-cycler">Track 00:00 / 08:00 · → Felt &amp; Mist</span>
-                    <span>·</span>
-                    <span id="gate-counter-label">0 gates passed</span>
+                    <span id="track-timer-label" title="Current track playing time &amp; modal Circle-of-Fifths auto-cycler">Track 00:00 / 08:00</span>
                   </div>
                 </div>
               </div>
@@ -432,9 +430,9 @@
                   <div class="control-row">
                     <div class="control-label-line">
                       <label for="master-volume">Master output level</label>
-                      <span id="val-master-volume" class="control-value">80%</span>
+                      <span id="val-master-volume" class="control-value">84%</span>
                     </div>
-                    <input type="range" id="master-volume" min="0.0" max="1.0" step="0.01" value="0.80">
+                    <input type="range" id="master-volume" min="0.0" max="1.0" step="0.01" value="0.84" data-default-value="0.84">
                   </div>
                 </div>
               </div>
@@ -710,20 +708,20 @@
     </div>
   </div>
 
-  <script src="js/presets.js?v=20261009e"></script>
-  <script src="js/audio-engine.js?v=20261009e"></script>
-  <script src="js/piano-sampler.js?v=20261009e"></script>
-  <script src="js/probability-engine.js?v=20261009e"></script>
-  <script src="js/phrase-engine.js?v=20261009e"></script>
-  <script src="js/octave-and-motion.js?v=20261009e"></script>
-  <script src="js/aurora.js?v=20261009e"></script>
-  <script src="js/visualizer.js?v=20261009e"></script>
-  <script src="js/voice-cards.js?v=20261009e"></script>
-  <script src="js/auto-cycler.js?v=20261009e"></script>
-  <script src="js/app.js?v=20261009e"></script>
-  <script src="js/slider-styles.js?v=20261009e"></script>
-  <script src="js/pwa-media.js?v=20261009e"></script>
-  <script src="js/patch-storage.js?v=20261009e"></script>
-  <script src="js/mixer-dials.js?v=20261009e"></script>
+  <script src="js/presets.js?v=20261009g"></script>
+  <script src="js/audio-engine.js?v=20261009g"></script>
+  <script src="js/piano-sampler.js?v=20261009g"></script>
+  <script src="js/probability-engine.js?v=20261009g"></script>
+  <script src="js/phrase-engine.js?v=20261009g"></script>
+  <script src="js/octave-and-motion.js?v=20261009g"></script>
+  <script src="js/aurora.js?v=20261009g"></script>
+  <script src="js/visualizer.js?v=20261009g"></script>
+  <script src="js/voice-cards.js?v=20261009g"></script>
+  <script src="js/auto-cycler.js?v=20261009g"></script>
+  <script src="js/app.js?v=20261009g"></script>
+  <script src="js/slider-styles.js?v=20261009g"></script>
+  <script src="js/pwa-media.js?v=20261009g"></script>
+  <script src="js/patch-storage.js?v=20261009g"></script>
+  <script src="js/mixer-dials.js?v=20261009g"></script>
 </body>
 </html>

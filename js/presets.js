@@ -7,12 +7,8 @@ const ENO_DATA = (function() {
   const NOTE_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
 
   const CIRCLE_OF_FIFTHS_ORDER = [
-    'thursday',
-    'reflection',
-    'installations',
-    'apollo_shimmer',
-    'mixing_colours',
-    'discreet_loops'
+    'thursday', 'reflection', 'installations', 'apollo_shimmer',
+    'mixing_colours', 'discreet_loops'
   ];
 
   const SCALES = {
@@ -28,9 +24,13 @@ const ENO_DATA = (function() {
       rootMidi: 55,
       circleStepToNext: 'P4 tonic (G → C) · 6/7 shared notes (F → F♯)',
       intervals: [0, 2, 4, 5, 7, 9, 10],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Perf 4th', 'Perfect 5th', 'Maj 6th (13)', 'Min 7th (b7)'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Perf 4th', 'Perfect 5th',
+        'Maj 6th (13)', 'Min 7th (b7)'
+      ],
       defaultWeights: [0.90, 0.75, 0.60, 0.30, 0.80, 0.50, 0.40],
-      description: 'Sunlit pastoral G Mixolydian (parent C Major 0♯/0♭) with a softened flat-seventh evoking endless warm light.'
+      description:
+          'Sunlit pastoral G Mixolydian (parent C Major 0♯/0♭) with a softened flat-seventh evoking endless warm light.'
     },
     reflection_eb: {
       id: 'reflection_eb',
@@ -44,9 +44,13 @@ const ENO_DATA = (function() {
       rootMidi: 48,
       circleStepToNext: 'P4 tonic (C → F) · 6/7 shared notes (F♯ → F♮)',
       intervals: [0, 2, 4, 6, 7, 9, 11],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Aug 4th (#11)', 'Perfect 5th', 'Maj 6th (13)', 'Maj 7th'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Aug 4th (#11)', 'Perfect 5th',
+        'Maj 6th (13)', 'Maj 7th'
+      ],
       defaultWeights: [0.95, 0.70, 0.55, 0.40, 0.85, 0.60, 0.35],
-      description: 'Luminous C Lydian mode (parent G Major 1♯) with an elevated #11 avoiding tonic cadence closure.'
+      description:
+          'Luminous C Lydian mode (parent G Major 1♯) with an elevated #11 avoiding tonic cadence closure.'
     },
     lux_a: {
       id: 'lux_a',
@@ -60,9 +64,13 @@ const ENO_DATA = (function() {
       rootMidi: 53,
       circleStepToNext: 'P5 tonic (F → C) · 7/7 shared notes (Relative Mode)',
       intervals: [0, 2, 4, 6, 7, 9, 11],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Aug 4th (#11)', 'Perfect 5th', 'Maj 6th (13)', 'Maj 7th'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Aug 4th (#11)', 'Perfect 5th',
+        'Maj 6th (13)', 'Maj 7th'
+      ],
       defaultWeights: [0.85, 0.75, 0.70, 0.50, 0.90, 0.60, 0.35],
-      description: 'Airy, crystalline F Lydian architecture (parent C Major 0♯/0♭) built for long gallery and cathedral reverberation.'
+      description:
+          'Airy, crystalline F Lydian architecture (parent C Major 0♯/0♭) built for long gallery and cathedral reverberation.'
     },
     airports_db: {
       id: 'airports_db',
@@ -76,9 +84,13 @@ const ENO_DATA = (function() {
       rootMidi: 48,
       circleStepToNext: 'P5 tonic (C → G) · 6/7 shared notes (B♮ → B♭)',
       intervals: [0, 2, 4, 5, 7, 9, 11],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Perf 4th (11)', 'Perfect 5th', 'Maj 6th (13)', 'Maj 7th'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Maj 3rd', 'Perf 4th (11)', 'Perfect 5th',
+        'Maj 6th (13)', 'Maj 7th'
+      ],
       defaultWeights: [0.90, 0.82, 0.65, 0.20, 0.85, 0.70, 0.30],
-      description: 'Peaceful, unhurried C Major landscape (0♯/0♭, relative to F Lydian) evoking acoustic piano and vocal cluster tape loops.'
+      description:
+          'Peaceful, unhurried C Major landscape (0♯/0♭, relative to F Lydian) evoking acoustic piano and vocal cluster tape loops.'
     },
     mixing_c: {
       id: 'mixing_c',
@@ -92,9 +104,13 @@ const ENO_DATA = (function() {
       rootMidi: 55,
       circleStepToNext: 'P5 tonic (G → D) · 7/7 shared notes (Relative Mode)',
       intervals: [0, 2, 3, 5, 7, 9, 10],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Min 3rd (b3)', 'Perf 4th (11)', 'Perfect 5th', 'Maj 6th (13)', 'Min 7th (b7)'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Min 3rd (b3)', 'Perf 4th (11)',
+        'Perfect 5th', 'Maj 6th (13)', 'Min 7th (b7)'
+      ],
       defaultWeights: [0.95, 0.70, 0.80, 0.35, 0.85, 0.65, 0.45],
-      description: 'Poignant, reflective G Dorian modal palette (parent F Major 1♭) layered with damped felt piano tone.'
+      description:
+          'Poignant, reflective G Dorian modal palette (parent F Major 1♭) layered with damped felt piano tone.'
     },
     onland_f: {
       id: 'onland_f',
@@ -108,19 +124,125 @@ const ENO_DATA = (function() {
       rootMidi: 50,
       circleStepToNext: 'P4 tonic (D → G) · 6/7 shared notes (B♭ → B♮)',
       intervals: [0, 2, 3, 5, 7, 8, 10],
-      degreeNames: ['Root (1)', 'Maj 2nd (9)', 'Min 3rd (b3)', 'Perf 4th', 'Perfect 5th', 'Min 6th (b6)', 'Min 7th (b7)'],
+      degreeNames: [
+        'Root (1)', 'Maj 2nd (9)', 'Min 3rd (b3)', 'Perf 4th', 'Perfect 5th',
+        'Min 6th (b6)', 'Min 7th (b7)'
+      ],
       defaultWeights: [0.90, 0.50, 0.75, 0.45, 0.80, 0.60, 0.40],
-      description: 'Shadowed D Aeolian natural minor (parent F Major 1♭, relative to G Dorian) evoking rural earth and damp moss.'
+      description:
+          'Shadowed D Aeolian natural minor (parent F Major 1♭, relative to G Dorian) evoking rural earth and damp moss.'
     }
   };
 
   const VOICES = [
-    { id: 'pad', name: 'CS-80 Ribbon Pad', role: 'Warm detuned saw/triangle swell', badgeHue: 'blue', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 17.3, defaultProb: 0.74, defaultGain: 0.36, defaultCutoff: 5200, defaultResonance: 1.2, panSpread: 0.35, defaultRelease: 8.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'piano', name: 'Felt Piano', role: 'Salamander C5 multi-sample + 3-stage wool-felt EQ & key noise', badgeHue: 'teal', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 7.9, defaultProb: 0.62, defaultGain: 2.00, defaultCutoff: 12000, defaultResonance: 0.8, panSpread: 0.45, defaultRelease: 4.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'bell', name: 'DX7 Glass Bell', role: 'FM crystalline chime (Chilvers/Lanois patch)', badgeHue: 'purple', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 11.3, defaultProb: 0.46, defaultGain: 0.27, defaultCutoff: 9500, defaultResonance: 1.4, panSpread: 0.65, defaultRelease: 5.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'choir', name: 'Spectral Choir', role: 'Staggered additive harmonic bloom', badgeHue: 'green', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 23.9, defaultProb: 0.52, defaultGain: 0.30, defaultCutoff: 6400, defaultResonance: 1.2, panSpread: 0.50, defaultRelease: 9.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'tape', name: 'Revox Tape Loop', role: 'Varispeed sound-on-sound fragment', badgeHue: 'orange', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 13.7, defaultProb: 0.60, defaultGain: 0.32, defaultCutoff: 4200, defaultResonance: 1.6, panSpread: 0.40, defaultRelease: 6.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'drone', name: 'Sub-Bass Pedal', role: 'Deep foundational root + fifth anchor', badgeHue: 'yellow', octaveOffset: -1, defaultOctave: -1, defaultPrimeCycle: 31.1, defaultProb: 0.82, defaultGain: 0.35, defaultCutoff: 1800, defaultResonance: 1.8, panSpread: 0.15, defaultRelease: 11.0, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 }
+    {
+      id: 'pad',
+      name: 'CS-80 Ribbon Pad',
+      role: 'Warm detuned saw/triangle swell',
+      badgeHue: 'blue',
+      octaveOffset: 0,
+      defaultOctave: 0,
+      defaultPrimeCycle: 17.3,
+      defaultProb: 0.74,
+      defaultGain: 0.72,
+      defaultCutoff: 5200,
+      defaultResonance: 1.2,
+      panSpread: 0.35,
+      defaultRelease: 8.5,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    },
+    {
+      id: 'piano',
+      name: 'Felt Piano',
+      role: 'Salamander C5 multi-sample + 3-stage wool-felt EQ & key noise',
+      badgeHue: 'teal',
+      octaveOffset: 0,
+      defaultOctave: 0,
+      defaultPrimeCycle: 7.9,
+      defaultProb: 0.62,
+      defaultGain: 2.00,
+      defaultCutoff: 12000,
+      defaultResonance: 0.8,
+      panSpread: 0.45,
+      defaultRelease: 4.5,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    },
+    {
+      id: 'bell',
+      name: 'DX7 Glass Bell',
+      role: 'FM crystalline chime (Chilvers/Lanois patch)',
+      badgeHue: 'purple',
+      octaveOffset: 1,
+      defaultOctave: 1,
+      defaultPrimeCycle: 11.3,
+      defaultProb: 0.46,
+      defaultGain: 0.54,
+      defaultCutoff: 9500,
+      defaultResonance: 1.4,
+      panSpread: 0.65,
+      defaultRelease: 5.2,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    },
+    {
+      id: 'choir',
+      name: 'Spectral Choir',
+      role: 'Staggered additive harmonic bloom',
+      badgeHue: 'green',
+      octaveOffset: 1,
+      defaultOctave: 1,
+      defaultPrimeCycle: 23.9,
+      defaultProb: 0.52,
+      defaultGain: 0.60,
+      defaultCutoff: 6400,
+      defaultResonance: 1.2,
+      panSpread: 0.50,
+      defaultRelease: 9.5,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    },
+    {
+      id: 'tape',
+      name: 'Revox Tape Loop',
+      role: 'Varispeed sound-on-sound fragment',
+      badgeHue: 'orange',
+      octaveOffset: 0,
+      defaultOctave: 0,
+      defaultPrimeCycle: 13.7,
+      defaultProb: 0.60,
+      defaultGain: 0.64,
+      defaultCutoff: 4200,
+      defaultResonance: 1.6,
+      panSpread: 0.40,
+      defaultRelease: 6.2,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    },
+    {
+      id: 'drone',
+      name: 'Sub-Bass Pedal',
+      role: 'Deep foundational root + fifth anchor',
+      badgeHue: 'yellow',
+      octaveOffset: -1,
+      defaultOctave: -1,
+      defaultPrimeCycle: 31.1,
+      defaultProb: 0.82,
+      defaultGain: 0.70,
+      defaultCutoff: 1800,
+      defaultResonance: 1.8,
+      panSpread: 0.15,
+      defaultRelease: 11.0,
+      defaultOctaveShiftProb: 0.10,
+      defaultNoteOctaveShiftProb: 0.03,
+      defaultChordOctaveShiftProb: 0.10
+    }
   ];
 
   const CIRCADIAN_MODES = {
@@ -139,7 +261,8 @@ const ENO_DATA = (function() {
       year: '1985',
       album: 'Sunlit Atrium',
       badgeHue: 'teal',
-      summary: 'Warm afternoon soundscape in G Mixolydian (parent C Major 0♯/0♭) with treated piano and shimmering tails.',
+      summary:
+          'Warm afternoon soundscape in G Mixolydian (parent C Major 0♯/0♭) with treated piano and shimmering tails.',
       scale: 'thursday_g',
       keyLabel: 'G Mixolydian',
       parentKeySignature: 'C Major (0♯/0♭)',
@@ -150,19 +273,107 @@ const ENO_DATA = (function() {
       chordProgInstrument: 'choir',
       noteOctaveShiftChance: 0.03,
       chordOctaveShiftChance: 0.10,
-      phraseLengthLfo: { enabled: true, periodSec: 180, minRatio: 0.50, maxRatio: 1.00 },
+      phraseLengthLfo:
+          {enabled: true, periodSec: 180, minRatio: 0.50, maxRatio: 1.00},
       circadian: 'off',
       auroraPalette: 'thursday',
-      global: { attack: 3.2, release: 7.0, sustain: 0.70, envelopeMode: 'override', cutoff: 2200, resonance: 1.1, filterType: 'lowpass', filterDrift: 0.20, reverbMix: 0.50, reverbDecay: 9.5, reverbShimmer: 0.14, reverbDamping: 6200, delayMix: 0.38, delayTime: 0.82, delayFeedback: 0.58, delayWow: 0.18, masterVolume: 0.92, pianoCrossfade: -0.49 },
-      phraseParams: { chordProgCycle: 10.7, chordProgGate: 0.87, phraseCompletionGate: 0.18, phraseGateProb: 0.76, phraseLoopCycle: 6.7, phraseNoteGate: 0.22, phraseSkipChance: 0.15, phraseVariationChance: 0.55, noteOctaveShiftChance: 0.03, chordOctaveShiftChance: 0.10 },
-      probability: { activeVoiceCount: 6, rotationSpeed: 0.90, globalProb: 0.58, voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'], densityBias: 0.05, mutationRate: 0.10, timeStretch: 1.11, degreeWeights: [0.90, 0.75, 0.60, 0.30, 0.80, 0.50, 0.40] },
+      global: {
+        attack: 3.2,
+        release: 7.0,
+        sustain: 0.70,
+        envelopeMode: 'override',
+        cutoff: 2200,
+        resonance: 1.1,
+        filterType: 'lowpass',
+        filterDrift: 0.20,
+        reverbMix: 0.50,
+        reverbDecay: 9.5,
+        reverbShimmer: 0.14,
+        reverbDamping: 6200,
+        delayMix: 0.38,
+        delayTime: 0.82,
+        delayFeedback: 0.58,
+        delayWow: 0.18,
+        masterVolume: 0.84,
+        pianoCrossfade: -0.62
+      },
+      phraseParams: {
+        chordProgCycle: 10.7,
+        chordProgGate: 0.87,
+        phraseCompletionGate: 0.18,
+        phraseGateProb: 0.76,
+        phraseLoopCycle: 6.7,
+        phraseNoteGate: 0.22,
+        phraseSkipChance: 0.15,
+        phraseVariationChance: 0.55,
+        noteOctaveShiftChance: 0.03,
+        chordOctaveShiftChance: 0.10
+      },
+      probability: {
+        activeVoiceCount: 6,
+        rotationSpeed: 0.90,
+        globalProb: 0.58,
+        voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'],
+        densityBias: 0.05,
+        mutationRate: 0.10,
+        timeStretch: 1.11,
+        degreeWeights: [0.90, 0.75, 0.60, 0.30, 0.80, 0.50, 0.40]
+      },
       voices: {
-        pad: { prob: 0.68, cycle: 19.1, gain: 0.32, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.76, cycle: 6.7, gain: 2.00, release: 4.2, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.40, cycle: 13.1, gain: 0.25, release: 4.8, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.92, cycle: 10.7, gain: 0.28, release: 9.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.50, cycle: 17.9, gain: 0.29, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.70, cycle: 37.3, gain: 0.31, release: 10.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.68,
+          cycle: 19.1,
+          gain: 0.65,
+          release: 8.0,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.76,
+          cycle: 6.7,
+          gain: 2.00,
+          release: 4.2,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.40,
+          cycle: 13.1,
+          gain: 0.50,
+          release: 4.8,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        choir: {
+          prob: 0.92,
+          cycle: 10.7,
+          gain: 0.56,
+          release: 9.2,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        tape: {
+          prob: 0.50,
+          cycle: 17.9,
+          gain: 0.58,
+          release: 5.8,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.70,
+          cycle: 37.3,
+          gain: 0.62,
+          release: 10.5,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     },
     reflection: {
@@ -171,7 +382,8 @@ const ENO_DATA = (function() {
       year: '2017',
       album: 'Luminous Drift',
       badgeHue: 'blue',
-      summary: 'Endless generative ambient piece using Logic Pro Scripter probability gates in C Lydian (parent G Major 1♯).',
+      summary:
+          'Endless generative ambient piece using Logic Pro Scripter probability gates in C Lydian (parent G Major 1♯).',
       scale: 'reflection_eb',
       keyLabel: 'C Lydian',
       parentKeySignature: 'G Major (1♯)',
@@ -184,15 +396,91 @@ const ENO_DATA = (function() {
       chordOctaveShiftChance: 0.10,
       circadian: 'auto',
       auroraPalette: 'reflection',
-      global: { attack: 4.8, release: 8.5, sustain: 0.70, envelopeMode: 'override', cutoff: 1850, resonance: 1.4, filterType: 'lowpass', filterDrift: 0.35, reverbMix: 0.58, reverbDecay: 12.0, reverbShimmer: 0.22, reverbDamping: 5200, delayMix: 0.32, delayTime: 0.68, delayFeedback: 0.52, delayWow: 0.25, masterVolume: 0.82, pianoCrossfade: -0.49 },
-      probability: { activeVoiceCount: 6, rotationSpeed: 1.00, globalProb: 0.63, voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'], densityBias: 0.0, mutationRate: 0.15, timeStretch: 1.0, degreeWeights: [0.95, 0.70, 0.55, 0.40, 0.85, 0.60, 0.35] },
+      global: {
+        attack: 4.8,
+        release: 8.5,
+        sustain: 0.70,
+        envelopeMode: 'override',
+        cutoff: 1850,
+        resonance: 1.4,
+        filterType: 'lowpass',
+        filterDrift: 0.35,
+        reverbMix: 0.58,
+        reverbDecay: 12.0,
+        reverbShimmer: 0.22,
+        reverbDamping: 5200,
+        delayMix: 0.32,
+        delayTime: 0.68,
+        delayFeedback: 0.52,
+        delayWow: 0.25,
+        masterVolume: 0.84,
+        pianoCrossfade: -0.62
+      },
+      probability: {
+        activeVoiceCount: 6,
+        rotationSpeed: 1.00,
+        globalProb: 0.63,
+        voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'],
+        densityBias: 0.0,
+        mutationRate: 0.15,
+        timeStretch: 1.0,
+        degreeWeights: [0.95, 0.70, 0.55, 0.40, 0.85, 0.60, 0.35]
+      },
       voices: {
-        pad: { prob: 0.74, cycle: 17.3, gain: 0.36, release: 9.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.62, cycle: 7.9, gain: 2.00, release: 4.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.46, cycle: 11.3, gain: 0.27, release: 5.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.52, cycle: 23.9, gain: 0.30, release: 10.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.60, cycle: 13.7, gain: 0.32, release: 6.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.82, cycle: 31.1, gain: 0.35, release: 12.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.74,
+          cycle: 17.3,
+          gain: 0.72,
+          release: 9.5,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.62,
+          cycle: 7.9,
+          gain: 2.00,
+          release: 4.8,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.46,
+          cycle: 11.3,
+          gain: 0.54,
+          release: 5.5,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        choir: {
+          prob: 0.52,
+          cycle: 23.9,
+          gain: 0.60,
+          release: 10.5,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        tape: {
+          prob: 0.60,
+          cycle: 13.7,
+          gain: 0.64,
+          release: 6.5,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.82,
+          cycle: 31.1,
+          gain: 0.70,
+          release: 12.0,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     },
     installations: {
@@ -201,7 +489,8 @@ const ENO_DATA = (function() {
       year: '2018',
       album: 'Cathedral Glass',
       badgeHue: 'purple',
-      summary: 'Asynchronous architectural generative sound environments in F Lydian (parent C Major 0♯/0♭) with long prime phase drift.',
+      summary:
+          'Asynchronous architectural generative sound environments in F Lydian (parent C Major 0♯/0♭) with long prime phase drift.',
       scale: 'lux_a',
       keyLabel: 'F Lydian',
       parentKeySignature: 'C Major (0♯/0♭)',
@@ -214,15 +503,91 @@ const ENO_DATA = (function() {
       chordOctaveShiftChance: 0.10,
       circadian: 'evening',
       auroraPalette: 'installations',
-      global: { attack: 6.0, release: 11.5, sustain: 0.75, envelopeMode: 'override', cutoff: 1600, resonance: 1.8, filterType: 'lowpass', filterDrift: 0.45, reverbMix: 0.65, reverbDecay: 15.0, reverbShimmer: 0.28, reverbDamping: 4800, delayMix: 0.42, delayTime: 1.15, delayFeedback: 0.64, delayWow: 0.35, masterVolume: 0.78, pianoCrossfade: -0.49 },
-      probability: { activeVoiceCount: 6, rotationSpeed: 0.80, globalProb: 0.66, voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'], densityBias: -0.10, mutationRate: 0.22, timeStretch: 1.25, degreeWeights: [0.85, 0.75, 0.70, 0.50, 0.90, 0.60, 0.35] },
+      global: {
+        attack: 6.0,
+        release: 11.5,
+        sustain: 0.75,
+        envelopeMode: 'override',
+        cutoff: 1600,
+        resonance: 1.8,
+        filterType: 'lowpass',
+        filterDrift: 0.45,
+        reverbMix: 0.65,
+        reverbDecay: 15.0,
+        reverbShimmer: 0.28,
+        reverbDamping: 4800,
+        delayMix: 0.42,
+        delayTime: 1.15,
+        delayFeedback: 0.64,
+        delayWow: 0.35,
+        masterVolume: 0.78,
+        pianoCrossfade: -0.62
+      },
+      probability: {
+        activeVoiceCount: 6,
+        rotationSpeed: 0.80,
+        globalProb: 0.66,
+        voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'],
+        densityBias: -0.10,
+        mutationRate: 0.22,
+        timeStretch: 1.25,
+        degreeWeights: [0.85, 0.75, 0.70, 0.50, 0.90, 0.60, 0.35]
+      },
       voices: {
-        pad: { prob: 0.78, cycle: 23.3, gain: 0.38, release: 12.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.68, cycle: 11.7, gain: 2.00, release: 6.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.58, cycle: 17.1, gain: 0.30, release: 7.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.66, cycle: 31.7, gain: 0.35, release: 13.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.62, cycle: 19.9, gain: 0.34, release: 8.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.88, cycle: 43.1, gain: 0.38, release: 15.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.78,
+          cycle: 23.3,
+          gain: 0.75,
+          release: 12.0,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.68,
+          cycle: 11.7,
+          gain: 2.00,
+          release: 6.0,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.58,
+          cycle: 17.1,
+          gain: 0.60,
+          release: 7.2,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        choir: {
+          prob: 0.66,
+          cycle: 31.7,
+          gain: 0.70,
+          release: 13.5,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        tape: {
+          prob: 0.62,
+          cycle: 19.9,
+          gain: 0.68,
+          release: 8.5,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.88,
+          cycle: 43.1,
+          gain: 0.75,
+          release: 15.0,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     },
     apollo_shimmer: {
@@ -231,7 +596,8 @@ const ENO_DATA = (function() {
       year: '1983',
       album: 'Weightless Orbit',
       badgeHue: 'orange',
-      summary: 'Iconic pitch-shifted octave feedback reverb in C Major (0♯/0♭, relative to F Lydian) creating floating zero-gravity majesty.',
+      summary:
+          'Iconic pitch-shifted octave feedback reverb in C Major (0♯/0♭, relative to F Lydian) creating floating zero-gravity majesty.',
       scale: 'airports_db',
       keyLabel: 'C Major',
       parentKeySignature: 'C Major (0♯/0♭)',
@@ -244,15 +610,91 @@ const ENO_DATA = (function() {
       chordOctaveShiftChance: 0.10,
       circadian: 'night',
       auroraPalette: 'apollo_shimmer',
-      global: { attack: 5.5, release: 12.0, sustain: 0.80, envelopeMode: 'override', cutoff: 2400, resonance: 1.5, filterType: 'lowpass', filterDrift: 0.30, reverbMix: 0.72, reverbDecay: 16.0, reverbShimmer: 0.45, reverbDamping: 6800, delayMix: 0.45, delayTime: 0.75, delayFeedback: 0.68, delayWow: 0.22, masterVolume: 0.76, pianoCrossfade: -0.49 },
-      probability: { activeVoiceCount: 6, rotationSpeed: 0.74, globalProb: 0.68, voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'], densityBias: -0.15, mutationRate: 0.18, timeStretch: 1.35, degreeWeights: [0.90, 0.82, 0.65, 0.20, 0.85, 0.70, 0.30] },
+      global: {
+        attack: 5.5,
+        release: 12.0,
+        sustain: 0.80,
+        envelopeMode: 'override',
+        cutoff: 2400,
+        resonance: 1.5,
+        filterType: 'lowpass',
+        filterDrift: 0.30,
+        reverbMix: 0.72,
+        reverbDecay: 16.0,
+        reverbShimmer: 0.45,
+        reverbDamping: 6800,
+        delayMix: 0.45,
+        delayTime: 0.75,
+        delayFeedback: 0.68,
+        delayWow: 0.22,
+        masterVolume: 0.76,
+        pianoCrossfade: -0.62
+      },
+      probability: {
+        activeVoiceCount: 6,
+        rotationSpeed: 0.74,
+        globalProb: 0.68,
+        voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'],
+        densityBias: -0.15,
+        mutationRate: 0.18,
+        timeStretch: 1.35,
+        degreeWeights: [0.90, 0.82, 0.65, 0.20, 0.85, 0.70, 0.30]
+      },
       voices: {
-        pad: { prob: 0.82, cycle: 21.1, gain: 0.39, release: 12.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.72, cycle: 8.9, gain: 2.00, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.65, cycle: 14.9, gain: 0.31, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.70, cycle: 27.7, gain: 0.36, release: 14.0, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.58, cycle: 16.3, gain: 0.30, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.85, cycle: 37.9, gain: 0.37, release: 15.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.82,
+          cycle: 21.1,
+          gain: 0.78,
+          release: 12.5,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.72,
+          cycle: 8.9,
+          gain: 2.00,
+          release: 5.8,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.65,
+          cycle: 14.9,
+          gain: 0.62,
+          release: 7.5,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        choir: {
+          prob: 0.70,
+          cycle: 27.7,
+          gain: 0.72,
+          release: 14.0,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        tape: {
+          prob: 0.58,
+          cycle: 16.3,
+          gain: 0.60,
+          release: 8.0,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.85,
+          cycle: 37.9,
+          gain: 0.74,
+          release: 15.5,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     },
     mixing_colours: {
@@ -261,7 +703,8 @@ const ENO_DATA = (function() {
       year: '2020',
       album: 'Felt & Mist',
       badgeHue: 'green',
-      summary: 'Intimate felt piano miniatures in G Dorian (parent F Major 1♭) bathed in subtle modular electronics and tape flutter.',
+      summary:
+          'Intimate felt piano miniatures in G Dorian (parent F Major 1♭) bathed in subtle modular electronics and tape flutter.',
       scale: 'mixing_c',
       keyLabel: 'G Dorian',
       parentKeySignature: 'F Major (1♭)',
@@ -274,15 +717,91 @@ const ENO_DATA = (function() {
       chordOctaveShiftChance: 0.10,
       circadian: 'off',
       auroraPalette: 'mixing_colours',
-      global: { attack: 2.8, release: 6.5, sustain: 0.60, envelopeMode: 'override', cutoff: 1750, resonance: 1.2, filterType: 'lowpass', filterDrift: 0.25, reverbMix: 0.48, reverbDecay: 8.5, reverbShimmer: 0.10, reverbDamping: 4200, delayMix: 0.30, delayTime: 0.54, delayFeedback: 0.45, delayWow: 0.28, masterVolume: 0.84, pianoCrossfade: -0.49 },
-      probability: { activeVoiceCount: 6, rotationSpeed: 1.05, globalProb: 0.60, voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'], densityBias: 0.08, mutationRate: 0.08, timeStretch: 0.95, degreeWeights: [0.95, 0.70, 0.80, 0.35, 0.85, 0.65, 0.45] },
+      global: {
+        attack: 2.8,
+        release: 6.5,
+        sustain: 0.60,
+        envelopeMode: 'override',
+        cutoff: 1750,
+        resonance: 1.2,
+        filterType: 'lowpass',
+        filterDrift: 0.25,
+        reverbMix: 0.48,
+        reverbDecay: 8.5,
+        reverbShimmer: 0.10,
+        reverbDamping: 4200,
+        delayMix: 0.30,
+        delayTime: 0.54,
+        delayFeedback: 0.45,
+        delayWow: 0.28,
+        masterVolume: 0.84,
+        pianoCrossfade: -0.62
+      },
+      probability: {
+        activeVoiceCount: 6,
+        rotationSpeed: 1.05,
+        globalProb: 0.60,
+        voiceOrder: ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'],
+        densityBias: 0.08,
+        mutationRate: 0.08,
+        timeStretch: 0.95,
+        degreeWeights: [0.95, 0.70, 0.80, 0.35, 0.85, 0.65, 0.45]
+      },
       voices: {
-        pad: { prob: 0.55, cycle: 13.9, gain: 0.30, release: 7.2, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.88, cycle: 5.3, gain: 2.00, release: 3.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.35, cycle: 11.3, gain: 0.22, release: 4.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.42, cycle: 23.1, gain: 0.26, release: 8.0, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.72, cycle: 9.7, gain: 0.35, release: 5.2, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.65, cycle: 29.3, gain: 0.31, release: 9.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.55,
+          cycle: 13.9,
+          gain: 0.60,
+          release: 7.2,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.88,
+          cycle: 5.3,
+          gain: 2.00,
+          release: 3.8,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.35,
+          cycle: 11.3,
+          gain: 0.45,
+          release: 4.2,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        choir: {
+          prob: 0.42,
+          cycle: 23.1,
+          gain: 0.52,
+          release: 8.0,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        tape: {
+          prob: 0.72,
+          cycle: 9.7,
+          gain: 0.70,
+          release: 5.2,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.65,
+          cycle: 29.3,
+          gain: 0.62,
+          release: 9.0,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     },
     discreet_loops: {
@@ -291,7 +810,8 @@ const ENO_DATA = (function() {
       year: '1975',
       album: 'Moss & Reel',
       badgeHue: 'yellow',
-      summary: 'Hypnotic 4-voice twin-Revox tape loop machine in D Aeolian (parent F Major 1♭) with faster rotation and resonant tape echo.',
+      summary:
+          'Hypnotic 4-voice twin-Revox tape loop machine in D Aeolian (parent F Major 1♭) with faster rotation and resonant tape echo.',
       scale: 'onland_f',
       keyLabel: 'D Aeolian',
       parentKeySignature: 'F Major (1♭)',
@@ -304,16 +824,103 @@ const ENO_DATA = (function() {
       chordOctaveShiftChance: 0.10,
       circadian: 'morning',
       auroraPalette: 'discreet_loops',
-      global: { attack: 1.4, release: 5.8, sustain: 0.60, envelopeMode: 'override', cutoff: 1150, resonance: 3.2, filterType: 'lowpass', filterDrift: 0.45, reverbMix: 0.42, reverbDecay: 7.5, reverbShimmer: 0.08, reverbDamping: 3200, delayMix: 0.68, delayTime: 1.18, delayFeedback: 0.78, delayWow: 0.56, masterVolume: 0.87, pianoCrossfade: -0.49 },
-      phraseParams: { chordProgCycle: 8.9, chordProgGate: 0.84, phraseCompletionGate: 0.18, phraseGateProb: 0.97, phraseLoopCycle: 11.7, phraseNoteGate: 0.22, phraseSkipChance: 0.15, phraseVariationChance: 0.55, noteOctaveShiftChance: 0.03, chordOctaveShiftChance: 0.10 },
-      probability: { activeVoiceCount: 4, rotationSpeed: 1.55, globalProb: 0.70, voiceOrder: ['tape', 'drone', 'pad', 'piano', 'bell', 'choir'], densityBias: 0.08, mutationRate: 0.12, timeStretch: 0.65, degreeWeights: [0.90, 0.50, 0.75, 0.45, 0.85, 0.60, 0.40] },
+      global: {
+        attack: 1.4,
+        release: 5.8,
+        sustain: 0.60,
+        envelopeMode: 'override',
+        cutoff: 1150,
+        resonance: 3.2,
+        filterType: 'lowpass',
+        filterDrift: 0.45,
+        reverbMix: 0.42,
+        reverbDecay: 7.5,
+        reverbShimmer: 0.08,
+        reverbDamping: 3200,
+        delayMix: 0.68,
+        delayTime: 1.18,
+        delayFeedback: 0.78,
+        delayWow: 0.56,
+        masterVolume: 0.87,
+        pianoCrossfade: -0.62
+      },
+      phraseParams: {
+        chordProgCycle: 8.9,
+        chordProgGate: 0.84,
+        phraseCompletionGate: 0.18,
+        phraseGateProb: 0.97,
+        phraseLoopCycle: 11.7,
+        phraseNoteGate: 0.22,
+        phraseSkipChance: 0.15,
+        phraseVariationChance: 0.55,
+        noteOctaveShiftChance: 0.03,
+        chordOctaveShiftChance: 0.10
+      },
+      probability: {
+        activeVoiceCount: 4,
+        rotationSpeed: 1.55,
+        globalProb: 0.70,
+        voiceOrder: ['tape', 'drone', 'pad', 'piano', 'bell', 'choir'],
+        densityBias: 0.08,
+        mutationRate: 0.12,
+        timeStretch: 0.65,
+        degreeWeights: [0.90, 0.50, 0.75, 0.45, 0.85, 0.60, 0.40]
+      },
       voices: {
-        pad: { prob: 0.66, cycle: 13.7, gain: 0.32, release: 7.9, octave: 0, octaveShiftProb: 0.10, muted: false },
-        piano: { prob: 0.97, cycle: 11.7, gain: 3.51, release: 3.6, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.45, cycle: 11.3, gain: 0.24, release: 0.2, octave: 1, octaveShiftProb: 0.10, muted: true },
-        choir: { prob: 0.48, cycle: 23.9, gain: 0.28, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: true },
-        tape: { prob: 0.84, cycle: 8.9, gain: 0.43, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.74, cycle: 19.3, gain: 0.37, release: 9.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        pad: {
+          prob: 0.66,
+          cycle: 13.7,
+          gain: 0.64,
+          release: 7.9,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        piano: {
+          prob: 0.97,
+          cycle: 11.7,
+          gain: 2.00,
+          release: 3.6,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        bell: {
+          prob: 0.45,
+          cycle: 11.3,
+          gain: 0.48,
+          release: 0.2,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: true
+        },
+        choir: {
+          prob: 0.48,
+          cycle: 23.9,
+          gain: 0.56,
+          release: 7.5,
+          octave: 1,
+          octaveShiftProb: 0.10,
+          muted: true
+        },
+        tape: {
+          prob: 0.84,
+          cycle: 8.9,
+          gain: 0.86,
+          release: 8.0,
+          octave: 0,
+          octaveShiftProb: 0.10,
+          muted: false
+        },
+        drone: {
+          prob: 0.74,
+          cycle: 19.3,
+          gain: 0.74,
+          release: 9.5,
+          octave: -1,
+          octaveShiftProb: 0.10,
+          muted: false
+        }
       }
     }
   };
@@ -431,5 +1038,3 @@ const ENO_DATA = (function() {
 
 if (typeof window !== 'undefined') window.ENO_DATA = ENO_DATA;
 if (typeof module !== 'undefined' && module.exports) module.exports = ENO_DATA;
-
-

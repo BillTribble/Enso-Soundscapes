@@ -1,23 +1,37 @@
 /**
  * Aurora: Domain-Warped FBM WebGL Shader with Slow Ambient Harmonic Blooms
- * Reflects the musical vibe of each track and breathes slowly with note/chord/bloom events.
+ * Reflects the musical vibe of each track and breathes slowly with
+ * note/chord/bloom events.
  */
 'use strict';
 
 const AURORA_PALETTES = {
   // Base palettes
-  dawn:    [[0.95, 0.62, 0.60], [0.72, 0.62, 0.92], [1.00, 0.82, 0.58]],
-  fog:     [[0.42, 0.84, 0.77], [0.48, 0.64, 0.90], [0.71, 0.84, 0.65]],
+  dawn: [[0.95, 0.62, 0.60], [0.72, 0.62, 0.92], [1.00, 0.82, 0.58]],
+  fog: [[0.42, 0.84, 0.77], [0.48, 0.64, 0.90], [0.71, 0.84, 0.65]],
   drizzle: [[0.31, 0.50, 0.85], [0.35, 0.76, 0.85], [0.55, 0.48, 0.85]],
-  golden:  [[0.96, 0.72, 0.38], [0.85, 0.47, 0.29], [0.79, 0.76, 0.42]],
+  golden: [[0.96, 0.72, 0.38], [0.85, 0.47, 0.29], [0.79, 0.76, 0.42]],
 
-  // Track-specific palettes reflecting each preset's harmonic & atmospheric vibe
-  thursday:       [[0.96, 0.74, 0.38], [0.42, 0.84, 0.75], [0.98, 0.84, 0.52]], // Sunlit Atrium: warm afternoon gold & conservatory jade
-  reflection:     [[0.31, 0.50, 0.85], [0.35, 0.76, 0.85], [0.55, 0.48, 0.85]], // Luminous Drift: cerulean sky, cyan glass & Lydian indigo (drizzle)
-  installations:  [[0.95, 0.62, 0.60], [0.72, 0.62, 0.92], [1.00, 0.82, 0.58]], // Cathedral Glass: stained-glass rose, amethyst & candle gold (dawn)
-  mixing_colours: [[0.42, 0.84, 0.77], [0.48, 0.64, 0.90], [0.71, 0.84, 0.65]], // Felt & Mist: Nordic sea-glass mist, fjord blue & celadon (fog)
-  apollo_shimmer: [[0.96, 0.72, 0.38], [0.85, 0.47, 0.29], [0.64, 0.52, 0.90]], // Weightless Orbit: solar gold, lunar copper & deep orbital violet
-  discreet_loops: [[0.48, 0.78, 0.52], [0.82, 0.68, 0.36], [0.34, 0.68, 0.62]]  // Moss & Reel: woodland moss, warm tape-oxide ochre & damp fern
+  // Track-specific palettes reflecting each preset's harmonic & atmospheric
+  // vibe
+  thursday: [
+    [0.96, 0.74, 0.38], [0.42, 0.84, 0.75], [0.98, 0.84, 0.52]
+  ],  // Sunlit Atrium: warm afternoon gold & conservatory jade
+  reflection: [
+    [0.31, 0.50, 0.85], [0.35, 0.76, 0.85], [0.55, 0.48, 0.85]
+  ],  // Luminous Drift: cerulean sky, cyan glass & Lydian indigo (drizzle)
+  installations: [
+    [0.95, 0.62, 0.60], [0.72, 0.62, 0.92], [1.00, 0.82, 0.58]
+  ],  // Cathedral Glass: stained-glass rose, amethyst & candle gold (dawn)
+  mixing_colours: [
+    [0.42, 0.84, 0.77], [0.48, 0.64, 0.90], [0.71, 0.84, 0.65]
+  ],  // Felt & Mist: Nordic sea-glass mist, fjord blue & celadon (fog)
+  apollo_shimmer: [
+    [0.96, 0.72, 0.38], [0.85, 0.47, 0.29], [0.64, 0.52, 0.90]
+  ],  // Weightless Orbit: solar gold, lunar copper & deep orbital violet
+  discreet_loops: [
+    [0.48, 0.78, 0.52], [0.82, 0.68, 0.36], [0.34, 0.68, 0.62]
+  ]  // Moss & Reel: woodland moss, warm tape-oxide ochre & damp fern
 };
 
 const SCALE_TO_PALETTE = {
@@ -29,14 +43,19 @@ const SCALE_TO_PALETTE = {
   onland_f: 'discreet_loops'
 };
 
-function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 } = {}) {
+function createAurora(
+    canvas, {palette = 'thursday', dark = true, scale = 0.5} = {}) {
   if (!canvas) return null;
 
   let gl = null;
   try {
-    gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false }) ||
-         canvas.getContext('experimental-webgl', { antialias: false, premultipliedAlpha: false });
-  } catch (e) {}
+    gl = canvas.getContext(
+             'webgl', {antialias: false, premultipliedAlpha: false}) ||
+        canvas.getContext(
+            'experimental-webgl',
+            {antialias: false, premultipliedAlpha: false});
+  } catch (e) {
+  }
 
   const vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   const fs = `precision highp float;
@@ -106,7 +125,8 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
         const x = gl.createShader(t);
         gl.shaderSource(x, s);
         gl.compileShader(x);
-        if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(x);
+        if (!gl.getShaderParameter(x, gl.COMPILE_STATUS))
+          throw gl.getShaderInfoLog(x);
         return x;
       };
       pr = gl.createProgram();
@@ -115,13 +135,16 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
       gl.linkProgram(pr);
       gl.useProgram(pr);
       gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      gl.bufferData(
+          gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]),
+          gl.STATIC_DRAW);
       const loc = gl.getAttribLocation(pr, 'p');
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-      ['R', 'T', 'K', 'D', 'C0', 'C1', 'C2', 'B0', 'B1', 'B2', 'B3'].forEach((k) => {
-        U[k] = gl.getUniformLocation(pr, k);
-      });
+      ['R', 'T', 'K', 'D', 'C0', 'C1', 'C2', 'B0', 'B1', 'B2', 'B3'].forEach(
+          (k) => {
+            U[k] = gl.getUniformLocation(pr, k);
+          });
     } catch (err) {
       gl = null;
     }
@@ -138,7 +161,8 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
 
   const resolve = (p) => {
     if (typeof p === 'string') {
-      const base = AURORA_PALETTES[p] || AURORA_PALETTES[SCALE_TO_PALETTE[p]] || AURORA_PALETTES.thursday;
+      const base = AURORA_PALETTES[p] || AURORA_PALETTES[SCALE_TO_PALETTE[p]] ||
+          AURORA_PALETTES.thursday;
       return base.map((c) => c.slice());
     }
     if (Array.isArray(p) && p.length === 3) return p.map((c) => c.slice());
@@ -156,10 +180,42 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
   let bloomIdx = 0;
   // 4 slow ambient bloom slots: { x, y, birth, duration, peak, env, progress }
   const blooms = [
-    { x: 0.5, y: 0.5, birth: -99999, duration: 6500, peak: 0, env: 0, progress: 1 },
-    { x: 0.5, y: 0.5, birth: -99999, duration: 6500, peak: 0, env: 0, progress: 1 },
-    { x: 0.5, y: 0.5, birth: -99999, duration: 6500, peak: 0, env: 0, progress: 1 },
-    { x: 0.5, y: 0.5, birth: -99999, duration: 6500, peak: 0, env: 0, progress: 1 }
+    {
+      x: 0.5,
+      y: 0.5,
+      birth: -99999,
+      duration: 6500,
+      peak: 0,
+      env: 0,
+      progress: 1
+    },
+    {
+      x: 0.5,
+      y: 0.5,
+      birth: -99999,
+      duration: 6500,
+      peak: 0,
+      env: 0,
+      progress: 1
+    },
+    {
+      x: 0.5,
+      y: 0.5,
+      birth: -99999,
+      duration: 6500,
+      peak: 0,
+      env: 0,
+      progress: 1
+    },
+    {
+      x: 0.5,
+      y: 0.5,
+      birth: -99999,
+      duration: 6500,
+      peak: 0,
+      env: 0,
+      progress: 1
+    }
   ];
 
   const t0 = performance.now();
@@ -170,12 +226,14 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
     lastNow = now;
     const elapsedSec = (now - t0) / 1000;
 
-    // Slow, breathing ambient swell (attack ~1.4s, release ~5.2s) instead of sharp kick flash
+    // Slow, breathing ambient swell (attack ~1.4s, release ~5.2s) instead of
+    // sharp kick flash
     kickV *= Math.exp(-dt / 4.8);
     const tau = kickV > kickS ? 1.35 : 3.8;
     kickS += (kickV - kickS) * (1 - Math.exp(-dt / tau));
 
-    // Update each expanding circular harmonic bloom (like the circle bloom effect)
+    // Update each expanding circular harmonic bloom (like the circle bloom
+    // effect)
     for (let i = 0; i < 4; i++) {
       const b = blooms[i];
       const age = now - b.birth;
@@ -183,9 +241,12 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
         const prog = age / b.duration;
         b.progress = prog;
         const attackRatio = 0.22;
-        const rawEnv = prog < attackRatio
-          ? Math.sin((prog / attackRatio) * (Math.PI * 0.5))
-          : 0.5 * (1 + Math.cos(((prog - attackRatio) / (1 - attackRatio)) * Math.PI));
+        const rawEnv = prog < attackRatio ?
+            Math.sin((prog / attackRatio) * (Math.PI * 0.5)) :
+            0.5 *
+                (1 +
+                 Math.cos(
+                     ((prog - attackRatio) / (1 - attackRatio)) * Math.PI));
         b.env = rawEnv * b.peak;
       } else {
         b.env = 0;
@@ -213,20 +274,31 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
     } else if (ctx2d) {
       const w = canvas.width, h = canvas.height;
       const isD = darkV > 0.5;
-      const tint = (c, dMul, lMix) => isD
-        ? [Math.round(c[0] * 255 * dMul), Math.round(c[1] * 255 * dMul), Math.round(c[2] * 255 * dMul)]
-        : [Math.round((c[0] * lMix + (1 - lMix) * 0.94) * 255), Math.round((c[1] * lMix + (1 - lMix) * 0.95) * 255), Math.round((c[2] * lMix + (1 - lMix) * 0.97) * 255)];
-      const t0c = tint(cur[0], 0.24, 0.58), t1c = tint(cur[1], 0.22, 0.52), t2c = tint(cur[2], 0.18, 0.45);
+      const tint = (c, dMul, lMix) => isD ?
+          [
+            Math.round(c[0] * 255 * dMul), Math.round(c[1] * 255 * dMul),
+            Math.round(c[2] * 255 * dMul)
+          ] :
+          [
+            Math.round((c[0] * lMix + (1 - lMix) * 0.94) * 255),
+            Math.round((c[1] * lMix + (1 - lMix) * 0.95) * 255),
+            Math.round((c[2] * lMix + (1 - lMix) * 0.97) * 255)
+          ];
+      const t0c = tint(cur[0], 0.24, 0.58), t1c = tint(cur[1], 0.22, 0.52),
+            t2c = tint(cur[2], 0.18, 0.45);
       const bgGrad = ctx2d.createLinearGradient(0, 0, w, h);
       bgGrad.addColorStop(0, `rgb(${t0c[0]},${t0c[1]},${t0c[2]})`);
       bgGrad.addColorStop(0.5, `rgb(${t1c[0]},${t1c[1]},${t1c[2]})`);
       bgGrad.addColorStop(1, `rgb(${t2c[0]},${t2c[1]},${t2c[2]})`);
       ctx2d.fillStyle = bgGrad;
       ctx2d.fillRect(0, 0, w, h);
-      const rgb = (c, a) => `rgba(${Math.round(c[0] * 255)},${Math.round(c[1] * 255)},${Math.round(c[2] * 255)},${a.toFixed(3)})`;
+      const rgb = (c, a) => `rgba(${Math.round(c[0] * 255)},${
+          Math.round(c[1] * 255)},${Math.round(c[2] * 255)},${a.toFixed(3)})`;
       for (let i = 0; i < 3; i++) {
-        const cx = w * (0.20 + 0.30 * i + 0.14 * Math.sin(elapsedSec * 0.12 + i * 2.1));
-        const cy = h * (0.22 + 0.22 * i + 0.12 * Math.cos(elapsedSec * 0.09 + i * 1.7));
+        const cx = w *
+            (0.20 + 0.30 * i + 0.14 * Math.sin(elapsedSec * 0.12 + i * 2.1));
+        const cy = h *
+            (0.22 + 0.22 * i + 0.12 * Math.cos(elapsedSec * 0.09 + i * 1.7));
         const rad = Math.max(w, h) * (0.62 + kickS * 0.20);
         const g = ctx2d.createRadialGradient(cx, cy, 4, cx, cy, rad);
         const alpha = (isD ? 0.26 : 0.48) * (0.88 + kickS * 0.28);
@@ -245,12 +317,25 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
     let m = mode;
     if (m === 'auto') {
       const hr = new Date().getHours();
-      m = (hr >= 6 && hr < 12) ? 'morning' : (hr >= 12 && hr < 18) ? 'afternoon' : (hr >= 18 && hr < 23) ? 'evening' : 'night';
+      m = (hr >= 6 && hr < 12)  ? 'morning' :
+          (hr >= 12 && hr < 18) ? 'afternoon' :
+          (hr >= 18 && hr < 23) ? 'evening' :
+                                  'night';
     }
     return cols.map(([r, g, b]) => {
-      if (m === 'morning') return [Math.min(1, r * 0.98 + 0.03), Math.min(1, g * 1.03), Math.min(1, b * 1.05)];
-      if (m === 'evening') return [Math.min(1, r * 1.04), Math.max(0, g * 0.95), Math.min(1, b * 1.06)];
-      if (m === 'night') return [Math.max(0, r * 0.88), Math.max(0, g * 0.92), Math.min(1, b * 1.08)];
+      if (m === 'morning')
+        return [
+          Math.min(1, r * 0.98 + 0.03), Math.min(1, g * 1.03),
+          Math.min(1, b * 1.05)
+        ];
+      if (m === 'evening')
+        return [
+          Math.min(1, r * 1.04), Math.max(0, g * 0.95), Math.min(1, b * 1.06)
+        ];
+      if (m === 'night')
+        return [
+          Math.max(0, r * 0.88), Math.max(0, g * 0.92), Math.min(1, b * 1.08)
+        ];
       return [r, g, b];
     });
   }
@@ -265,9 +350,15 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
       const slot = blooms[bloomIdx % 4];
       bloomIdx = (bloomIdx + 1) % 4;
       const angle = (bloomIdx * 1.618 + now * 0.00015) * Math.PI * 2;
-      slot.x = (opts && typeof opts.x === 'number') ? opts.x : (0.5 + Math.cos(angle) * 0.24);
-      slot.y = (opts && typeof opts.y === 'number') ? opts.y : (0.52 + Math.sin(angle) * 0.20);
-      slot.duration = (opts && typeof opts.durationMs === 'number') ? opts.durationMs : (5800 + Math.random() * 2200);
+      slot.x = (opts && typeof opts.x === 'number') ?
+          opts.x :
+          (0.5 + Math.cos(angle) * 0.24);
+      slot.y = (opts && typeof opts.y === 'number') ?
+          opts.y :
+          (0.52 + Math.sin(angle) * 0.20);
+      slot.duration = (opts && typeof opts.durationMs === 'number') ?
+          opts.durationMs :
+          (5800 + Math.random() * 2200);
       slot.birth = isBoot ? (now - slot.duration * 0.22) : now;
       slot.peak = strength * 0.85;
       slot.progress = isBoot ? 0.22 : 0;
@@ -278,7 +369,9 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
       if ((performance.now() - t0) < 400) cur = target.map((c) => c.slice());
     },
     setTrackVibe(presetId, scaleId, circadianMode) {
-      const key = AURORA_PALETTES[presetId] ? presetId : (SCALE_TO_PALETTE[scaleId] || 'thursday');
+      const key = AURORA_PALETTES[presetId] ?
+          presetId :
+          (SCALE_TO_PALETTE[scaleId] || 'thursday');
       activePaletteKey = key;
       target = applyCircadianTint(resolve(key), circadianMode);
       if ((performance.now() - t0) < 400) cur = target.map((c) => c.slice());
@@ -288,7 +381,7 @@ function createAurora(canvas, { palette = 'thursday', dark = true, scale = 0.5 }
       if ((performance.now() - t0) < 400) darkV = darkT;
     },
     getState() {
-      return { palette: activePaletteKey, dark: darkT === 1, K: kickS, kickV };
+      return {palette: activePaletteKey, dark: darkT === 1, K: kickS, kickV};
     },
     stop() {
       cancelAnimationFrame(raf);
@@ -303,15 +396,23 @@ if (typeof window !== 'undefined') {
 
   const initAurora = () => {
     const el = document.getElementById('aurora');
-    if (!el || (window.aurora && typeof window.aurora.setDark === 'function')) return;
+    if (!el || (window.aurora && typeof window.aurora.setDark === 'function'))
+      return;
     const root = document.documentElement;
-    const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false };
-    const isDark = root.getAttribute('data-theme') === 'dark' || (!root.hasAttribute('data-theme') && mq.matches);
-    const aurora = createAurora(el, { palette: 'thursday', dark: isDark });
+    const mq = window.matchMedia ?
+        window.matchMedia('(prefers-color-scheme: dark)') :
+        {matches: false};
+    const mode = root.getAttribute('data-theme-mode') || 'auto';
+    const isDark = root.getAttribute('data-theme') === 'dark' ||
+        (mode === 'auto' && !root.hasAttribute('data-theme-mode') &&
+         mq.matches);
+    const aurora = createAurora(el, {palette: 'thursday', dark: isDark});
     window.aurora = aurora;
     if (mq.addEventListener) {
       mq.addEventListener('change', (e) => {
-        if (aurora && !root.hasAttribute('data-theme')) aurora.setDark(e.matches);
+        if (aurora &&
+            (root.getAttribute('data-theme-mode') || 'auto') === 'auto')
+          aurora.setDark(e.matches);
       });
     }
   };

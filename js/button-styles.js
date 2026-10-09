@@ -496,21 +496,46 @@
       }
     });
 
+    let themeMode = localStorage.getItem('enso-theme-mode') || 'auto';
+    const applyBtnTheme = (mode) => {
+      themeMode = (mode === 'light' || mode === 'dark' || mode === 'auto') ?
+          mode :
+          'auto';
+      const sysDark =
+          !!(window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isDark = themeMode === 'dark' || (themeMode === 'auto' && sysDark);
+      document.documentElement.setAttribute('data-theme-mode', themeMode);
+      if (isDark)
+        document.documentElement.setAttribute('data-theme', 'dark');
+      else
+        document.documentElement.removeAttribute('data-theme');
+      const icon = document.getElementById('theme-icon');
+      if (icon)
+        icon.textContent = {
+          auto: 'brightness_auto',
+          light: 'light_mode',
+          dark: 'dark_mode'
+        }[themeMode];
+    };
     const themeBtn = document.getElementById('btn-theme-toggle');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (isDark) {
-          document.documentElement.removeAttribute('data-theme');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        }
-        const icon = document.getElementById('theme-icon');
-        if (icon) {
-          icon.textContent = isDark ? 'dark_mode' : 'light_mode';
+        const order = ['auto', 'light', 'dark'];
+        applyBtnTheme(order[(order.indexOf(themeMode) + 1) % 3]);
+        try {
+          localStorage.setItem('enso-theme-mode', themeMode);
+        } catch (e) {
         }
       });
     }
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener?.('change', () => {
+            if (themeMode === 'auto') applyBtnTheme('auto');
+          });
+    }
+    applyBtnTheme(themeMode);
   }
 
   function applyHashParams() {
@@ -518,6 +543,12 @@
     const params = new URLSearchParams(hash);
     if (params.get('theme') === 'dark') {
       document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.setAttribute('data-theme-mode', 'dark');
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.textContent = 'dark_mode';
+    } else if (params.get('theme') === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme-mode', 'light');
       const icon = document.getElementById('theme-icon');
       if (icon) icon.textContent = 'light_mode';
     }

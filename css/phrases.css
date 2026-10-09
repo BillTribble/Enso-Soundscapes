@@ -86,6 +86,8 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   cursor: pointer;
   transition: background-color 160ms cubic-bezier(0.2, 0, 0, 1), color 160ms cubic-bezier(0.2, 0, 0, 1);
   outline: none;
@@ -154,6 +156,8 @@
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   cursor: pointer;
   transition: background-color 160ms cubic-bezier(0.2, 0, 0, 1), color 160ms cubic-bezier(0.2, 0, 0, 1);
   outline: none;
@@ -200,6 +204,7 @@
 /* Fluid Motion, Badge morphing, & Icon-only harmony badge */
 .badge {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   white-space: nowrap;
   overflow: hidden;
   will-change: width, transform;
@@ -243,6 +248,12 @@
 .voice-card .card-title-cluster > .badge:not(.badge-icon-only) {
   padding: 0 7px;
   font-size: 11px;
+}
+
+.voice-card .card-title-cluster > .badge[id^="voice-note-"] {
+  min-width: 38px;
+  justify-content: center;
+  text-align: center;
 }
 
 .voice-card .badge-row {

@@ -16,28 +16,89 @@
   let patchOverrides = {};
   let customPresets = {};
   let customTrackPatterns = {};
-  let globalVoiceBalance = -0.49;
+  let globalVoiceBalance = -0.62;
   let globalVoiceGains = null;
   let globalVoiceFilters = null;
 
   const SLIDER_MAP = {
-    attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume',
-    cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift',
-    reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping',
-    delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow'
+    attack: 'global-attack',
+    release: 'global-release',
+    sustain: 'global-sustain',
+    masterVolume: 'master-volume',
+    cutoff: 'filter-cutoff',
+    resonance: 'filter-resonance',
+    filterDrift: 'filter-drift',
+    reverbMix: 'reverb-mix',
+    reverbShimmer: 'reverb-shimmer',
+    reverbDecay: 'reverb-decay',
+    reverbDamping: 'reverb-damping',
+    delayMix: 'delay-mix',
+    delayTime: 'delay-time',
+    delayFeedback: 'delay-feedback',
+    delayWow: 'delay-wow'
   };
 
   const PHRASE_SLIDERS = [
-    { key: 'phraseVariationChance', id: 'phrase-variation-chance', lblId: 'val-phrase-variation-chance', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'phraseSkipChance', id: 'phrase-skip-chance', lblId: 'val-phrase-skip-chance', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'phraseNoteGate', id: 'phrase-note-gate', lblId: 'val-phrase-note-gate', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'phraseCompletionGate', id: 'phrase-completion-gate', lblId: 'val-phrase-completion-gate', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'phraseGateProb', id: 'phrase-gate-prob', lblId: 'val-phrase-gate-prob', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'phraseLoopCycle', id: 'phrase-loop-cycle', lblId: 'val-phrase-loop-cycle', fmt: (v) => `${Number(v).toFixed(1)} s` },
-    { key: 'noteOctaveShiftChance', id: 'phrase-note-octave-shift', lblId: 'val-phrase-note-octave-shift', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'chordOctaveShiftChance', id: 'phrase-chord-octave-shift', lblId: 'val-phrase-chord-octave-shift', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'chordProgGate', id: 'chord-prog-gate', lblId: 'val-chord-prog-gate', fmt: (v) => `${Math.round(v * 100)}%` },
-    { key: 'chordProgCycle', id: 'chord-prog-cycle', lblId: 'val-chord-prog-cycle', fmt: (v) => `${Number(v).toFixed(1)} s` }
+    {
+      key: 'phraseVariationChance',
+      id: 'phrase-variation-chance',
+      lblId: 'val-phrase-variation-chance',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'phraseSkipChance',
+      id: 'phrase-skip-chance',
+      lblId: 'val-phrase-skip-chance',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'phraseNoteGate',
+      id: 'phrase-note-gate',
+      lblId: 'val-phrase-note-gate',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'phraseCompletionGate',
+      id: 'phrase-completion-gate',
+      lblId: 'val-phrase-completion-gate',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'phraseGateProb',
+      id: 'phrase-gate-prob',
+      lblId: 'val-phrase-gate-prob',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'phraseLoopCycle',
+      id: 'phrase-loop-cycle',
+      lblId: 'val-phrase-loop-cycle',
+      fmt: (v) => `${Number(v).toFixed(1)} s`
+    },
+    {
+      key: 'noteOctaveShiftChance',
+      id: 'phrase-note-octave-shift',
+      lblId: 'val-phrase-note-octave-shift',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'chordOctaveShiftChance',
+      id: 'phrase-chord-octave-shift',
+      lblId: 'val-phrase-chord-octave-shift',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'chordProgGate',
+      id: 'chord-prog-gate',
+      lblId: 'val-chord-prog-gate',
+      fmt: (v) => `${Math.round(v * 100)}%`
+    },
+    {
+      key: 'chordProgCycle',
+      id: 'chord-prog-cycle',
+      lblId: 'val-chord-prog-cycle',
+      fmt: (v) => `${Number(v).toFixed(1)} s`
+    }
   ];
 
   function getApp() {
@@ -63,9 +124,9 @@
     globalParams.envelopeMode = app.audioEngine?.envelopeMode || 'override';
     globalParams.filterType = app.audioEngine?.filterType || 'lowpass';
     const xfEl = document.getElementById('piano-other-crossfade');
-    globalVoiceBalance = typeof app.globalVoiceBalance === 'number'
-      ? app.globalVoiceBalance
-      : (xfEl ? parseFloat(xfEl.value) : globalVoiceBalance);
+    globalVoiceBalance = typeof app.globalVoiceBalance === 'number' ?
+        app.globalVoiceBalance :
+        (xfEl ? parseFloat(xfEl.value) : globalVoiceBalance);
     globalParams.pianoCrossfade = globalVoiceBalance;
 
     const probEngine = app.probEngine || {};
@@ -81,7 +142,14 @@
     };
 
     const voices = {};
-    const defaultGain = { pad: 0.36, piano: 2.00, bell: 0.27, choir: 0.30, tape: 0.32, drone: 0.35 };
+    const defaultGain = {
+      pad: 0.72,
+      piano: 2.00,
+      bell: 0.54,
+      choir: 0.60,
+      tape: 0.64,
+      drone: 0.70
+    };
     const defaultRelease = { pad: 8.5, piano: 4.5, bell: 5.2, choir: 9.5, tape: 6.2, drone: 11.0 };
     const defaultOctave = { pad: 0, piano: 0, bell: 1, choir: 1, tape: 0, drone: -1 };
     if (Array.isArray(probEngine.voices)) {
@@ -93,17 +161,35 @@
           prob: v.prob !== undefined ? v.prob : 0.6,
           cycle: v.cycle !== undefined ? v.cycle : 10.0,
           gain: v.id === 'piano' ? (g || 2.00) : g,
-          release: typeof v.release === 'number' ? v.release : (defaultRelease[v.id] || 7.0),
+          release: typeof v.release === 'number' ?
+              v.release :
+              (defaultRelease[v.id] || 7.0),
           octave: oct,
-          octaveShiftProb: typeof v.octaveShiftProb === 'number' ? v.octaveShiftProb : (v.defaultOctaveShiftProb ?? 0.10),
-          noteOctaveShiftProb: typeof v.noteOctaveShiftProb === 'number' ? v.noteOctaveShiftProb : (v.defaultNoteOctaveShiftProb ?? 0.03),
-          chordOctaveShiftProb: typeof v.chordOctaveShiftProb === 'number' ? v.chordOctaveShiftProb : (v.defaultChordOctaveShiftProb ?? 0.10),
+          octaveShiftProb: typeof v.octaveShiftProb === 'number' ?
+              v.octaveShiftProb :
+              (v.defaultOctaveShiftProb ?? 0.10),
+          noteOctaveShiftProb: typeof v.noteOctaveShiftProb === 'number' ?
+              v.noteOctaveShiftProb :
+              (v.defaultNoteOctaveShiftProb ?? 0.03),
+          chordOctaveShiftProb: typeof v.chordOctaveShiftProb === 'number' ?
+              v.chordOctaveShiftProb :
+              (v.defaultChordOctaveShiftProb ?? 0.10),
           muted: !!v.muted
         };
       });
     }
     if (!voices.piano) {
-      voices.piano = { prob: 0.62, cycle: 7.9, gain: 2.00, release: 4.5, octave: 0, octaveShiftProb: 0.10, noteOctaveShiftProb: 0.03, chordOctaveShiftProb: 0.10, muted: false };
+      voices.piano = {
+        prob: 0.62,
+        cycle: 7.9,
+        gain: 2.00,
+        release: 4.5,
+        octave: 0,
+        octaveShiftProb: 0.10,
+        noteOctaveShiftProb: 0.03,
+        chordOctaveShiftProb: 0.10,
+        muted: false
+      };
     } else if (typeof voices.piano.gain !== 'number' || voices.piano.gain <= 0) {
       voices.piano.gain = 2.00;
     }
@@ -168,7 +254,7 @@
   function persistToLocalStorage() {
     try {
       const payload = {
-        version: 2,
+        version: 3,
         globalVoiceBalance,
         globalVoiceGains,
         globalVoiceFilters,
@@ -179,7 +265,10 @@
       localStorage.setItem(LOCAL_STORAGE_PATCHES_KEY, JSON.stringify(payload));
       const app = getApp();
       if (app?.activePresetId) {
-        localStorage.setItem(LOCAL_STORAGE_SESSION_KEY, JSON.stringify({ activePresetId: app.activePresetId, globalVoiceBalance }));
+        localStorage.setItem(
+            LOCAL_STORAGE_SESSION_KEY,
+            JSON.stringify(
+                {activePresetId: app.activePresetId, globalVoiceBalance}));
       }
     } catch (e) {
       console.warn('[patch-storage] localStorage write failed:', e);
@@ -191,12 +280,13 @@
       return;
     }
     const host = window.location.hostname || '';
-    const hasLocalBackend = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host.endsWith('.googlers.com');
+    const hasLocalBackend = host === 'localhost' || host === '127.0.0.1' ||
+        host === '::1' || host.endsWith('.googlers.com');
     if (!hasLocalBackend) return;
 
     const app = getApp();
     const payload = {
-      version: 2,
+      version: 3,
       globalVoiceBalance,
       globalVoiceGains,
       globalVoiceFilters,
@@ -217,8 +307,10 @@
   function saveGlobalVoiceSettings() {
     const app = getApp();
     if (!app) return;
-    if (app.globalVoiceGains) globalVoiceGains = JSON.parse(JSON.stringify(app.globalVoiceGains));
-    if (app.globalVoiceFilters) globalVoiceFilters = JSON.parse(JSON.stringify(app.globalVoiceFilters));
+    if (app.globalVoiceGains)
+      globalVoiceGains = JSON.parse(JSON.stringify(app.globalVoiceGains));
+    if (app.globalVoiceFilters)
+      globalVoiceFilters = JSON.parse(JSON.stringify(app.globalVoiceFilters));
     persistToLocalStorage();
     persistToDisk();
   }
@@ -518,12 +610,16 @@
       });
     }
 
-    // Mark dirty on control changes (including re-rendered voice cards), except global Voice balance
-    document.querySelectorAll('.control-row input, .piano-phrases-card input, .xy-pad-surface').forEach((el) => {
-      if (el.id === 'piano-other-crossfade') return;
-      el.addEventListener('input', () => markDirty(true));
-      el.addEventListener('change', () => markDirty(true));
-    });
+    // Mark dirty on control changes (including re-rendered voice cards), except
+    // global Voice balance
+    document
+        .querySelectorAll(
+            '.control-row input, .piano-phrases-card input, .xy-pad-surface')
+        .forEach((el) => {
+          if (el.id === 'piano-other-crossfade') return;
+          el.addEventListener('input', () => markDirty(true));
+          el.addEventListener('change', () => markDirty(true));
+        });
     const voicesCont = document.getElementById('voices-cards-container');
     if (voicesCont) {
       voicesCont.addEventListener('input', () => markDirty(true));
@@ -559,23 +655,44 @@
       return;
     }
 
-    // 1. Load from localStorage (migrating v1 overrides into v2 factory defaults)
+    // 1. Load from localStorage (migrating v1/v2 overrides into v3 factory
+    // defaults)
     try {
       const raw = localStorage.getItem(LOCAL_STORAGE_PATCHES_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (typeof parsed.globalVoiceBalance === 'number') {
-          globalVoiceBalance = Math.max(-1, Math.min(1, parsed.globalVoiceBalance));
-        }
-        if (parsed.globalVoiceGains) globalVoiceGains = parsed.globalVoiceGains;
-        if (parsed.globalVoiceFilters) globalVoiceFilters = parsed.globalVoiceFilters;
-        if (parsed.customPresets) customPresets = parsed.customPresets;
-        if (parsed.customTrackPatterns) customTrackPatterns = parsed.customTrackPatterns;
-        if ((parsed.version || 1) >= 2 && parsed.patchOverrides) {
-          patchOverrides = parsed.patchOverrides;
-        } else {
+        if ((parsed.version || 1) < 3) {
+          globalVoiceBalance = -0.62;
+          globalVoiceGains = {
+            pad: 0.65,
+            piano: 2.00,
+            bell: 0.50,
+            choir: 0.56,
+            tape: 0.58,
+            drone: 0.62
+          };
           patchOverrides = {};
+          if (parsed.globalVoiceFilters)
+            globalVoiceFilters = parsed.globalVoiceFilters;
+          if (parsed.customPresets) customPresets = parsed.customPresets;
+          if (parsed.customTrackPatterns)
+            customTrackPatterns = parsed.customTrackPatterns;
           persistToLocalStorage();
+        } else {
+          if (typeof parsed.globalVoiceBalance === 'number') {
+            globalVoiceBalance =
+                Math.max(-1, Math.min(1, parsed.globalVoiceBalance));
+          }
+          if (parsed.globalVoiceGains)
+            globalVoiceGains = parsed.globalVoiceGains;
+          if (parsed.globalVoiceFilters)
+            globalVoiceFilters = parsed.globalVoiceFilters;
+          if (parsed.customPresets) customPresets = parsed.customPresets;
+          if (parsed.customTrackPatterns)
+            customTrackPatterns = parsed.customTrackPatterns;
+          if (parsed.patchOverrides) {
+            patchOverrides = parsed.patchOverrides;
+          }
         }
         applyLoadedData();
       }
@@ -586,26 +703,64 @@
     // 2. Fetch from disk-backed API
     if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
       fetch(API_PATCHES_URL)
-        .then((res) => (res.ok ? res.json() : fetch(STATIC_PATCHES_URL).then((r) => (r.ok ? r.json() : null))))
-        .catch(() => fetch(STATIC_PATCHES_URL).then((r) => (r.ok ? r.json() : null)).catch(() => null))
-        .then((data) => {
-          if (!data) return;
-          if (typeof data.globalVoiceBalance === 'number') {
-            globalVoiceBalance = Math.max(-1, Math.min(1, data.globalVoiceBalance));
-          }
-          if (data.globalVoiceGains) globalVoiceGains = data.globalVoiceGains;
-          if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
-          if ((data.version || 1) >= 2 && data.patchOverrides) {
-            patchOverrides = { ...patchOverrides, ...data.patchOverrides };
-          }
-          if (data.customPresets) customPresets = { ...customPresets, ...data.customPresets };
-          if (data.customTrackPatterns) customTrackPatterns = { ...customTrackPatterns, ...data.customTrackPatterns };
-          applyLoadedData();
-          if (data.activePresetId && window.ENO_DATA?.PRESETS?.[data.activePresetId]) {
-            getApp()?.applyPreset(data.activePresetId, false);
-          }
-        })
-        .catch(() => {});
+          .then(
+              (res) =>
+                  (res.ok ? res.json() :
+                            fetch(STATIC_PATCHES_URL)
+                                .then((r) => (r.ok ? r.json() : null))))
+          .catch(
+              () => fetch(STATIC_PATCHES_URL)
+                        .then((r) => (r.ok ? r.json() : null))
+                        .catch(() => null))
+          .then((data) => {
+            if (!data) return;
+            if ((data.version || 1) < 3) {
+              globalVoiceBalance = -0.62;
+              globalVoiceGains = {
+                pad: 0.65,
+                piano: 2.00,
+                bell: 0.50,
+                choir: 0.56,
+                tape: 0.58,
+                drone: 0.62
+              };
+              patchOverrides = {};
+              if (data.globalVoiceFilters)
+                globalVoiceFilters = data.globalVoiceFilters;
+              if (data.customPresets)
+                customPresets = {...customPresets, ...data.customPresets};
+              if (data.customTrackPatterns)
+                customTrackPatterns = {
+                  ...customTrackPatterns,
+                  ...data.customTrackPatterns
+                };
+            } else {
+              if (typeof data.globalVoiceBalance === 'number') {
+                globalVoiceBalance =
+                    Math.max(-1, Math.min(1, data.globalVoiceBalance));
+              }
+              if (data.globalVoiceGains)
+                globalVoiceGains = data.globalVoiceGains;
+              if (data.globalVoiceFilters)
+                globalVoiceFilters = data.globalVoiceFilters;
+              if (data.patchOverrides) {
+                patchOverrides = {...patchOverrides, ...data.patchOverrides};
+              }
+              if (data.customPresets)
+                customPresets = {...customPresets, ...data.customPresets};
+              if (data.customTrackPatterns)
+                customTrackPatterns = {
+                  ...customTrackPatterns,
+                  ...data.customTrackPatterns
+                };
+            }
+            applyLoadedData();
+            if (data.activePresetId &&
+                window.ENO_DATA?.PRESETS?.[data.activePresetId]) {
+              getApp()?.applyPreset(data.activePresetId, false);
+            }
+          })
+          .catch(() => {});
     }
   }
 
@@ -639,8 +794,13 @@
     });
     if (app) {
       app.globalVoiceBalance = globalVoiceBalance;
-      if (globalVoiceGains) app.globalVoiceGains = { ...app.globalVoiceGains, ...globalVoiceGains };
-      if (globalVoiceFilters) app.globalVoiceFilters = { ...app.globalVoiceFilters, ...globalVoiceFilters };
+      if (globalVoiceGains)
+        app.globalVoiceGains = {...app.globalVoiceGains, ...globalVoiceGains};
+      if (globalVoiceFilters)
+        app.globalVoiceFilters = {
+          ...app.globalVoiceFilters,
+          ...globalVoiceFilters
+        };
       app.syncVoiceGainSlidersFromCrossfade?.();
       app.syncVoiceFilterSliders?.();
     }

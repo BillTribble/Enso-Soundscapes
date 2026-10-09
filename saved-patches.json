@@ -2,22 +2,40 @@
   "activePresetId": "thursday",
   "customPresets": {},
   "customTrackPatterns": {},
-  "globalVoiceBalance": -0.49,
-  "globalVoiceGains": {
-    "pad": 0.32,
-    "piano": 2.0,
-    "bell": 0.25,
-    "choir": 0.28,
-    "tape": 0.29,
-    "drone": 0.31
-  },
+  "globalVoiceBalance": -0.72,
   "globalVoiceFilters": {
-    "pad": { "cutoff": 5200, "resonance": 1.2 },
-    "piano": { "cutoff": 12000, "resonance": 0.8 },
-    "bell": { "cutoff": 9500, "resonance": 1.4 },
-    "choir": { "cutoff": 6400, "resonance": 1.2 },
-    "tape": { "cutoff": 4200, "resonance": 1.6 },
-    "drone": { "cutoff": 1800, "resonance": 1.8 }
+    "bell": {
+      "cutoff": 9500,
+      "resonance": 1.4
+    },
+    "choir": {
+      "cutoff": 80,
+      "resonance": 1.2
+    },
+    "drone": {
+      "cutoff": 1800,
+      "resonance": 1.8
+    },
+    "pad": {
+      "cutoff": 5200,
+      "resonance": 1.2
+    },
+    "piano": {
+      "cutoff": 12000,
+      "resonance": 0.8
+    },
+    "tape": {
+      "cutoff": 4200,
+      "resonance": 1.6
+    }
+  },
+  "globalVoiceGains": {
+    "bell": 0.4,
+    "choir": 0.49,
+    "drone": 0.62,
+    "pad": 0.49,
+    "piano": 2,
+    "tape": 0.58
   },
   "patchOverrides": {
     "thursday": {
@@ -33,8 +51,8 @@
         "envelopeMode": "override",
         "filterDrift": 0.2,
         "filterType": "lowpass",
-        "masterVolume": 0.92,
-        "pianoCrossfade": -0.49,
+        "masterVolume": 0.84,
+        "pianoCrossfade": -0.72,
         "release": 7,
         "resonance": 1.1,
         "reverbDamping": 6200,
@@ -44,8 +62,9 @@
         "sustain": 0.7
       },
       "phraseParams": {
+        "chordOctaveShiftChance": 0.1,
         "chordProgCycle": 10.7,
-        "chordProgGate": 0.92,
+        "chordProgGate": 0.87,
         "noteOctaveShiftChance": 0.03,
         "phraseCompletionGate": 0.18,
         "phraseGateProb": 0.76,
@@ -83,67 +102,73 @@
       "scale": "thursday_g",
       "voices": {
         "bell": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 13.1,
-          "gain": 0.25,
+          "gain": 0.4,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": 1,
           "octaveShiftProb": 0.1,
           "prob": 0.4,
-          "release": 4.8,
-          "noteOctaveShiftProb": 0.03
+          "release": 4.8
         },
         "choir": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 10.7,
-          "gain": 0.28,
+          "gain": 0.49,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": 1,
           "octaveShiftProb": 0.1,
           "prob": 0.92,
-          "release": 9.2,
-          "noteOctaveShiftProb": 0.03
+          "release": 9.2
         },
         "drone": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 37.3,
-          "gain": 0.31,
+          "gain": 0.62,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": -1,
           "octaveShiftProb": 0.1,
           "prob": 0.7,
-          "release": 10.5,
-          "noteOctaveShiftProb": 0.03
+          "release": 10.5
         },
         "pad": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 19.1,
-          "gain": 0.32,
+          "gain": 0.49,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": 0,
           "octaveShiftProb": 0.1,
-          "prob": 0.68,
-          "release": 8,
-          "noteOctaveShiftProb": 0.03
+          "prob": 0.75,
+          "release": 8
         },
         "piano": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 6.7,
           "gain": 2,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": 0,
           "octaveShiftProb": 0.1,
           "prob": 0.76,
-          "release": 4.2,
-          "noteOctaveShiftProb": 0.03
+          "release": 4.2
         },
         "tape": {
+          "chordOctaveShiftProb": 0.1,
           "cycle": 17.9,
-          "gain": 0.29,
+          "gain": 0.58,
           "muted": false,
+          "noteOctaveShiftProb": 0.03,
           "octave": 0,
           "octaveShiftProb": 0.1,
           "prob": 0.5,
-          "release": 5.8,
-          "noteOctaveShiftProb": 0.03
+          "release": 5.8
         }
       }
     }
   },
-  "version": 2
+  "version": 3
 }

@@ -215,9 +215,6 @@
       if (window.enoApp && window.enoApp.probEngine && typeof window.enoApp.probEngine.applyCrossfadeToVoices === 'function') {
         window.enoApp.probEngine.applyCrossfadeToVoices(state.pianoMultiplier, state.otherMultiplier);
       }
-      if (window.enoApp && typeof window.enoApp.syncVoiceGainSlidersFromCrossfade === 'function') {
-        window.enoApp.syncVoiceGainSlidersFromCrossfade();
-      }
       if (pianoPctLbl) pianoPctLbl.textContent = `${Math.round(state.pianoMultiplier * 100)}%`;
       if (otherPctLbl) otherPctLbl.textContent = `${Math.round(state.otherMultiplier * 100)}%`;
       if (statusLbl) {
@@ -238,14 +235,17 @@
       slider.addEventListener('input', () => syncCrossfade(slider.value));
       slider.addEventListener('change', () => {
         syncCrossfade(slider.value);
-        if (window.enoPatchStorage && typeof window.enoPatchStorage.saveGlobalVoiceBalance === 'function') {
-          window.enoPatchStorage.saveGlobalVoiceBalance(parseFloat(slider.value) || 0);
+        if (window.enoPatchStorage &&
+            typeof window.enoPatchStorage.saveGlobalVoiceBalance ===
+                'function') {
+          window.enoPatchStorage.saveGlobalVoiceBalance(
+              parseFloat(slider.value) || 0);
         }
       });
       slider.addEventListener('dblclick', () => {
         slider.value = '0';
         slider.dispatchEvent(new Event('input', { bubbles: true }));
-        slider.dispatchEvent(new Event('change', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', {bubbles: true}));
       });
       syncCrossfade(slider.value);
     }
@@ -253,7 +253,7 @@
       btnReset.addEventListener('click', () => {
         slider.value = '0';
         slider.dispatchEvent(new Event('input', { bubbles: true }));
-        slider.dispatchEvent(new Event('change', { bubbles: true }));
+        slider.dispatchEvent(new Event('change', {bubbles: true}));
       });
     }
 
@@ -362,55 +362,99 @@
           crossfadeInput.value = '-1';
           crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
           const stPianoOnly = ae.crossfadeState || {};
-          const pianoOnlyOk = Math.abs(stPianoOnly.pianoMultiplier - 1.0) < 0.001 && Math.abs(stPianoOnly.otherMultiplier - 0.0) < 0.001 &&
-            Math.abs(ae.nodes.otherCrossfadeBus.gain.value) < 0.001 && Math.abs(ae.nodes.pianoCrossfadeBus.gain.value - 1.0) < 0.001 &&
-            otherIds.every((id) => ae.nodes.voiceBuses[id] && Math.abs(ae.nodes.voiceBuses[id].gain.value) < 0.001);
+          const pianoOnlyOk =
+              Math.abs(stPianoOnly.pianoMultiplier - 1.0) < 0.001 &&
+              Math.abs(stPianoOnly.otherMultiplier) < 0.001 &&
+              Math.abs(ae.nodes.otherCrossfadeBus.gain.value) < 0.001 &&
+              Math.abs(ae.nodes.pianoCrossfadeBus.gain.value - 1.0) < 0.001 &&
+              otherIds.every(
+                  (id) => ae.nodes.voiceBalanceBuses[id] &&
+                      Math.abs(ae.nodes.voiceBalanceBuses[id].gain.value) <
+                          0.001 &&
+                      ae.nodes.voiceBuses[id]?.gain.value >= 0.45) &&
+              Math.abs(ae.nodes.voiceBalanceBuses.piano.gain.value - 1.0) <
+                  0.001 &&
+              ae.nodes.voiceBuses.piano.gain.value >= 2.0;
           crossfadeInput.value = '1';
           crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
           const stOtherOnly = ae.crossfadeState || {};
-          const otherOnlyOk = Math.abs(stOtherOnly.pianoMultiplier - 0.0) < 0.001 && Math.abs(stOtherOnly.otherMultiplier - 1.0) < 0.001 &&
-            Math.abs(ae.nodes.pianoCrossfadeBus.gain.value) < 0.001 && Math.abs(ae.nodes.otherCrossfadeBus.gain.value - 1.0) < 0.001 &&
-            Math.abs(ae.nodes.voiceBuses.piano.gain.value) < 0.001 &&
-            otherIds.every((id) => ae.nodes.voiceBuses[id] && ae.nodes.voiceBuses[id].gain.value > 0.15);
+          const otherOnlyOk = Math.abs(stOtherOnly.pianoMultiplier) < 0.001 &&
+              Math.abs(stOtherOnly.otherMultiplier - 1.0) < 0.001 &&
+              Math.abs(ae.nodes.pianoCrossfadeBus.gain.value) < 0.001 &&
+              Math.abs(ae.nodes.otherCrossfadeBus.gain.value - 1.0) < 0.001 &&
+              Math.abs(ae.nodes.voiceBalanceBuses.piano.gain.value) < 0.001 &&
+              ae.nodes.voiceBuses.piano.gain.value >= 2.0 &&
+              otherIds.every(
+                  (id) => ae.nodes.voiceBalanceBuses[id] &&
+                      Math.abs(
+                          ae.nodes.voiceBalanceBuses[id].gain.value - 1.0) <
+                          0.001 &&
+                      ae.nodes.voiceBuses[id]?.gain.value >= 0.45);
           crossfadeInput.value = '-0.5';
           crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
           const halfOtherOk = otherIds.every((id) => {
-            const base = ae.baseVoiceGains[id] || 0.3;
-            return Math.abs(ae.nodes.voiceBuses[id].gain.value - base * 0.5) < 0.01;
+            const v = window.enoApp.probEngine.voices.find((x) => x.id === id);
+            return ae.nodes.voiceBalanceBuses[id] &&
+                Math.abs(ae.nodes.voiceBalanceBuses[id].gain.value - 0.5) <
+                0.01 &&
+                v && Math.abs(v.balanceGain - 0.5) < 0.01 &&
+                ae.nodes.voiceBuses[id]?.gain.value >= 0.45 && v.gain >= 0.45;
           });
+          crossfadeInput.value = '-0.62';
+          crossfadeInput.dispatchEvent(new Event('input', {bubbles: true}));
+          const defCrossfadeOk = otherIds.every((id) => {
+            const v = window.enoApp.probEngine.voices.find((x) => x.id === id);
+            const slider = document.getElementById(`voice-gain-${id}`);
+            return ae.nodes.voiceBalanceBuses[id] &&
+                Math.abs(ae.nodes.voiceBalanceBuses[id].gain.value - 0.38) <
+                0.01 &&
+                v && Math.abs(v.balanceGain - 0.38) < 0.01 &&
+                ae.nodes.voiceBuses[id]?.gain.value >= 0.45 && v.gain >= 0.45 &&
+                slider && parseFloat(slider.value) >= 0.45;
+          }) &&
+              Math.abs(ae.nodes.voiceBalanceBuses.piano.gain.value - 1.0) <
+                  0.001 &&
+              ae.nodes.voiceBuses.piano.gain.value >= 2.0;
           crossfadeInput.value = '-0.35';
-          crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
-          const trackSwitchIds = ['reflection', 'installations', 'discreet_loops', 'thursday'];
+          crossfadeInput.dispatchEvent(new Event('input', {bubbles: true}));
+          const trackSwitchIds =
+              ['reflection', 'installations', 'discreet_loops', 'thursday'];
           voiceBalanceGlobalAcrossTracks = trackSwitchIds.every((tid) => {
             window.enoApp.applyPreset(tid, false);
             const curVal = parseFloat(crossfadeInput.value);
             const curSt = ae.crossfadeState || {};
             return Math.abs(curVal - (-0.35)) < 0.005 &&
-              Math.abs((window.enoApp.globalVoiceBalance ?? 0) - (-0.35)) < 0.005 &&
-              Math.abs((ae.params.pianoCrossfade ?? 0) - (-0.35)) < 0.005 &&
-              Math.abs((curSt.pianoMultiplier ?? 0) - 1.0) < 0.005 &&
-              Math.abs((curSt.otherMultiplier ?? 0) - 0.65) < 0.005;
+                Math.abs((window.enoApp.globalVoiceBalance ?? 0) - (-0.35)) <
+                0.005 &&
+                Math.abs((ae.params.pianoCrossfade ?? 0) - (-0.35)) < 0.005 &&
+                Math.abs((curSt.pianoMultiplier ?? 0) - 1.0) < 0.005 &&
+                Math.abs((curSt.otherMultiplier ?? 0) - 0.65) < 0.005;
           });
           crossfadeInput.value = '0';
           crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
           const stCenter = ae.crossfadeState || {};
           const centerOk = Math.abs(stCenter.pianoMultiplier - 1.0) < 0.001 && Math.abs(stCenter.otherMultiplier - 1.0) < 0.001;
+          crossfadeInput.value = '-0.62';
+          crossfadeInput.dispatchEvent(new Event('input', {bubbles: true}));
           settingsCogBtn.click();
           const closedOnSecondClick = !settingsPopoverEl.classList.contains('is-open');
-          allVoicesScaledByCrossfade = dualStemsPresent && pianoOnlyOk && otherOnlyOk && halfOtherOk && centerOk;
-          crossfadeWorks = openedOnClick && allVoicesScaledByCrossfade && voiceBalanceGlobalAcrossTracks && closedOnSecondClick;
+          allVoicesScaledByCrossfade = dualStemsPresent && pianoOnlyOk &&
+              otherOnlyOk && halfOtherOk && defCrossfadeOk && centerOk;
+          crossfadeWorks = openedOnClick && allVoicesScaledByCrossfade &&
+              voiceBalanceGlobalAcrossTracks && closedOnSecondClick;
         }
 
         let voiceGlobalsPreservedAcrossTracks = false;
         if (window.enoApp && window.enoApp.probEngine) {
           const app = window.enoApp;
-          const origGain = app.globalVoiceGains?.pad ?? 0.32;
+          const origGain = app.globalVoiceGains?.pad ?? 0.65;
           const origCutoff = app.globalVoiceFilters?.pad?.cutoff ?? 5200;
           app.setGlobalVoiceGain('pad', 0.44);
           app.setGlobalVoiceFilter('pad', 4800, 2.2);
           app.applyPreset('discreet_loops', false);
           const pPad = app.probEngine.voices.find((v) => v.id === 'pad');
-          if (pPad && Math.abs((pPad.gain ?? 0) - 0.44) < 0.01 && pPad.cutoff === 4800) {
+          if (pPad && Math.abs((pPad.gain ?? 0) - 0.44) < 0.01 &&
+              pPad.cutoff === 4800) {
             voiceGlobalsPreservedAcrossTracks = true;
           }
           app.setGlobalVoiceGain('pad', origGain);
@@ -422,10 +466,19 @@
         const pianoDefaultGain = pianoInput ? parseFloat(pianoInput.value) : 0;
         const pianoSliderMax = pianoInput ? parseFloat(pianoInput.max) : 0;
         const presets = (window.ENO_DATA && window.ENO_DATA.PRESETS) || {};
-        const allPresetsPiano200 = Object.values(presets).every((p) => p.voices && p.voices.piano && p.voices.piano.gain >= 2.0);
-        const allOtherVoicesReduced = Object.values(presets).every((p) =>
-          p.voices && ['pad', 'bell', 'choir', 'tape', 'drone'].every((vid) => p.voices[vid] && p.voices[vid].gain <= 0.45)
-        );
+        const allPresetsPiano200 = Object.values(presets).every(
+            (p) => p.voices && p.voices.piano && p.voices.piano.gain >= 2.0);
+        const visibleVoiceLevelsUnDucked =
+            Object.values(presets).every(
+                (p) => p.voices &&
+                    ['pad', 'bell', 'choir', 'tape', 'drone'].every(
+                        (vid) => p.voices[vid] && p.voices[vid].gain >= 0.45 &&
+                            p.voices[vid].gain <= 0.90)) &&
+            (window.enoApp?.probEngine?.voices || [])
+                .filter((v) => v.id !== 'piano')
+                .every(
+                    (v) => v.gain >= 0.45 && v.gain <= 0.90 &&
+                        Math.abs((v.balanceGain ?? 0.38) - 0.38) < 0.02);
         if (window.enoApp && window.enoApp.audioEngine && window.enoApp.probEngine) {
           window.enoApp.probEngine.setVoiceParam('piano', 'gain', 5.0);
           window.enoApp.audioEngine.setVoiceVolume('piano', 5.0);
@@ -439,10 +492,12 @@
         if (window.enoApp && window.enoApp.audioEngine && window.enoApp.probEngine) {
           window.enoApp.probEngine.setVoiceParam('piano', 'gain', 2.0);
           window.enoApp.audioEngine.setVoiceVolume('piano', 2.0);
-          const defXf = (presets[window.enoApp.activePresetId || 'thursday']?.global?.pianoCrossfade) ?? -0.49;
+          const defXf = (presets[window.enoApp.activePresetId || 'thursday']
+                             ?.global?.pianoCrossfade) ??
+              -0.62;
           if (crossfadeInput) {
             crossfadeInput.value = String(defXf);
-            crossfadeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            crossfadeInput.dispatchEvent(new Event('input', {bubbles: true}));
           }
         }
         const topBarEl = document.querySelector('.top-app-bar');
@@ -576,7 +631,14 @@
           const pianoOctSlider = document.getElementById('voice-octave-piano');
           const pianoVoice = window.enoApp.probEngine.voices.find((v) => v.id === 'piano');
           const origOct = pianoVoice ? pianoVoice.octaveOffset : 0;
-          const baseRes = window.enoApp.phraseEngine.triggerPianoPhrase(pianoVoice, { octaveBias: 0 }, { dryRun: true, forcePrimary: true, ignoreLfo: true, forceFull: true, disableVariations: true });
+          const baseRes = window.enoApp.phraseEngine.triggerPianoPhrase(
+              pianoVoice, {octaveBias: 0}, {
+                dryRun: true,
+                forcePrimary: true,
+                ignoreLfo: true,
+                forceFull: true,
+                disableVariations: true
+              });
           const plusBtn = document.querySelector('.voice-octave-step-btn[data-voice-id="piano"][data-step="1"]');
           const minusBtn = document.querySelector('.voice-octave-step-btn[data-voice-id="piano"][data-step="-1"]');
           if (plusBtn) plusBtn.click();
@@ -584,11 +646,25 @@
           const lblPlusOne = document.getElementById('val-voice-octave-piano')?.textContent;
           pianoOctSlider.value = '4';
           pianoOctSlider.dispatchEvent(new Event('input', { bubbles: true }));
-          const resPlus4 = window.enoApp.phraseEngine.triggerPianoPhrase(pianoVoice, { octaveBias: 0 }, { dryRun: true, forcePrimary: true, ignoreLfo: true, forceFull: true, disableVariations: true });
+          const resPlus4 = window.enoApp.phraseEngine.triggerPianoPhrase(
+              pianoVoice, {octaveBias: 0}, {
+                dryRun: true,
+                forcePrimary: true,
+                ignoreLfo: true,
+                forceFull: true,
+                disableVariations: true
+              });
           const plusDisabledAt4 = !!(plusBtn && plusBtn.disabled);
           pianoOctSlider.value = '-4';
           pianoOctSlider.dispatchEvent(new Event('input', { bubbles: true }));
-          const resMinus4 = window.enoApp.phraseEngine.triggerPianoPhrase(pianoVoice, { octaveBias: 0 }, { dryRun: true, forcePrimary: true, ignoreLfo: true, forceFull: true, disableVariations: true });
+          const resMinus4 = window.enoApp.phraseEngine.triggerPianoPhrase(
+              pianoVoice, {octaveBias: 0}, {
+                dryRun: true,
+                forcePrimary: true,
+                ignoreLfo: true,
+                forceFull: true,
+                disableVariations: true
+              });
           const minusDisabledAtMinus4 = !!(minusBtn && minusBtn.disabled);
           pianoOctSlider.value = String(origOct);
           pianoOctSlider.dispatchEvent(new Event('input', { bubbles: true }));
@@ -600,17 +676,22 @@
             (resPlus4.firstMidi - baseRes.firstMidi === 48) &&
             (baseRes.firstMidi - resMinus4.firstMidi === 48);
         }
-        const waveBoxes = Array.from(document.querySelectorAll('#voices-cards-container .voice-waveform-box'));
-        const waveCanvases = Array.from(document.querySelectorAll('#voices-cards-container .voice-waveform-canvas'));
+        const waveBoxes = Array.from(document.querySelectorAll(
+            '#voices-cards-container .voice-waveform-box'));
+        const waveCanvases = Array.from(document.querySelectorAll(
+            '#voices-cards-container .voice-waveform-canvas'));
         let voiceWaveformsUnderDialsVerified = false;
+        let voiceWaveformsAlignedRowVerified = false;
         let voiceWaveformsThemeVerified = false;
         let envelopeTopOnlyLightBlueVerified = false;
-        if (waveBoxes.length === 6 && waveCanvases.length === 6 && window.enoApp && window.enoApp.visualizer) {
+        if (waveBoxes.length === 6 && waveCanvases.length === 6 &&
+            window.enoApp && window.enoApp.visualizer) {
           window.enoApp.visualizer.resize();
           window.enoApp.visualizer.render();
           voiceWaveformsUnderDialsVerified = waveBoxes.every((box, i) => {
             const card = box.closest('.voice-card');
-            const dialsGrid = card ? card.querySelector('.macro-rack-grid-3') : null;
+            const dialsGrid =
+                card ? card.querySelector('.macro-rack-grid-3') : null;
             const c = waveCanvases[i];
             if (!card || !dialsGrid || !c) return false;
             const bRect = box.getBoundingClientRect();
@@ -619,109 +700,236 @@
             let hasPixels = false;
             try {
               const ctx = c.getContext('2d');
-              const img = ctx.getImageData(0, 0, Math.min(c.width, 60), Math.min(c.height, 28)).data;
+              const img =
+                  ctx.getImageData(
+                         0, 0, Math.min(c.width, 60), Math.min(c.height, 28))
+                      .data;
               for (let k = 3; k < img.length; k += 4) {
-                if (img[k] > 20) { hasPixels = true; break; }
+                if (img[k] > 20) {
+                  hasPixels = true;
+                  break;
+                }
               }
-            } catch (e) { hasPixels = true; }
-            return bRect.top >= dRect.bottom - 2 &&
-              bRect.height >= 26 && bRect.height <= 36 &&
-              bRect.width >= (cRect.width - 36) &&
-              hasPixels;
+            } catch (e) {
+              hasPixels = true;
+            }
+            return bRect.top >= dRect.bottom - 2 && bRect.height >= 26 &&
+                bRect.height <= 36 && bRect.width >= (cRect.width - 36) &&
+                hasPixels;
           });
+          voiceWaveformsAlignedRowVerified = true;
+          for (let i = 0; i < waveBoxes.length; i++) {
+            const cardA = waveBoxes[i].closest('.voice-card');
+            if (!cardA) {
+              voiceWaveformsAlignedRowVerified = false;
+              break;
+            }
+            const rCardA = cardA.getBoundingClientRect();
+            const rBoxA = waveBoxes[i].getBoundingClientRect();
+            for (let j = i + 1; j < waveBoxes.length; j++) {
+              const cardB = waveBoxes[j].closest('.voice-card');
+              if (!cardB) continue;
+              const rCardB = cardB.getBoundingClientRect();
+              if (Math.abs(rCardA.top - rCardB.top) < 8) {
+                const rBoxB = waveBoxes[j].getBoundingClientRect();
+                if (Math.abs(rBoxA.top - rBoxB.top) > 1.5 ||
+                    Math.abs(rBoxA.bottom - rBoxB.bottom) > 1.5) {
+                  voiceWaveformsAlignedRowVerified = false;
+                }
+              }
+            }
+          }
           const phaseFill = document.querySelector('.voice-phase-bar-fill');
-          const origTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+          const origTheme = window.enoApp.themeMode ||
+              (document.documentElement.getAttribute('data-theme') === 'dark' ?
+                   'dark' :
+                   'light');
           window.enoApp.setTheme('light');
           const lightBoxBg = getComputedStyle(waveBoxes[0]).backgroundColor;
-          const lightPhaseBg = phaseFill ? getComputedStyle(phaseFill).backgroundColor : '';
-          const lightWaveColor = (window.enoApp.visualizer.colors.lightBlue || '').toUpperCase();
+          const lightPhaseBg =
+              phaseFill ? getComputedStyle(phaseFill).backgroundColor : '';
+          const lightWaveColor =
+              (window.enoApp.visualizer.colors.lightBlue || '').toUpperCase();
           window.enoApp.setTheme('dark');
           const darkBoxBg = getComputedStyle(waveBoxes[0]).backgroundColor;
-          const darkPhaseBg = phaseFill ? getComputedStyle(phaseFill).backgroundColor : '';
-          const darkWaveColor = (window.enoApp.visualizer.colors.lightBlue || '').toUpperCase();
+          const darkPhaseBg =
+              phaseFill ? getComputedStyle(phaseFill).backgroundColor : '';
+          const darkWaveColor =
+              (window.enoApp.visualizer.colors.lightBlue || '').toUpperCase();
           window.enoApp.setTheme(origTheme);
-          voiceWaveformsThemeVerified =
-            lightBoxBg === 'rgb(255, 255, 255)' &&
-            lightPhaseBg === 'rgb(169, 199, 251)' &&
-            lightWaveColor === '#A9C7FB' &&
-            darkBoxBg === 'rgb(13, 14, 14)' &&
-            darkPhaseBg === 'rgb(14, 87, 208)' &&
-            darkWaveColor === '#0E57D0';
+          voiceWaveformsThemeVerified = lightBoxBg === 'rgb(255, 255, 255)' &&
+              lightPhaseBg === 'rgb(169, 199, 251)' &&
+              lightWaveColor === '#A9C7FB' && darkBoxBg === 'rgb(13, 14, 14)' &&
+              darkPhaseBg === 'rgb(14, 87, 208)' && darkWaveColor === '#0E57D0';
           const envC = document.getElementById('envelope-canvas');
           if (envC && envC.width > 20 && envC.height > 20) {
             window.enoApp.visualizer.render();
             try {
               const eCtx = envC.getContext('2d');
               const dpr = window.devicePixelRatio || 1;
-              const botY = Math.max(0, Math.min(envC.height - 1, Math.round((envC.height / dpr - 12) * dpr)));
+              const botY = Math.max(
+                  0,
+                  Math.min(
+                      envC.height - 1,
+                      Math.round((envC.height / dpr - 12) * dpr)));
               const midX = Math.round(envC.width * 0.5);
               const botPx = eCtx.getImageData(midX, botY, 1, 1).data;
-              envelopeTopOnlyLightBlueVerified = (botPx[3] < 35) && (lightWaveColor === '#A9C7FB');
+              envelopeTopOnlyLightBlueVerified =
+                  (botPx[3] < 35) && (lightWaveColor === '#A9C7FB');
             } catch (e) {
               envelopeTopOnlyLightBlueVerified = true;
             }
           }
         }
-        Object.assign(data, {
-          voiceWaveformsCount: waveCanvases.length,
-          voiceWaveformsUnderDialsVerified: voiceWaveformsUnderDialsVerified,
-          voiceWaveformsThemeVerified: voiceWaveformsThemeVerified,
-          envelopeTopOnlyLightBlueVerified: envelopeTopOnlyLightBlueVerified,
-          topBarVolumeDialPresent: topBarVolumeDialPresent,
-          topBarVolumeSyncVerified: topBarVolumeSyncVerified,
-          defaultPresetId: (window.enoApp && window.enoApp.activePresetId) || 'thursday',
-          firstPresetId: (window.ENO_DATA && window.ENO_DATA.PRESETS && window.ENO_DATA.PRESETS[0]) ? window.ENO_DATA.PRESETS[0].id : 'thursday',
-          phraseVariationChanceDefault: (window.enoApp && window.enoApp.phraseEngine) ? window.enoApp.phraseEngine.phraseVariationChance : 0.55,
-          pwaManifestLinked: !!document.querySelector('link[rel="manifest"]'),
-          appleTouchIconLinked: !!document.querySelector('link[rel="apple-touch-icon"]'),
-          mediaSessionSupported: ('mediaSession' in navigator),
-          bgKeepAlivePresent: !!document.getElementById('bg-audio-keepalive'),
-          canvasRenderedPixels: canvasRenderedPixels,
-          mobileTopBarTwoRows: mobileTopBarTwoRows,
-          mobileZeroHorizontalOverflow: mobileZeroHorizontalOverflow,
-          voiceGainSlidersCount: document.querySelectorAll('.voice-gain-slider').length,
-          voiceCutoffSlidersCount: document.querySelectorAll('.voice-cutoff-slider').length,
-          voiceResonanceSlidersCount: document.querySelectorAll('.voice-resonance-slider').length,
-          voiceFiltersConnected: Object.keys(window.enoApp?.audioEngine?.nodes?.voiceFilters || {}).length,
-          bloomTextRemoved: Array.from(document.querySelectorAll('.voice-pluck-btn')).every((b) => !b.textContent.includes('Bloom')),
-          envModeToggleRemoved: document.querySelectorAll('[data-env-mode]').length === 0,
-          voiceGlobalsPreservedAcrossTracks: voiceGlobalsPreservedAcrossTracks,
-          voiceReleaseSlidersCount: releaseSliders.length,
-          voiceReleaseSyncVerified: voiceReleaseSyncVerified,
-          voiceOctaveSlidersCount: octaveSliders.length,
-          voiceOctaveButtonsCount: octaveStepBtns.length,
-          voiceOctaveSyncVerified: voiceOctaveSyncVerified,
-          keyLockedBadgesRemoved: keyLockedBadgesRemoved,
-          defaultControlStyle: document.body.getAttribute('data-control-style'),
-          settingsCogPresent: settingsCogPresent,
-          crossfadeWorks: crossfadeWorks,
-          allVoicesScaledByCrossfade: allVoicesScaledByCrossfade,
-          voiceBalanceGlobalAcrossTracks: voiceBalanceGlobalAcrossTracks,
-          rotaryDialsCount: rotaryDialsCount,
-          minimalOutsideEncoderOnly: minimalOutsideEncoderOnly,
-          dialWidthPx: dialWidthPx,
-          dialSmallAndLabelRight: dialSmallAndLabelRight,
-          pianoDefaultGain: Number(pianoDefaultGain.toFixed(2)),
-          pianoSliderMax: Number(pianoSliderMax.toFixed(2)),
-          allPresetsPiano200: allPresetsPiano200,
-          allOtherVoicesReduced: allOtherVoicesReduced,
-          pianoBusGain: Number(pianoBusGainMax.toFixed(2)),
-          pianoProbGainMax: Number(pianoProbGainMax.toFixed(2)),
-          feltLpRemoved: !(window.enoApp && window.enoApp.audioEngine && window.enoApp.audioEngine.feltPianoConfig.lowpassHz),
-          topBarBadgeRemoved: !document.getElementById('active-preset-badge'),
-          topBarTabsLabels: topBarTabsLabels,
-          topBarPickerCentered: topBarPickerCentered,
-          bloomHintDelayMs: bloomHintDelayMs,
-          bloomHintDisappearsVerified: bloomHintDisappearsVerified,
-          studioCardTitles: studioCardTitles,
-          removedStudioBadges: removedStudioBadges,
-          releaseAllIconOnly: releaseAllIconOnly,
-          brandTitleText: (document.querySelector('.brand-title')?.textContent || '').trim(),
-          documentTitleText: (document.title || '').trim(),
-          researchBadgesRemoved: document.querySelectorAll('.research-homage-banner .badge').length === 0,
-          sparkleIconRemoved: !document.querySelector('.research-homage-icon')
-        });
-        document.body.setAttribute('data-selftest', JSON.stringify(data));
+        const ac =
+            window.enoAutoCycler || (window.enoApp && window.enoApp.autoCycler);
+        const circleVerify =
+            (ac && typeof ac.verifyCircleOfFifthsOrder === 'function') ?
+            ac.verifyCircleOfFifthsOrder() :
+            {ok: false};
+        const simBlend =
+            (ac && typeof ac.simulateTransitionForTest === 'function') ?
+            ac.simulateTransitionForTest('thursday', 'reflection') :
+            {ok: false};
+        const toggleEl = document.getElementById('auto-cycle-toggle');
+        const minsEl = document.getElementById('auto-cycle-minutes');
+        const sessTimerEl = document.getElementById('session-timer-label');
+        const trackTimerEl = document.getElementById('track-timer-label');
+        const hudText =
+            document.querySelector('.canvas-hud-overlay')?.textContent || '';
+        const hudGateCounterRemoved =
+            !document.getElementById('gate-counter-label') &&
+            !/gates passed/i.test(hudText);
+        const hudNextTrackRemoved =
+            !!(trackTimerEl && !/→/.test(trackTimerEl.textContent || '') &&
+               /^Track \d{2}:\d{2}( \/ \d{2}:\d{2})?$/.test(
+                   (trackTimerEl.textContent || '').trim()));
+        const finishSelfTest = () => {
+          let tabularDigitsEqualWidth = false;
+          if (sessTimerEl) {
+            const origTxt = sessTimerEl.textContent;
+            sessTimerEl.textContent = '11:11';
+            const w11 = sessTimerEl.getBoundingClientRect().width;
+            sessTimerEl.textContent = '08:08';
+            const w08 = sessTimerEl.getBoundingClientRect().width;
+            sessTimerEl.textContent = origTxt;
+            tabularDigitsEqualWidth = w11 > 0 && Math.abs(w11 - w08) < 0.25;
+          }
+          const badgeCs = getComputedStyle(document.querySelector('.badge'));
+          const hudCs =
+              getComputedStyle(document.querySelector('.canvas-hud-pill'));
+          const tabularNumsCssVerified =
+              badgeCs.fontVariantNumeric.includes('tabular-nums') &&
+              hudCs.fontVariantNumeric.includes('tabular-nums');
+
+          Object.assign(data, {
+            hudGateCounterRemoved,
+            hudNextTrackRemoved,
+            tabularDigitsEqualWidth,
+            tabularNumsCssVerified,
+            autoCyclerPresent: Boolean(ac),
+            autoCycleEnabledDefault: Boolean(
+                ac && ac.enabled === true && toggleEl &&
+                toggleEl.checked === true),
+            autoCycleTransitionMinutesDefault:
+                (ac && minsEl) ? Number(ac.transitionMinutes) : 0,
+            circleOfFifthsOrderVerified:
+                Boolean(circleVerify && circleVerify.ok),
+            circleOfFifthsOrderList: circleVerify.order || [],
+            circleOfFifthsTransitions: circleVerify.transitions || [],
+            smoothTransitionBlendVerified: Boolean(simBlend && simBlend.ok),
+            trackTimerPresent: Boolean(
+                document.getElementById('track-timer-label') &&
+                document.getElementById('auto-cycle-elapsed-label')),
+            voiceWaveformsCount: waveCanvases.length,
+            voiceWaveformsUnderDialsVerified,
+            voiceWaveformsAlignedRowVerified,
+            voiceWaveformsThemeVerified,
+            envelopeTopOnlyLightBlueVerified,
+            topBarVolumeDialPresent,
+            topBarVolumeSyncVerified,
+            defaultPresetId:
+                (window.enoApp && window.enoApp.activePresetId) || 'thursday',
+            firstPresetId: (window.ENO_DATA && window.ENO_DATA.PRESETS &&
+                            window.ENO_DATA.PRESETS[0]) ?
+                window.ENO_DATA.PRESETS[0].id :
+                'thursday',
+            phraseVariationChanceDefault:
+                (window.enoApp && window.enoApp.phraseEngine) ?
+                window.enoApp.phraseEngine.phraseVariationChance :
+                0.55,
+            pwaManifestLinked: !!document.querySelector('link[rel="manifest"]'),
+            appleTouchIconLinked:
+                !!document.querySelector('link[rel="apple-touch-icon"]'),
+            mediaSessionSupported: ('mediaSession' in navigator),
+            bgKeepAlivePresent: !!document.getElementById('bg-audio-keepalive'),
+            canvasRenderedPixels,
+            mobileTopBarTwoRows,
+            mobileZeroHorizontalOverflow,
+            voiceGainSlidersCount:
+                document.querySelectorAll('.voice-gain-slider').length,
+            voiceCutoffSlidersCount:
+                document.querySelectorAll('.voice-cutoff-slider').length,
+            voiceResonanceSlidersCount:
+                document.querySelectorAll('.voice-resonance-slider').length,
+            voiceFiltersConnected:
+                Object
+                    .keys(window.enoApp?.audioEngine?.nodes?.voiceFilters || {})
+                    .length,
+            bloomTextRemoved:
+                Array.from(document.querySelectorAll('.voice-pluck-btn'))
+                    .every((b) => !b.textContent.includes('Bloom')),
+            envModeToggleRemoved:
+                document.querySelectorAll('[data-env-mode]').length === 0,
+            voiceGlobalsPreservedAcrossTracks,
+            voiceReleaseSlidersCount: releaseSliders.length,
+            voiceReleaseSyncVerified,
+            voiceOctaveSlidersCount: octaveSliders.length,
+            voiceOctaveButtonsCount: octaveStepBtns.length,
+            voiceOctaveSyncVerified,
+            keyLockedBadgesRemoved,
+            defaultControlStyle:
+                document.body.getAttribute('data-control-style'),
+            settingsCogPresent,
+            crossfadeWorks,
+            allVoicesScaledByCrossfade,
+            voiceBalanceGlobalAcrossTracks,
+            rotaryDialsCount,
+            minimalOutsideEncoderOnly,
+            dialWidthPx,
+            dialSmallAndLabelRight,
+            pianoDefaultGain: Number(pianoDefaultGain.toFixed(2)),
+            pianoSliderMax: Number(pianoSliderMax.toFixed(2)),
+            allPresetsPiano200,
+            visibleVoiceLevelsUnDucked,
+            pianoBusGain: Number(pianoBusGainMax.toFixed(2)),
+            pianoProbGainMax: Number(pianoProbGainMax.toFixed(2)),
+            feltLpRemoved:
+                !(window.enoApp && window.enoApp.audioEngine &&
+                  window.enoApp.audioEngine.feltPianoConfig.lowpassHz),
+            topBarBadgeRemoved: !document.getElementById('active-preset-badge'),
+            topBarTabsLabels,
+            topBarPickerCentered,
+            bloomHintDelayMs,
+            bloomHintDisappearsVerified,
+            studioCardTitles,
+            removedStudioBadges,
+            releaseAllIconOnly,
+            brandTitleText:
+                (document.querySelector('.brand-title')?.textContent ||
+                 '').trim(),
+            documentTitleText: (document.title || '').trim(),
+            researchBadgesRemoved:
+                document.querySelectorAll('.research-homage-banner .badge')
+                    .length === 0,
+            sparkleIconRemoved: !document.querySelector('.research-homage-icon')
+          });
+          document.body.setAttribute('data-selftest', JSON.stringify(data));
+        };
+        if (document.fonts && document.fonts.ready)
+          document.fonts.ready.then(finishSelfTest);
+        else
+          finishSelfTest();
       }, 15);
     }
   }

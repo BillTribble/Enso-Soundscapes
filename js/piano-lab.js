@@ -214,18 +214,44 @@
     bindSlider('lab-reverb', 'val-lab-reverb', v => `${Math.round(v * 100)}%`, v => engine.setReverbMix(v));
     bindSlider('lab-shimmer', 'val-lab-shimmer', v => `${Math.round(v * 100)}%`, v => engine.setReverbShimmer(v));
 
-    // Theme toggle
-    document.getElementById('btn-theme-toggle').addEventListener('click', () => {
-      const root = document.documentElement;
-      const isDark = root.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        root.removeAttribute('data-theme');
-        document.getElementById('theme-icon').textContent = 'dark_mode';
-      } else {
-        root.setAttribute('data-theme', 'dark');
-        document.getElementById('theme-icon').textContent = 'light_mode';
-      }
-    });
+    // Theme toggle (auto | light | dark)
+    let labThemeMode = localStorage.getItem('enso-theme-mode') || 'auto';
+    const applyLabTheme = (mode) => {
+      labThemeMode = (mode === 'light' || mode === 'dark' || mode === 'auto') ?
+          mode :
+          'auto';
+      const sysDark =
+          !!(window.matchMedia &&
+             window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const isDark =
+          labThemeMode === 'dark' || (labThemeMode === 'auto' && sysDark);
+      document.documentElement.setAttribute('data-theme-mode', labThemeMode);
+      if (isDark)
+        document.documentElement.setAttribute('data-theme', 'dark');
+      else
+        document.documentElement.removeAttribute('data-theme');
+      document.getElementById('theme-icon').textContent = {
+        auto: 'brightness_auto',
+        light: 'light_mode',
+        dark: 'dark_mode'
+      }[labThemeMode];
+    };
+    applyLabTheme(labThemeMode);
+    document.getElementById('btn-theme-toggle')
+        .addEventListener('click', () => {
+          const order = ['auto', 'light', 'dark'];
+          applyLabTheme(order[(order.indexOf(labThemeMode) + 1) % 3]);
+          try {
+            localStorage.setItem('enso-theme-mode', labThemeMode);
+          } catch (e) {
+          }
+        });
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)')
+          .addEventListener?.('change', () => {
+            if (labThemeMode === 'auto') applyLabTheme('auto');
+          });
+    }
 
     // Keyboard shortcuts 1-9
     window.addEventListener('keydown', (e) => {

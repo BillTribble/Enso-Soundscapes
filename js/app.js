@@ -25,22 +25,22 @@
       window.probEngine = this.probEngine;
 
       this.activePresetId = 'thursday';
-      this.globalVoiceBalance = -0.49;
+      this.globalVoiceBalance = -0.62;
       this.globalVoiceGains = {
-        pad: 0.32,
+        pad: 0.65,
         piano: 2.00,
-        bell: 0.25,
-        choir: 0.28,
-        tape: 0.29,
-        drone: 0.31
+        bell: 0.50,
+        choir: 0.56,
+        tape: 0.58,
+        drone: 0.62
       };
       this.globalVoiceFilters = {
-        pad: { cutoff: 5200, resonance: 1.2 },
-        piano: { cutoff: 12000, resonance: 0.8 },
-        bell: { cutoff: 9500, resonance: 1.4 },
-        choir: { cutoff: 6400, resonance: 1.2 },
-        tape: { cutoff: 4200, resonance: 1.6 },
-        drone: { cutoff: 1800, resonance: 1.8 }
+        pad: {cutoff: 5200, resonance: 1.2},
+        piano: {cutoff: 12000, resonance: 0.8},
+        bell: {cutoff: 9500, resonance: 1.4},
+        choir: {cutoff: 6400, resonance: 1.2},
+        tape: {cutoff: 4200, resonance: 1.6},
+        drone: {cutoff: 1800, resonance: 1.8}
       };
       this.xyTarget = 'filter';
       this.logFilterText = '';
@@ -60,41 +60,127 @@
       this.bindGlobalMacroSliders();
       this.bindXYPerformancePad();
       this.bindInlineClearInputs();
-      this.autoCycler = (typeof window.EnsoAutoCycler === 'function')
-        ? new window.EnsoAutoCycler(this)
-        : null;
+      this.autoCycler = (typeof window.EnsoAutoCycler === 'function') ?
+          new window.EnsoAutoCycler(this) :
+          null;
       if (this.autoCycler) window.enoAutoCycler = this.autoCycler;
       this.applyPreset('thursday', false);
       this.startSchedulerLoop();
     }
 
     initThemeSync() {
-      const root = document.documentElement;
       const q = `${window.location.search || ''}&${(window.location.hash || '').replace(/^#/, '')}`;
-      let isDark = q.includes('theme=dark');
+      let initialMode = 'auto';
       try {
-        const pTheme = window.parent && window.parent !== window ? window.parent.document.documentElement.getAttribute('data-theme') : null;
-        const stored = localStorage.getItem('DARK_MODE');
-        if (pTheme === 'dark' || stored === 'true') isDark = true;
-        if (q.includes('theme=light')) isDark = false;
-      } catch (e) {}
-      this.setTheme(isDark ? 'dark' : 'light');
+        const storedMode = localStorage.getItem('enso-theme-mode');
+        if (storedMode === 'light' || storedMode === 'dark' ||
+            storedMode === 'auto') {
+          initialMode = storedMode;
+        }
+      } catch (e) {
+      }
+      if (q.includes('theme=dark'))
+        initialMode = 'dark';
+      else if (q.includes('theme=light'))
+        initialMode = 'light';
+      else if (q.includes('theme=auto'))
+        initialMode = 'auto';
+
+      this._systemDarkOverride = null;
+      this.setTheme(initialMode);
+
+      if (window.matchMedia) {
+        this._themeMq = window.matchMedia('(prefers-color-scheme: dark)');
+        const onSystemThemeChange = () => {
+          if (this.themeMode === 'auto') this.setTheme('auto');
+        };
+        if (this._themeMq.addEventListener)
+          this._themeMq.addEventListener('change', onSystemThemeChange);
+        else if (this._themeMq.addListener)
+          this._themeMq.addListener(onSystemThemeChange);
+      }
+
+      try {
+        if (window.parent && window.parent !== window &&
+            window.parent.document && window.MutationObserver) {
+          const obs = new MutationObserver(() => {
+            if (this.themeMode === 'auto') this.setTheme('auto');
+          });
+          obs.observe(
+              window.parent.document.documentElement,
+              {attributes: true, attributeFilter: ['data-theme', 'class']});
+        }
+      } catch (e) {
+      }
+
       const btnTheme = document.getElementById('btn-theme-toggle');
       if (btnTheme) {
         btnTheme.addEventListener('click', () => {
-          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          const order = ['auto', 'light', 'dark'];
+          const idx = order.indexOf(this.themeMode || 'auto');
+          const next = order[(idx + 1) % order.length];
           this.setTheme(next);
-          try { localStorage.setItem('DARK_MODE', next === 'dark' ? 'true' : 'false'); } catch (e) {}
+          try {
+            localStorage.setItem('enso-theme-mode', next);
+          } catch (e) {
+          }
         });
       }
     }
 
+    resolveIsDark(
+        mode = this.themeMode, systemOverride = this._systemDarkOverride) {
+      if (mode === 'dark') return true;
+      if (mode === 'light') return false;
+      if (typeof systemOverride === 'boolean') return systemOverride;
+      try {
+        if (window.parent && window.parent !== window &&
+            window.parent.document) {
+          const pTheme =
+              window.parent.document.documentElement.getAttribute('data-theme');
+          if (pTheme) return pTheme.toLowerCase() === 'dark';
+        }
+      } catch (e) {
+      }
+      return !!(
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+
     setTheme(theme) {
-      const root = document.documentElement, icon = document.getElementById('theme-icon');
-      if (theme === 'dark') { root.setAttribute('data-theme', 'dark'); if (icon) icon.textContent = 'light_mode'; }
-      else { root.removeAttribute('data-theme'); if (icon) icon.textContent = 'dark_mode'; }
+      const mode = (theme === 'dark' || theme === 'light' || theme === 'auto') ?
+          theme :
+          'auto';
+      this.themeMode = mode;
+      const isDark = this.resolveIsDark(mode);
+      const root = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const btn = document.getElementById('btn-theme-toggle');
+      root.setAttribute('data-theme-mode', mode);
+      if (isDark)
+        root.setAttribute('data-theme', 'dark');
+      else
+        root.removeAttribute('data-theme');
+
+      const iconMap = {
+        auto: 'brightness_auto',
+        light: 'light_mode',
+        dark: 'dark_mode'
+      };
+      if (icon) icon.textContent = iconMap[mode] || 'brightness_auto';
+      if (btn) {
+        const label = mode === 'auto' ?
+            `Theme: Auto (${
+                isDark ? 'Dark' : 'Light'} system) · Click to switch` :
+            `Theme: ${mode === 'dark' ? 'Dark' : 'Light'} · Click to switch`;
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+      }
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme)
+        metaTheme.setAttribute('content', isDark ? '#0e141b' : '#f0f4f9');
       if (this.visualizer) this.visualizer.updateThemeColors();
-      if (window.aurora) window.aurora.setDark(theme === 'dark');
+      if (window.aurora) window.aurora.setDark(isDark);
     }
 
     initVisualizer() {
@@ -127,12 +213,15 @@
           opt.value = sc.id; opt.textContent = sc.name;
           selectScale.appendChild(opt);
         });
-        if (this.probEngine?.scaleId) selectScale.value = this.probEngine.scaleId;
+        if (this.probEngine?.scaleId)
+          selectScale.value = this.probEngine.scaleId;
         selectScale.onchange = () => {
           this.probEngine.setScale(selectScale.value, true);
           this.renderDegreeWeights();
           this.updateMatrixScaleBadge();
-          window.aurora?.setTrackVibe?.(this.activePresetId, this.probEngine.scaleId, this.probEngine.circadianMode);
+          window.aurora?.setTrackVibe?.(
+              this.activePresetId, this.probEngine.scaleId,
+              this.probEngine.circadianMode);
         };
       }
 
@@ -144,11 +233,14 @@
           opt.value = cm.id; opt.textContent = cm.name;
           selectCircadian.appendChild(opt);
         });
-        if (this.probEngine?.circadianMode) selectCircadian.value = this.probEngine.circadianMode;
+        if (this.probEngine?.circadianMode)
+          selectCircadian.value = this.probEngine.circadianMode;
         selectCircadian.onchange = () => {
           this.probEngine.setCircadianMode(selectCircadian.value);
           this.audioEngine.setCircadianMultipliers(this.probEngine.getEffectiveCircadian());
-          window.aurora?.setTrackVibe?.(this.activePresetId, this.probEngine.scaleId, this.probEngine.circadianMode);
+          window.aurora?.setTrackVibe?.(
+              this.activePresetId, this.probEngine.scaleId,
+              this.probEngine.circadianMode);
         };
       }
     }
@@ -174,8 +266,10 @@
     setGlobalVoiceFilter(vId, cutoff, resonance) {
       if (!this.globalVoiceFilters) this.globalVoiceFilters = {};
       if (!this.globalVoiceFilters[vId]) this.globalVoiceFilters[vId] = {};
-      if (typeof cutoff === 'number') this.globalVoiceFilters[vId].cutoff = cutoff;
-      if (typeof resonance === 'number') this.globalVoiceFilters[vId].resonance = resonance;
+      if (typeof cutoff === 'number')
+        this.globalVoiceFilters[vId].cutoff = cutoff;
+      if (typeof resonance === 'number')
+        this.globalVoiceFilters[vId].resonance = resonance;
       window.saveGlobalVoiceSettings?.();
     }
 
@@ -448,17 +542,26 @@
 
     setSliderAndDispatch(id, value) {
       const el = document.getElementById(id);
-      if (el) { el.value = value; el.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (el) {
+        el.value = value;
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+      }
     }
 
     bindInlineClearInputs() {
       const bindClearable = (inputId, clearBtnId, onUpdate) => {
-        const input = document.getElementById(inputId), btn = document.getElementById(clearBtnId);
+        const input = document.getElementById(inputId),
+              btn = document.getElementById(clearBtnId);
         if (!input || !btn) return;
         const syncVisibility = () => { btn.style.display = input.value.length > 0 ? 'inline-flex' : 'none'; };
         input.addEventListener('input', () => { syncVisibility(); onUpdate(input.value); });
         btn.addEventListener('mousedown', (e) => e.preventDefault());
-        btn.addEventListener('click', () => { input.value = ''; syncVisibility(); onUpdate(''); input.focus(); });
+        btn.addEventListener('click', () => {
+          input.value = '';
+          syncVisibility();
+          onUpdate('');
+          input.focus();
+        });
         syncVisibility();
       };
       bindClearable('filter-log-input', 'btn-clear-log-filter', (val) => { this.logFilterText = val; this.renderEventLog(); });
@@ -486,12 +589,25 @@
       }
       const g = preset.global || {};
       const sliderMap = {
-        attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume',
-        cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift',
-        reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping',
-        delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow'
+        attack: 'global-attack',
+        release: 'global-release',
+        sustain: 'global-sustain',
+        masterVolume: 'master-volume',
+        cutoff: 'filter-cutoff',
+        resonance: 'filter-resonance',
+        filterDrift: 'filter-drift',
+        reverbMix: 'reverb-mix',
+        reverbShimmer: 'reverb-shimmer',
+        reverbDecay: 'reverb-decay',
+        reverbDamping: 'reverb-damping',
+        delayMix: 'delay-mix',
+        delayTime: 'delay-time',
+        delayFeedback: 'delay-feedback',
+        delayWow: 'delay-wow'
       };
-      Object.entries(sliderMap).forEach(([k, id]) => { if (g[k] !== undefined) this.setSliderAndDispatch(id, g[k]); });
+      Object.entries(sliderMap).forEach(([k, id]) => {
+        if (g[k] !== undefined) this.setSliderAndDispatch(id, g[k]);
+      });
       if (g.envelopeMode) {
         this.audioEngine.setEnvelopeMode(g.envelopeMode);
       }
@@ -503,12 +619,20 @@
       if (Array.isArray(pr.voiceOrder)) this.probEngine.voiceOrder = [...pr.voiceOrder];
       if (preset.voices) {
         Object.entries(preset.voices).forEach(([vId, vCfg]) => {
-          ['prob', 'cycle', 'gain', 'release', 'octave', 'octaveShiftProb', 'noteOctaveShiftProb', 'chordOctaveShiftProb', 'muted'].forEach((k) => { if (vCfg[k] !== undefined) this.probEngine.setVoiceParam(vId, k, vCfg[k]); });
+          ['prob', 'cycle', 'gain', 'release', 'octave', 'octaveShiftProb',
+           'noteOctaveShiftProb', 'chordOctaveShiftProb', 'muted']
+              .forEach((k) => {
+                if (vCfg[k] !== undefined)
+                  this.probEngine.setVoiceParam(vId, k, vCfg[k]);
+              });
           if (vCfg.octave === undefined) {
             const vObj = this.probEngine.voices.find((v) => v.id === vId);
-            if (vObj) this.probEngine.setVoiceParam(vId, 'octave', vCfg.octaveOffset ?? vObj.defaultOctave ?? 0);
+            if (vObj)
+              this.probEngine.setVoiceParam(
+                  vId, 'octave', vCfg.octaveOffset ?? vObj.defaultOctave ?? 0);
           }
-          if (vCfg.release !== undefined) this.audioEngine.setVoiceRelease(vId, vCfg.release);
+          if (vCfg.release !== undefined)
+            this.audioEngine.setVoiceRelease(vId, vCfg.release);
         });
       }
       if (this.globalVoiceGains) {
@@ -548,15 +672,24 @@
       if (Array.isArray(pr.degreeWeights)) pr.degreeWeights.forEach((w, idx) => this.probEngine.setDegreeWeight(idx, w));
       if (this.phraseEngine) {
         this.phraseEngine.setPreset(presetId);
-        if (preset.phraseParams) { Object.assign(this.phraseEngine, preset.phraseParams); this.phraseEngine.syncUI(); }
+        if (preset.phraseParams) {
+          Object.assign(this.phraseEngine, preset.phraseParams);
+          this.phraseEngine.syncUI();
+        }
       }
       const xfEl = document.getElementById('piano-other-crossfade');
-      const xf = typeof this.globalVoiceBalance === 'number'
-        ? this.globalVoiceBalance
-        : (xfEl && xfEl.value !== '' ? parseFloat(xfEl.value) : (this.audioEngine.params.pianoCrossfade ?? -0.49));
+      const xf = typeof this.globalVoiceBalance === 'number' ?
+          this.globalVoiceBalance :
+          (xfEl && xfEl.value !== '' ?
+               parseFloat(xfEl.value) :
+               (this.audioEngine.params.pianoCrossfade ?? -0.62));
       this.globalVoiceBalance = xf;
-      const xfSt = this.audioEngine.setPianoCrossfade ? this.audioEngine.setPianoCrossfade(xf) : { pianoMultiplier: 1, otherMultiplier: 1 };
-      if (this.probEngine.applyCrossfadeToVoices) this.probEngine.applyCrossfadeToVoices(xfSt.pianoMultiplier, xfSt.otherMultiplier);
+      const xfSt = this.audioEngine.setPianoCrossfade ?
+          this.audioEngine.setPianoCrossfade(xf) :
+          {pianoMultiplier: 1, otherMultiplier: 1};
+      if (this.probEngine.applyCrossfadeToVoices)
+        this.probEngine.applyCrossfadeToVoices(
+            xfSt.pianoMultiplier, xfSt.otherMultiplier);
       this.renderVoicesGrid();
       this.setSliderAndDispatch('piano-other-crossfade', xf);
       this.syncVoiceGainSlidersFromCrossfade();
@@ -566,7 +699,10 @@
       this.updateHorizonBadge();
       this.syncXYPuckFromParams();
       if (window.aurora) {
-        window.aurora.setTrackVibe ? window.aurora.setTrackVibe(presetId, preset.scale, preset.circadian) : window.aurora.setPalette(preset.auroraPalette || presetId);
+        window.aurora.setTrackVibe ?
+            window.aurora.setTrackVibe(
+                presetId, preset.scale, preset.circadian) :
+            window.aurora.setPalette(preset.auroraPalette || presetId);
         if (triggerPreview) window.aurora.pulse(0.65);
       }
       this.autoCycler?.onManualPresetChange?.(presetId);
@@ -599,9 +735,13 @@
     handleProbabilityEvent(event) {
       if (this.visualizer && event) this.visualizer.addRipple({ type: event.outcome, voiceId: event.voiceId, note: event.noteName, midi: event.midi });
       if (event?.outcome === 'BLOOM') {
-        window.aurora?.pulse(0.85, { voiceId: event.voiceId, x: event.normX, y: event.normY !== undefined ? (1 - event.normY) : undefined });
+        window.aurora?.pulse(0.85, {
+          voiceId: event.voiceId,
+          x: event.normX,
+          y: event.normY !== undefined ? (1 - event.normY) : undefined
+        });
       } else if (event?.outcome === 'PASS') {
-        window.aurora?.pulse(0.55, { voiceId: event.voiceId });
+        window.aurora?.pulse(0.55, {voiceId: event.voiceId});
       }
       const noteBadge = document.getElementById(`voice-note-${event.voiceId}`);
       if (noteBadge) {
@@ -612,8 +752,6 @@
           noteBadge.textContent = txt;
         }
       }
-      const counterLbl = document.getElementById('gate-counter-label');
-      if (counterLbl) counterLbl.textContent = `${this.probEngine.stats.totalPasses} gates passed`;
       const motifEl = document.getElementById('motif-memory-display');
       if (motifEl) {
         const scales = (window.ENO_DATA && window.ENO_DATA.SCALES) || {}, sc = scales[this.probEngine.scaleId] || scales.reflection_eb;

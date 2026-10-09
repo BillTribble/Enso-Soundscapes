@@ -1,11 +1,14 @@
 'use strict';
 
-const CACHE_NAME = 'enso-soundscapes-v10';
+const CACHE_NAME = 'enso-soundscapes-v12';
 const APP_SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
   'saved-patches.json',
+  'fonts/InterVariable.woff2',
+  'fonts/GoogleSansCode.ttf',
+  'fonts/GoogleSymbols.ttf',
   'css/tokens.css',
   'css/styles.css',
   'css/aurora.css',
@@ -61,14 +64,16 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   event.respondWith(
-    fetch(event.request, { cache: 'no-store' })
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
-        }
-        return networkResponse;
-      })
-      .catch(() => caches.match(event.request, { ignoreSearch: true }).then((cached) => cached || caches.match('./')))
-  );
+      fetch(event.request, {cache: 'no-store'})
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME)
+                  .then((cache) => cache.put(event.request, responseToCache));
+            }
+            return networkResponse;
+          })
+          .catch(
+              () => caches.match(event.request, {ignoreSearch: true})
+                        .then((cached) => cached || caches.match('./'))));
 });

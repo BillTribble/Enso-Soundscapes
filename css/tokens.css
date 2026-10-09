@@ -1,6 +1,30 @@
 /* Google Material 3 (GM3) Canonical Color Tokens — Light + Dark.
    Link this from entry HTML <head>. Never hardcode hex; use var(--md-sys-color-*). */
 
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url('../fonts/InterVariable.woff2') format('woff2-variations'), url('../fonts/InterVariable.woff2') format('woff2'), local('Inter');
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+  src: url('../fonts/GoogleSansCode.ttf') format('truetype'), local('Google Sans Code'), local('Google Sans Mono');
+}
+
+@font-face {
+  font-family: 'Google Sans Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+  src: url('../fonts/GoogleSansCode.ttf') format('truetype'), local('Google Sans Mono'), local('Google Sans Code');
+}
+
 :root {
   --md-sys-color-primary: #0E57D0;
   --md-sys-color-on-primary: #FFFFFF;
@@ -61,8 +85,10 @@
   /* Typography Family Tokens */
   --md-ref-typeface-brand: 'Google Sans Flex', 'Google Sans', sans-serif;
   --md-ref-typeface-plain: 'Inter', sans-serif;
+  --md-ref-typeface-mono: 'Google Sans Code', 'Google Sans Mono', 'Roboto Mono', monospace;
   --font-family-display: var(--md-ref-typeface-brand);
   --font-family-body: var(--md-ref-typeface-plain);
+  --font-family-mono: var(--md-ref-typeface-mono);
 
   /* 1:1 Shorthand Aliases */
   --color-primary: var(--md-sys-color-primary);

@@ -56,9 +56,13 @@ window.EnsoPwaMedia = (function() {
 
   function initServiceWorker() {
     if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-      navigator.serviceWorker.register('sw.js?v=20261008d', { updateViaCache: 'none' })
-        .then((reg) => { if (reg && typeof reg.update === 'function') reg.update().catch(() => {}); })
-        .catch(() => {});
+      navigator.serviceWorker
+          .register('sw.js?v=20261008d', {updateViaCache: 'none'})
+          .then((reg) => {
+            if (reg && typeof reg.update === 'function')
+              reg.update().catch(() => {});
+          })
+          .catch(() => {});
     }
   }
 

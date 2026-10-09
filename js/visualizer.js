@@ -66,8 +66,10 @@
         onSurface: get('--md-sys-color-on-surface', '#E3E3E3'),
         onSurfaceVar: get('--md-sys-color-on-surface-variant', '#8E918F'),
         outline: get('--md-sys-color-outline', '#747775'),
-        outlineVariant: get('--md-sys-color-outline-variant', 'rgba(128, 128, 128, 0.22)'),
-        surfaceHighest: get('--md-sys-color-surface-container-highest', '#353637'),
+        outlineVariant:
+            get('--md-sys-color-outline-variant', 'rgba(128, 128, 128, 0.22)'),
+        surfaceHighest:
+            get('--md-sys-color-surface-container-highest', '#353637'),
         surfaceContainer: get('--md-sys-color-surface-container', '#202021'),
         voices: {
           pad: get('--md-sys-color-on-blue-tonal', '#60A5FA'),
@@ -162,16 +164,18 @@
     resize() {
       const dpr = window.devicePixelRatio || 1;
       this.updateThemeColors();
-      const waveCanvases = Array.from(document.querySelectorAll('.voice-waveform-canvas'));
-      [this.primaryCanvas, this.envelopeCanvas, ...waveCanvases].forEach(canvas => {
-        if (!canvas) return;
-        const rect = canvas.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) return;
-        canvas.width = Math.round(rect.width * dpr);
-        canvas.height = Math.round(rect.height * dpr);
-        const ctx = canvas.getContext('2d');
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      });
+      const waveCanvases =
+          Array.from(document.querySelectorAll('.voice-waveform-canvas'));
+      [this.primaryCanvas, this.envelopeCanvas, ...waveCanvases].forEach(
+          canvas => {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            const ctx = canvas.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          });
       this.render();
     }
 
@@ -394,8 +398,11 @@
       ctx.save();
       ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.lineTo(p1.x + 8, p2.y); ctx.lineTo(p2.x, p2.y); ctx.lineTo(p3.x, p3.y); ctx.closePath();
       const grad = ctx.createLinearGradient(0, padY, 0, h - padY);
-      grad.addColorStop(0, this.colors.lightBlue); grad.addColorStop(1, 'transparent');
-      ctx.fillStyle = grad; ctx.globalAlpha = 0.16; ctx.fill();
+      grad.addColorStop(0, this.colors.lightBlue);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.16;
+      ctx.fill();
 
       // Top-only light blue envelope contour line (no bottom border)
       ctx.beginPath();
@@ -488,6 +495,40 @@
           return;
         }
 
+        // Compute active note / ripple envelope for this voice
+        let envAmp = 0;
+        let noteFreq = 220 * Math.pow(2, (idx - 2) * 0.25);
+        if (audio?.activeNotes) {
+          const ctxNow = audio.ctx ? audio.ctx.currentTime : 0;
+          for (const note of audio.activeNotes.values()) {
+            if (note.voiceId !== id) continue;
+            if (typeof note.freq === 'number') noteFreq = note.freq;
+            const gVal = note.envGain?.gain?.value ?? 0;
+            const totalDur =
+                Math.max(0.4, (note.stopTime || 4) - (note.startTime || 0));
+            const elapsed = Math.max(0, ctxNow - (note.startTime || 0));
+            const synthEnv = elapsed > 0.25 ?
+                Math.max(0.15, 1 - (elapsed / totalDur)) :
+                0.76;
+            envAmp = Math.max(
+                envAmp, gVal > 0.02 ? Math.min(1, gVal * 1.4) : synthEnv);
+          }
+        }
+        for (const r of this.ripples) {
+          if (r.voiceId !== id || r.type === 'REST') continue;
+          const prog = (now - r.birth) / Math.max(100, r.duration);
+          if (prog >= 0 && prog < 1) {
+            const rAmp = prog < r.attackRatio ?
+                Math.max(0.35, prog / Math.max(0.01, r.attackRatio)) :
+                Math.max(
+                    0,
+                    1 -
+                        (prog - r.attackRatio) /
+                            Math.max(0.01, 1 - r.attackRatio));
+            envAmp = Math.max(envAmp, rAmp * 0.85);
+          }
+        }
+
         // 1. Check live Web Audio per-voice AnalyserNode time-domain samples
         const analyser = audio?.nodes?.voiceAnalysers?.[id];
         let usedAnalyser = false;
@@ -500,31 +541,46 @@
           } else {
             const byteBuf = new Uint8Array(analyser.fftSize);
             analyser.getByteTimeDomainData(byteBuf);
-            for (let i = 0; i < byteBuf.length; i++) this._waveBuf[i] = (byteBuf[i] - 128) / 128;
+            for (let i = 0; i < byteBuf.length; i++)
+              this._waveBuf[i] = (byteBuf[i] - 128) / 128;
           }
           let peak = 0;
           for (let i = 0; i < this._waveBuf.length; i++) {
             const a = Math.abs(this._waveBuf[i]);
             if (a > peak) peak = a;
           }
-          if (peak > 0.003) {
+          if (peak > 0.00025) {
             usedAnalyser = true;
-            const normScale = Math.min(3.2, 0.85 / Math.max(0.18, peak));
+            const refPeak = id === 'piano' ? 0.32 : 0.035;
+            const sigEnv = Math.min(0.92, Math.pow(peak / refPeak, 0.42));
+            const targetEnv = Math.min(0.92, Math.max(sigEnv, envAmp * 0.82));
+            const invPeak = 1 / peak;
             let zeroCross = 0;
-            for (let i = 1; i < this._waveBuf.length / 2; i++) {
+            const searchLim =
+                Math.min(512, Math.floor(this._waveBuf.length * 0.35));
+            for (let i = 1; i < searchLim; i++) {
               if (this._waveBuf[i - 1] <= 0 && this._waveBuf[i] > 0) {
                 zeroCross = i;
                 break;
               }
             }
-            const span = Math.floor(this._waveBuf.length * 0.5);
+            const span = Math.min(768, this._waveBuf.length - zeroCross - 1);
+            const drawPts = 96;
             ctx.beginPath();
-            for (let i = 0; i <= span; i++) {
-              const x = 4 + (i / span) * (w - 8);
-              const sample = Math.max(-1, Math.min(1, (this._waveBuf[zeroCross + i] || 0) * normScale));
+            for (let i = 0; i <= drawPts; i++) {
+              const norm = i / drawPts;
+              const x = 4 + norm * (w - 8);
+              const bufIdx = zeroCross + Math.floor(norm * span);
+              const win = 0.25 + 0.75 * Math.sin(norm * Math.PI);
+              const sample =
+                  Math.max(
+                      -1, Math.min(1, (this._waveBuf[bufIdx] || 0) * invPeak)) *
+                  targetEnv * win;
               const y = cy - sample * maxAmpPx;
-              if (i === 0) ctx.moveTo(x, y);
-              else ctx.lineTo(x, y);
+              if (i === 0)
+                ctx.moveTo(x, y);
+              else
+                ctx.lineTo(x, y);
             }
             ctx.strokeStyle = waveColor;
             ctx.lineWidth = 1.75;
@@ -535,41 +591,20 @@
           }
         }
 
-        // 2. Active-note / ripple harmonic waveform synthesis (when AudioContext is suspended or between analyser frames)
+        // 2. Active-note / ripple harmonic waveform synthesis (when
+        // AudioContext is suspended or between analyser frames)
         if (!usedAnalyser) {
-          let envAmp = 0;
-          let noteFreq = 220 * Math.pow(2, (idx - 2) * 0.25);
-          if (audio?.activeNotes) {
-            const ctxNow = audio.ctx ? audio.ctx.currentTime : 0;
-            for (const note of audio.activeNotes.values()) {
-              if (note.voiceId !== id) continue;
-              if (typeof note.freq === 'number') noteFreq = note.freq;
-              const gVal = note.envGain?.gain?.value ?? 0;
-              const totalDur = Math.max(0.4, (note.stopTime || 4) - (note.startTime || 0));
-              const elapsed = Math.max(0, ctxNow - (note.startTime || 0));
-              const synthEnv = elapsed > 0
-                ? Math.max(0, 1 - (elapsed / totalDur))
-                : 0.72;
-              envAmp = Math.max(envAmp, gVal > 0.01 ? Math.min(1, gVal * 1.4) : synthEnv);
-            }
-          }
-          for (const r of this.ripples) {
-            if (r.voiceId !== id || r.type === 'REST') continue;
-            const prog = (now - r.birth) / Math.max(100, r.duration);
-            if (prog >= 0 && prog < 1) {
-              const rAmp = prog < r.attackRatio
-                ? (prog / Math.max(0.01, r.attackRatio))
-                : Math.max(0, 1 - (prog - r.attackRatio) / Math.max(0.01, 1 - r.attackRatio));
-              envAmp = Math.max(envAmp, rAmp * 0.85);
-            }
-          }
           if (envAmp < 0.08 && probEng?.isRunning) {
             const phase = voiceState.phase ?? 0;
             envAmp = 0.18 + 0.14 * Math.sin(phase * Math.PI);
           }
 
-          const gainScale = Math.min(1.15, Math.max(0.25, (voiceState.gain ?? 0.6) / (id === 'piano' ? 2.0 : 0.45)));
-          const effAmp = Math.min(0.92, envAmp * gainScale);
+          const gainScale = Math.min(
+              1.15,
+              Math.max(
+                  0.45,
+                  (voiceState.gain ?? 0.6) / (id === 'piano' ? 2.0 : 0.16)));
+          const effAmp = Math.min(0.88, envAmp * gainScale);
           const cycles = Math.max(2.2, Math.min(6.5, (noteFreq / 110) * 1.8));
           const phaseShift = now * 0.0035 * (1 + idx * 0.15);
           const steps = 64;
@@ -582,23 +617,34 @@
             const theta = norm * Math.PI * 2 * cycles + phaseShift;
             let sample = 0;
             if (id === 'pad') {
-              sample = 0.55 * Math.sin(theta) + 0.28 * Math.sin(theta * 2.01 + 0.4) + 0.22 * Math.sin(theta * 0.5);
+              sample = 0.55 * Math.sin(theta) +
+                  0.28 * Math.sin(theta * 2.01 + 0.4) +
+                  0.22 * Math.sin(theta * 0.5);
             } else if (id === 'piano') {
               const decayWin = Math.pow(1 - norm * 0.55, 1.3);
-              sample = (0.62 * Math.sin(theta) + 0.26 * Math.sin(theta * 2) + 0.12 * Math.sin(theta * 3)) * decayWin;
+              sample = (0.62 * Math.sin(theta) + 0.26 * Math.sin(theta * 2) +
+                        0.12 * Math.sin(theta * 3)) *
+                  decayWin;
             } else if (id === 'bell') {
               sample = Math.sin(theta + 1.35 * Math.sin(theta * 2.76));
             } else if (id === 'choir') {
-              sample = 0.52 * Math.sin(theta) + 0.30 * Math.sin(theta * 2 - 0.3) + 0.18 * Math.sin(theta * 3 + 0.5);
+              sample = 0.52 * Math.sin(theta) +
+                  0.30 * Math.sin(theta * 2 - 0.3) +
+                  0.18 * Math.sin(theta * 3 + 0.5);
             } else if (id === 'tape') {
-              const flutter = 0.25 * Math.sin(norm * Math.PI * 4 + phaseShift * 0.6);
-              sample = 0.64 * Math.sin(theta + flutter) + 0.28 * Math.sin(theta * 2 + flutter);
+              const flutter =
+                  0.25 * Math.sin(norm * Math.PI * 4 + phaseShift * 0.6);
+              sample = 0.64 * Math.sin(theta + flutter) +
+                  0.28 * Math.sin(theta * 2 + flutter);
             } else {
-              sample = 0.56 * Math.sin(theta) + 0.30 * Math.sin(theta * 1.5) + 0.18 * Math.sin(theta * 2);
+              sample = 0.56 * Math.sin(theta) + 0.30 * Math.sin(theta * 1.5) +
+                  0.18 * Math.sin(theta * 2);
             }
             const y = cy - sample * effAmp * windowEnv * maxAmpPx;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            if (i === 0)
+              ctx.moveTo(x, y);
+            else
+              ctx.lineTo(x, y);
           }
           ctx.strokeStyle = waveColor;
           ctx.lineWidth = 1.75;
