@@ -440,10 +440,15 @@ body {
      and a crisp 3px primary edge indicator inside the bar
    ============================================================================ */
 .slider-style-tonal-fill-bar input[type="range"] {
-  height: var(--trk-bar-h);
-  border-radius: 8px;
+  min-height: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 9px 0;
+  box-sizing: border-box;
+  background-clip: content-box;
+  border-radius: 17px;
   overflow: hidden;
-  background: linear-gradient(
+  background-image: linear-gradient(
     to right,
     var(--md-sys-color-primary-container) 0%,
     var(--md-sys-color-primary-container) var(--pct, 50%),
@@ -455,16 +460,16 @@ body {
 .slider-style-tonal-fill-bar input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 3px;
-  height: var(--trk-bar-h);
+  width: 4px;
+  height: 22px;
   border-radius: 2px;
   background-color: var(--md-sys-color-primary);
   border: none;
 }
 
 .slider-style-tonal-fill-bar input[type="range"]::-moz-range-thumb {
-  width: 3px;
-  height: var(--trk-bar-h);
+  width: 4px;
+  height: 22px;
   border-radius: 2px;
   background-color: var(--md-sys-color-primary);
   border: none;

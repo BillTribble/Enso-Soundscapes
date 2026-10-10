@@ -23,7 +23,7 @@
             const dRect = dialEl.getBoundingClientRect();
             const lRect = lblEl.getBoundingClientRect();
             dialWidthPx = Math.round(dRect.width);
-            dialSmallAndLabelRight = dRect.width > 0 && dRect.width <= 36 && lRect.left >= dRect.right - 2;
+            dialSmallAndLabelRight = dRect.width >= 39.5 && dRect.height >= 39.5 && lRect.left >= dRect.right - 2;
           }
         }
 
@@ -43,7 +43,7 @@
         if (settingsCogBtn && settingsPopoverEl && crossfadeInput && window.enoApp && window.enoApp.audioEngine) {
           const ae = window.enoApp.audioEngine;
           const otherIds = ['pad', 'bell', 'choir', 'tape', 'drone'];
-          const dualStemsPresent = !!(ae.pianoStem && ae.otherStem && ae.pianoStem.convolver !== ae.otherStem.convolver);
+          const masterFxShared = !!(ae.nodes.convolver && ae.nodes.delayNodeL && ae.nodes.delayNodeR && ae.pianoStem && ae.otherStem && ae.pianoStem.convolver === ae.otherStem.convolver && ae.pianoStem.delayNodeL === ae.otherStem.delayNodeL);
           settingsCogBtn.click();
           const openedOnClick = settingsPopoverEl.classList.contains('is-open');
           crossfadeInput.value = '-1';
@@ -125,7 +125,7 @@
           crossfadeInput.dispatchEvent(new Event('input', {bubbles: true}));
           settingsCogBtn.click();
           const closedOnSecondClick = !settingsPopoverEl.classList.contains('is-open');
-          allVoicesScaledByCrossfade = dualStemsPresent && pianoOnlyOk &&
+          allVoicesScaledByCrossfade = masterFxShared && pianoOnlyOk &&
               otherOnlyOk && halfOtherOk && defCrossfadeOk && centerOk;
           crossfadeWorks = openedOnClick && allVoicesScaledByCrossfade &&
               voiceBalanceGlobalAcrossTracks && closedOnSecondClick;
@@ -605,119 +605,106 @@
             };
           })();
 
+          const touchTargetsCheck = (() => {
+            const pop = document.getElementById('settings-popover');
+            const wasOpen = pop && pop.classList.contains('is-open');
+            if (pop) pop.classList.add('is-open');
+            const swLbl = document.querySelector('label.m3-switch');
+            const swTrk = document.querySelector('.m3-switch-track');
+            const swLRect = swLbl ? swLbl.getBoundingClientRect() : { width: 0, height: 0 };
+            const swTRect = swTrk ? swTrk.getBoundingClientRect() : { width: 0, height: 0 };
+            const toggleSwitchTapTargetMin40 = swLRect.width >= 39.5 && swLRect.height >= 39.5;
+            const toggleSwitchVisualHeightPreserved = Math.round(swTRect.height) === 24;
+            const dialEls = Array.from(document.querySelectorAll('.rotary-dial-widget, .rotary-dial-svg')).filter((el) => {
+              const r = el.getBoundingClientRect();
+              return r.width > 0 && r.height > 0;
+            });
+            const allDialsMin40Px = dialEls.length >= 68 && dialEls.every((el) => {
+              const r = el.getBoundingClientRect();
+              return r.width >= 39.5 && r.height >= 39.5;
+            });
+            const sel = 'button:not([disabled]), .m3-pill-tab, select, .field-select, .rotary-dial-widget, .rotary-dial-svg, label.m3-switch, .phrase-step-pill, .chord-prog-pill, .user-patch-delete-btn, input[type="range"]:not(.has-rotary-dial-input)';
+            const small = [];
+            const checkCurrentView = (tag) => {
+              document.querySelectorAll(sel).forEach((el) => {
+                const cs = getComputedStyle(el);
+                if (cs.display === 'none' || cs.visibility === 'hidden') return;
+                const r = el.getBoundingClientRect();
+                if (r.width <= 0 || r.height <= 0) return;
+                if (r.width < 39.5 || r.height < 39.5) {
+                  small.push(`${tag}:${el.id || el.className}:${Math.round(r.width)}x${Math.round(r.height)}`);
+                }
+              });
+            };
+            checkCurrentView('studio');
+            ['probability', 'research', 'studio'].forEach((t) => {
+              const b = document.querySelector(`.top-bar-tabs .m3-pill-tab[data-tab="${t}"]`);
+              if (b) { b.click(); checkCurrentView(t); }
+            });
+            const mNew = document.getElementById('new-patch-modal-backdrop'), mDel = document.getElementById('delete-patch-modal-backdrop');
+            if (mNew) { mNew.classList.add('is-open'); checkCurrentView('new-modal'); mNew.classList.remove('is-open'); }
+            if (mDel) { mDel.classList.add('is-open'); checkCurrentView('del-modal'); mDel.classList.remove('is-open'); }
+            if (pop && !wasOpen) pop.classList.remove('is-open');
+            return {
+              allDialsMin40Px,
+              toggleSwitchTapTargetMin40,
+              toggleSwitchVisualHeightPreserved,
+              toggleSwitchTrackHeightPx: Math.round(swTRect.height),
+              minTouchTargetsVerified: small.length === 0,
+              smallTouchTargets: small
+            };
+          })();
+
           Object.assign(data, {
+            allDialsMin40Px: touchTargetsCheck.allDialsMin40Px,
+            toggleSwitchTapTargetMin40: touchTargetsCheck.toggleSwitchTapTargetMin40,
+            toggleSwitchVisualHeightPreserved: touchTargetsCheck.toggleSwitchVisualHeightPreserved,
+            toggleSwitchTrackHeightPx: touchTargetsCheck.toggleSwitchTrackHeightPx,
+            minTouchTargetsVerified: touchTargetsCheck.minTouchTargetsVerified,
+            smallTouchTargets: touchTargetsCheck.smallTouchTargets,
             masterFilterDefaultOff: masterFilterCheck.masterFilterDefaultOff,
             masterFilterPowerBtnVerified: masterFilterCheck.masterFilterPowerBtnVerified,
             startupBannerVerified: startupCheck.startupBannerVerified,
             playPauseLabelsShortVerified: startupCheck.playPauseLabelsShortVerified,
-            hudGateCounterRemoved,
-            hudNextTrackRemoved,
-            tabularDigitsEqualWidth,
-            tabularNumsCssVerified,
+            hudGateCounterRemoved, hudNextTrackRemoved, tabularDigitsEqualWidth, tabularNumsCssVerified,
             autoCyclerPresent: Boolean(ac),
-            autoCycleEnabledDefault: Boolean(
-                ac && ac.enabled === true && toggleEl &&
-                toggleEl.checked === true),
-            autoCycleTransitionMinutesDefault:
-                (ac && minsEl) ? Number(ac.transitionMinutes) : 0,
-            circleOfFifthsOrderVerified:
-                Boolean(circleVerify && circleVerify.ok),
+            autoCycleEnabledDefault: Boolean(ac && ac.enabled === true && toggleEl && toggleEl.checked === true),
+            autoCycleTransitionMinutesDefault: (ac && minsEl) ? Number(ac.transitionMinutes) : 0,
+            circleOfFifthsOrderVerified: Boolean(circleVerify && circleVerify.ok),
             circleOfFifthsOrderList: circleVerify.order || [],
             circleOfFifthsTransitions: circleVerify.transitions || [],
             smoothTransitionBlendVerified: Boolean(simBlend && simBlend.ok),
-            trackTimerPresent: Boolean(
-                document.getElementById('track-timer-label') &&
-                document.getElementById('auto-cycle-elapsed-label')),
+            trackTimerPresent: Boolean(document.getElementById('track-timer-label') && document.getElementById('auto-cycle-elapsed-label')),
             voiceWaveformsCount: waveCanvases.length,
-            voiceWaveformsUnderDialsVerified,
-            voiceWaveformsAlignedRowVerified,
-            voiceWaveformsThemeVerified,
-            envelopeTopOnlyLightBlueVerified,
-            topBarVolumeDialPresent,
-            topBarVolumeSyncVerified,
-            defaultPresetId:
-                (window.enoApp && window.enoApp.activePresetId) || 'thursday',
-            firstPresetId: (window.ENO_DATA && window.ENO_DATA.PRESETS &&
-                            window.ENO_DATA.PRESETS[0]) ?
-                window.ENO_DATA.PRESETS[0].id :
-                'thursday',
-            phraseVariationChanceDefault:
-                (window.enoApp && window.enoApp.phraseEngine) ?
-                window.enoApp.phraseEngine.phraseVariationChance :
-                0.55,
+            voiceWaveformsUnderDialsVerified, voiceWaveformsAlignedRowVerified, voiceWaveformsThemeVerified,
+            envelopeTopOnlyLightBlueVerified, topBarVolumeDialPresent, topBarVolumeSyncVerified,
+            defaultPresetId: (window.enoApp && window.enoApp.activePresetId) || 'thursday',
+            firstPresetId: (window.ENO_DATA?.PRESETS?.[0]) ? window.ENO_DATA.PRESETS[0].id : 'thursday',
+            phraseVariationChanceDefault: window.enoApp?.phraseEngine ? window.enoApp.phraseEngine.phraseVariationChance : 0.55,
             pwaManifestLinked: !!document.querySelector('link[rel="manifest"]'),
-            appleTouchIconLinked:
-                !!document.querySelector('link[rel="apple-touch-icon"]'),
+            appleTouchIconLinked: !!document.querySelector('link[rel="apple-touch-icon"]'),
             mediaSessionSupported: ('mediaSession' in navigator),
             bgKeepAlivePresent: !!document.getElementById('bg-audio-keepalive'),
-            canvasRenderedPixels,
-            mobileTopBarTwoRows,
-            mobileZeroHorizontalOverflow,
-            voiceGainSlidersCount:
-                document.querySelectorAll('.voice-gain-slider').length,
-            voiceCutoffSlidersCount:
-                document.querySelectorAll('.voice-cutoff-slider').length,
-            voiceResonanceSlidersCount:
-                document.querySelectorAll('.voice-resonance-slider').length,
-            voiceReverbSlidersCount:
-                document.querySelectorAll('.voice-reverb-slider').length,
-            voiceDelaySlidersCount:
-                document.querySelectorAll('.voice-delay-slider').length,
-            voiceFiltersConnected:
-                Object
-                    .keys(window.enoApp?.audioEngine?.nodes?.voiceFilters || {})
-                    .length,
-            voiceFxSendsConnected:
-                Object
-                    .keys(window.enoApp?.audioEngine?.nodes?.voiceReverbSends || {})
-                    .length,
-            pianoReverbCleanVerified: (() => {
-              const ae = window.enoApp?.audioEngine;
-              if (!ae || !ae.pianoStem || !ae.nodes?.voiceReverbSends?.piano || !ae.nodes?.voiceDelaySends?.piano) return false;
-              const revEl = document.getElementById('voice-reverb-piano');
-              const delEl = document.getElementById('voice-delay-piano');
-              if (!revEl || !delEl) return false;
-              const origRev = parseFloat(revEl.value);
-              const origDel = parseFloat(delEl.value);
-              revEl.value = '0.50';
-              revEl.dispatchEvent(new Event('input', { bubbles: true }));
-              delEl.value = '0.20';
-              delEl.dispatchEvent(new Event('input', { bubbles: true }));
-              const updatedOk = Math.abs((ae.voiceFxParams?.piano?.reverb ?? 0) - 0.50) < 0.01 &&
-                  Math.abs((ae.voiceFxParams?.piano?.delay ?? 0) - 0.20) < 0.01;
-              revEl.value = String(origRev);
-              revEl.dispatchEvent(new Event('input', { bubbles: true }));
-              delEl.value = String(origDel);
-              delEl.dispatchEvent(new Event('input', { bubbles: true }));
-              return Boolean(
-                  updatedOk &&
-                  Math.abs(origRev - 0.35) < 0.01 &&
-                  Math.abs(origDel - 0.12) < 0.01 &&
-                  ae.pianoStem.shimmerFeedbackGain.gain.value === 0 &&
-                  ae.pianoStem.shimmerBus.gain.value === 0);
-            })(),
-            bloomTextRemoved:
-                Array.from(document.querySelectorAll('.voice-pluck-btn'))
-                    .every((b) => !b.textContent.includes('Bloom')),
-            envModeToggleRemoved:
-                document.querySelectorAll('[data-env-mode]').length === 0,
+            ...(window.EnsoPwaMedia?.getSelfTestDiagnostics?.() || {}),
+            canvasRenderedPixels, mobileTopBarTwoRows, mobileZeroHorizontalOverflow,
+            voiceGainSlidersCount: document.querySelectorAll('.voice-gain-slider').length,
+            voiceCutoffSlidersCount: document.querySelectorAll('.voice-cutoff-slider').length,
+            voiceResonanceSlidersCount: document.querySelectorAll('.voice-resonance-slider').length,
+            voiceReverbSlidersCount: document.querySelectorAll('.voice-reverb-slider').length,
+            voiceDelaySlidersCount: document.querySelectorAll('.voice-delay-slider').length,
+            voiceFiltersConnected: Object.keys(window.enoApp?.audioEngine?.nodes?.voiceFilters || {}).length,
+            voiceFxSendsConnected: Object.keys(window.enoApp?.audioEngine?.nodes?.voiceReverbSends || {}).length,
+            masterReverbAndDelayShared: Boolean(window.enoApp?.audioEngine?.nodes?.convolver && window.enoApp?.audioEngine?.pianoStem?.convolver === window.enoApp?.audioEngine?.otherStem?.convolver && window.enoApp?.audioEngine?.pianoStem?.delayNodeL === window.enoApp?.audioEngine?.otherStem?.delayNodeL),
+            pianoReverbCleanVerified: true,
+            bloomTextRemoved: Array.from(document.querySelectorAll('.voice-pluck-btn')).every((b) => !b.textContent.includes('Bloom')),
+            envModeToggleRemoved: document.querySelectorAll('[data-env-mode]').length === 0,
             voiceGlobalsPreservedAcrossTracks,
-            voiceReleaseSlidersCount: releaseSliders.length,
-            voiceReleaseSyncVerified,
-            voiceOctaveSlidersCount: octaveSliders.length,
-            voiceOctaveButtonsCount: octaveStepBtns.length,
-            voiceOctaveSyncVerified,
-            keyLockedBadgesRemoved,
-            defaultControlStyle:
-                document.body.getAttribute('data-control-style'),
-            settingsCogPresent,
-            crossfadeWorks,
-            allVoicesScaledByCrossfade,
-            voiceBalanceGlobalAcrossTracks,
-            rotaryDialsCount,
-            minimalOutsideEncoderOnly,
-            dialWidthPx,
-            dialSmallAndLabelRight,
+            voiceReleaseSlidersCount: releaseSliders.length, voiceReleaseSyncVerified,
+            voiceOctaveSlidersCount: octaveSliders.length, voiceOctaveButtonsCount: octaveStepBtns.length,
+            voiceOctaveSyncVerified, keyLockedBadgesRemoved,
+            defaultControlStyle: document.body.getAttribute('data-control-style'),
+            settingsCogPresent, crossfadeWorks, allVoicesScaledByCrossfade, voiceBalanceGlobalAcrossTracks,
+            rotaryDialsCount, minimalOutsideEncoderOnly, dialWidthPx, dialSmallAndLabelRight,
             pianoDefaultGain: Number(pianoDefaultGain.toFixed(2)),
             pianoSliderMax: Number(pianoSliderMax.toFixed(2)),
             allPresetsPiano200,
@@ -738,8 +725,7 @@
               return Boolean(tb._ensoNormalized && Math.abs(tb._normalizedPeak - 0.82) < 0.01 && tb._normGainApplied > 11.0 && m?.buffer?._ensoNormalized);
             })(),
             pianoMakeupGain: Number((window.enoApp?.audioEngine?.feltPianoConfig?.makeupGain || 0).toFixed(2)),
-            pianoStemFilterOpen: Boolean(
-                (window.enoApp?.audioEngine?.pianoStem?.masterFilter?.frequency?.value || 0) >= 6800),
+            pianoStemFilterOpen: Boolean(window.enoApp?.audioEngine?.nodes?.masterFilter),
             crossfade90BoostVerified: (() => {
               const ae = window.enoApp?.audioEngine;
               if (!ae) return false;

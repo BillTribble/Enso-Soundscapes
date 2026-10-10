@@ -1,0 +1,168 @@
+/* Aurora WebGL Background & Translucent Surface Luminance */
+
+#aurora {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  display: block;
+  pointer-events: none;
+}
+
+html {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+body,
+.app-shell,
+#top-bar-volume-row,
+.top-app-bar .control-row.has-rotary-dial {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.top-app-bar {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: background-color 0.2s ease, backdrop-filter 0.2s ease, -webkit-backdrop-filter 0.2s ease;
+}
+
+.top-app-bar.is-scrolled,
+body.is-scrolled .top-app-bar {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 92%, transparent) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+.startup-play-banner,
+.preset-strip-card,
+.surface-card,
+.research-card,
+.research-homage-banner {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 76%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.nested-card,
+.voice-card,
+.degree-column,
+.event-log-item {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 74%, transparent);
+}
+
+.canvas-stage-wrapper {
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 45%, transparent);
+}
+
+/* Startup Play Banner (Covers Top Bar & Presets Panel on Initial Load) */
+.app-shell {
+  position: relative;
+}
+
+body.startup-banner-active .top-app-bar,
+body.startup-banner-active .preset-strip-card,
+.app-shell.startup-banner-active .top-app-bar,
+.app-shell.startup-banner-active .preset-strip-card {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.startup-play-banner {
+  position: absolute;
+  top: 8px;
+  left: 20px;
+  right: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 112px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 76%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1), transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.24s;
+}
+
+.startup-play-banner.is-dismissed,
+body:not(.startup-banner-active) .startup-play-banner {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: scale(0.99);
+}
+
+.startup-play-btn {
+  height: 54px;
+  padding: 0 32px;
+  border-radius: 9999px;
+  gap: 10px;
+  font-family: var(--md-ref-typeface-brand);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  box-shadow: none;
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.16s ease;
+}
+
+.startup-play-btn .startup-play-icon,
+.startup-play-btn .material-symbols-outlined {
+  font-size: 24px;
+}
+
+@media (hover: hover) {
+  .startup-play-banner:hover .startup-play-btn,
+  .startup-play-btn:hover {
+    transform: scale(1.03);
+    opacity: 0.94;
+  }
+}
+
+@media (max-width: 1280px) {
+  .startup-play-banner {
+    left: 16px;
+    right: 16px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 720px) {
+  .startup-play-banner {
+    left: 12px;
+    right: 12px;
+    min-height: 220px;
+    border-radius: 18px;
+  }
+  .startup-play-btn {
+    height: 48px;
+    padding: 0 26px;
+    font-size: 15.5px;
+    gap: 8px;
+  }
+  .startup-play-btn .startup-play-icon,
+  .startup-play-btn .material-symbols-outlined {
+    font-size: 22px;
+  }
+}
+
+

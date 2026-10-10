@@ -10,21 +10,23 @@
 }
 
 .patch-action-btn {
-  height: 30px;
-  padding: 0 12px;
+  min-height: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 14px;
   border-radius: 9999px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   white-space: nowrap;
   flex-shrink: 0;
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
 }
 
 .patch-action-btn .material-symbols-outlined {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .patch-action-btn.is-dirty {
@@ -38,8 +40,10 @@
 }
 
 .patch-reset-btn {
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 9999px;
   flex-shrink: 0;
   display: inline-flex;
@@ -48,7 +52,7 @@
 }
 
 .patch-reset-btn .material-symbols-outlined {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 /* Modal z-index ladder: Backdrop (1200) | Modal Card (1300) */
@@ -136,8 +140,9 @@
 
 .patch-modal-card .m3-input-field {
   width: 100%;
+  min-height: 42px;
   height: 42px;
-  padding: 0 36px 0 14px;
+  padding: 0 42px 0 14px;
   font-size: 14px;
   box-sizing: border-box;
   background-color: var(--md-sys-color-surface-container-lowest);
@@ -162,10 +167,12 @@
 }
 
 .patch-modal-actions .btn {
-  height: 36px;
+  min-height: 40px;
+  height: 40px;
+  min-width: 40px;
   padding: 0 16px;
   border-radius: 9999px;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -173,10 +180,12 @@
 }
 
 .patch-modal-actions .btn-text {
-  height: 36px;
-  padding: 0 12px;
+  min-height: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0 14px;
   border-radius: 9999px;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
 }
 
@@ -193,7 +202,7 @@
 .m3-pill-tabs.gm3-connected-dsp .m3-pill-tab.user-patch-pill,
 .m3-pill-tab.user-patch-pill {
   position: relative;
-  padding-right: 22px;
+  padding-right: 40px;
 }
 
 .user-patch-label {
@@ -203,35 +212,48 @@
 
 .user-patch-delete-btn {
   position: absolute;
-  top: 2px;
-  right: 3px;
-  width: 15px;
-  height: 15px;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  background-color: var(--md-sys-color-surface-container-highest);
+  background-color: transparent;
   color: var(--md-sys-color-on-surface-variant);
   cursor: pointer;
-  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  transition: opacity 0.15s ease, color 0.15s ease;
 }
 
 .user-patch-delete-icon {
-  font-size: 11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--md-sys-color-surface-container-highest);
+  font-size: 12px;
   line-height: 1;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 @media (hover: hover) {
   .m3-pill-tab.user-patch-pill:hover .user-patch-delete-btn,
   .m3-pill-tab.user-patch-pill:focus-within .user-patch-delete-btn {
-    opacity: 0.85;
+    opacity: 0.9;
     pointer-events: auto;
   }
   .user-patch-delete-btn:hover {
     opacity: 1;
+  }
+  .user-patch-delete-btn:hover .user-patch-delete-icon {
     background-color: var(--md-sys-color-error-container);
     color: var(--md-sys-color-on-error-container);
   }
@@ -239,7 +261,7 @@
 
 @media (hover: none) {
   .m3-pill-tab.user-patch-pill .user-patch-delete-btn {
-    opacity: 0.85;
+    opacity: 0.9;
     pointer-events: auto;
   }
 }

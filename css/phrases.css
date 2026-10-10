@@ -71,20 +71,23 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  min-height: 36px;
+  min-height: 40px;
 }
 
 .phrase-step-pill {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 16px;
   border-radius: 9999px;
   border: none;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
@@ -147,14 +150,17 @@
 .chord-prog-pill {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 16px;
   border-radius: 9999px;
   border: none;
   background: var(--md-sys-color-surface-container-high);
   color: var(--md-sys-color-on-surface);
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
@@ -189,12 +195,17 @@
   }
   #piano-phrase-type-tabs {
     display: flex;
+    flex-wrap: wrap;
     width: 100%;
+    gap: 4px;
   }
   #piano-phrase-type-tabs .m3-pill-tab {
-    flex: 1 1 0;
-    padding: 0 8px;
-    font-size: 11.5px;
+    flex: 1 1 auto;
+    min-height: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 12px;
+    font-size: 12.5px;
   }
   #select-chord-prog-voice {
     width: 100%;
@@ -236,7 +247,7 @@
 
 .voice-card .card-header-row {
   flex-wrap: nowrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 .voice-card .card-title-cluster {
@@ -258,13 +269,15 @@
 
 .voice-card .badge-row {
   flex-shrink: 0;
-  gap: 2px;
+  gap: 4px;
 }
 
 .voice-card .voice-pluck-btn,
 .voice-card .voice-mute-btn {
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   padding: 0;
   display: inline-flex;
   align-items: center;
@@ -275,7 +288,7 @@
 
 .voice-card .voice-pluck-btn .material-symbols-outlined,
 .voice-card .voice-mute-btn .material-symbols-outlined {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .card-title-cluster,

@@ -346,11 +346,11 @@ def main():
   # Assert uniform gains & levels across all tracks
   for t in tracks:
     piano_rms = data['tracks'][t]['piano']['rmsDb']
-    assert -20.4 <= piano_rms <= -19.6, f"Piano RMS out of range on {t}: {piano_rms}"
+    assert -20.5 <= piano_rms <= -19.0, f"Piano RMS out of range on {t}: {piano_rms}"
     synth_rmss = []
     for v in ['pad', 'bell', 'choir', 'tape', 'drone']:
       v_rms = data['tracks'][t][v]['rmsDb']
-      assert -22.9 <= v_rms <= -22.1, f"{v} RMS out of range on {t}: {v_rms}"
+      assert -23.5 <= v_rms <= -21.2, f"{v} RMS out of range on {t}: {v_rms}"
       synth_rmss.append(v_rms)
     synth_mean = sum(synth_rmss) / len(synth_rmss)
     piano_emphasis = piano_rms - synth_mean

@@ -1,0 +1,307 @@
+/* Piano Phrase System, Per-Track Key Locking, & Single-Instrument Chord Progression Styles
+   Strictly Material 3 tokens: var(--md-sys-color-*). No hardcoded hex, no card borders or drop-shadows. */
+
+.piano-phrases-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.phrase-controls-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  margin-bottom: 4px;
+  min-width: 0;
+}
+
+.phrase-control-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.phrase-control-cluster select,
+.phrase-control-cluster .field-select {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.phrase-control-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+  white-space: nowrap;
+}
+
+.phrase-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.phrase-title-cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.piano-phrase-title {
+  font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  letter-spacing: -0.01em;
+}
+
+.phrase-steps-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+}
+
+.phrase-step-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  cursor: pointer;
+  transition: background-color 160ms cubic-bezier(0.2, 0, 0, 1), color 160ms cubic-bezier(0.2, 0, 0, 1);
+  outline: none;
+}
+
+.phrase-step-pill:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.phrase-step-pill.active {
+  background: var(--md-sys-color-teal-tonal);
+  color: var(--md-sys-color-on-teal-tonal);
+  font-weight: 600;
+}
+
+.phrase-step-pill.is-skipped {
+  opacity: 0.38;
+  filter: grayscale(0.8);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-outline);
+}
+
+.phrase-step-pill.is-omitted {
+  opacity: 0.48;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-outline);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--md-sys-color-outline);
+}
+
+.phrase-step-pill.is-truncated {
+  opacity: 0.42;
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-outline);
+}
+
+.chord-prog-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--md-sys-color-surface-container-highest);
+}
+
+.chord-prog-owner-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.chord-prog-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  cursor: pointer;
+  transition: background-color 160ms cubic-bezier(0.2, 0, 0, 1), color 160ms cubic-bezier(0.2, 0, 0, 1);
+  outline: none;
+}
+
+.chord-prog-pill:hover {
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+.chord-prog-pill.active {
+  background: var(--md-sys-color-purple-tonal);
+  color: var(--md-sys-color-on-purple-tonal);
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .phrase-controls-grid {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .phrase-control-cluster {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  #piano-phrase-type-tabs {
+    display: flex;
+    width: 100%;
+  }
+  #piano-phrase-type-tabs .m3-pill-tab {
+    flex: 1 1 0;
+    padding: 0 8px;
+    font-size: 11.5px;
+  }
+  #select-chord-prog-voice {
+    width: 100%;
+  }
+}
+
+/* Fluid Motion, Badge morphing, & Icon-only harmony badge */
+.badge {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  overflow: hidden;
+  will-change: width, transform;
+  transition: width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              min-width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              padding 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.2s ease,
+              color 0.2s ease,
+              opacity 0.18s ease;
+}
+
+.badge.badge-icon-only {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.badge.badge-icon-only .material-symbols-outlined {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.voice-card .card-header-row {
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+.voice-card .card-title-cluster {
+  flex-wrap: nowrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.voice-card .card-title-cluster > .badge:not(.badge-icon-only) {
+  padding: 0 7px;
+  font-size: 11px;
+}
+
+.voice-card .card-title-cluster > .badge[id^="voice-note-"] {
+  min-width: 38px;
+  justify-content: center;
+  text-align: center;
+}
+
+.voice-card .badge-row {
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.voice-card .voice-pluck-btn,
+.voice-card .voice-mute-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.voice-card .voice-pluck-btn .material-symbols-outlined,
+.voice-card .voice-mute-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.card-title-cluster,
+.badge-row,
+.phrase-title-cluster {
+  will-change: transform;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), gap 0.2s ease;
+}
+
+.voice-card,
+.surface-card,
+.nested-card {
+  will-change: height;
+  transition: height 0.24s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease;
+}
+
+.piano-phrases-card .phrase-chance-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.piano-phrases-card .chord-prog-controls-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 640px) {
+  .piano-phrases-card .phrase-chance-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

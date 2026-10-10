@@ -689,24 +689,18 @@
     }
 
     handleProbabilityEvent(event) {
+      if (typeof document !== 'undefined' && document.hidden) return;
       if (this.visualizer && event) this.visualizer.addRipple({ type: event.outcome, voiceId: event.voiceId, note: event.noteName, midi: event.midi });
       if (event?.outcome === 'BLOOM') {
-        window.aurora?.pulse(0.85, {
-          voiceId: event.voiceId,
-          x: event.normX,
-          y: event.normY !== undefined ? (1 - event.normY) : undefined
-        });
+        window.aurora?.pulse(0.85, { voiceId: event.voiceId, x: event.normX, y: event.normY !== undefined ? (1 - event.normY) : undefined });
       } else if (event?.outcome === 'PASS') {
         window.aurora?.pulse(0.55, {voiceId: event.voiceId});
       }
       const noteBadge = document.getElementById(`voice-note-${event.voiceId}`);
       if (noteBadge) {
         const txt = event.outcome === 'REST' ? 'Rest' : `${event.noteName}`;
-        if (typeof window !== 'undefined' && window.EnsoMotion) {
-          window.EnsoMotion.setBadgeText(noteBadge, txt);
-        } else {
-          noteBadge.textContent = txt;
-        }
+        if (window.EnsoMotion) window.EnsoMotion.setBadgeText(noteBadge, txt);
+        else noteBadge.textContent = txt;
       }
       const motifEl = document.getElementById('motif-memory-display');
       if (motifEl) {
@@ -745,19 +739,25 @@
     }
 
     startSchedulerLoop() {
+      document.addEventListener('visibilitychange', () => {
+        this.lastTickTime = performance.now();
+        if (!document.hidden) this.renderEventLog();
+      });
       const step = (now) => {
         const dt = Math.min(0.25, Math.max(0.001, (now - this.lastTickTime) / 1000));
         this.lastTickTime = now;
-        this.probEngine.tick(dt);
-        this.autoCycler?.tick?.(dt);
-        this.probEngine.voices.forEach((v) => {
-          const bar = document.getElementById(`voice-phase-${v.id}`);
-          if (bar) bar.style.width = `${Math.round(v.phase * 100)}%`;
-        });
-        const timerLbl = document.getElementById('session-timer-label');
-        if (timerLbl) {
-          const sec = Math.floor(this.probEngine.stats.listenedSeconds);
-          timerLbl.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+        if (!document.hidden) {
+          this.probEngine.tick(dt);
+          this.autoCycler?.tick?.(dt);
+          this.probEngine.voices.forEach((v) => {
+            const bar = document.getElementById(`voice-phase-${v.id}`);
+            if (bar) bar.style.width = `${Math.round(v.phase * 100)}%`;
+          });
+          const timerLbl = document.getElementById('session-timer-label');
+          if (timerLbl) {
+            const sec = Math.floor(this.probEngine.stats.listenedSeconds);
+            timerLbl.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+          }
         }
         this.loopRafId = requestAnimationFrame(step);
       };

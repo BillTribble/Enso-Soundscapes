@@ -34,6 +34,9 @@ class AudioEngine {
       forceLayer: 'v1', makeupGain: 1.55, bodyWarmthHz: 240, bodyWarmthGainDb: 3.2,
       highShelfHz: 1850, highShelfCutDb: -11.5, mechReleaseGain: 0.022
     };
+    this.latencyHint = 'playback';
+    this._reverbIrTimer = null;
+    this._nextNoteScheduleTime = 0;
     this.isRunning = false;
     this.ctx = null;
     this.nodes = {};
@@ -42,6 +45,8 @@ class AudioEngine {
     this.voiceReleases = { pad: 8.5, piano: 4.5, bell: 5.2, choir: 9.5, tape: 6.2, drone: 11.0 };
     this.voiceFilterParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FILTERS));
     this.voiceFxParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FX));
+    this.voiceReverbSend = { pad: 0.7, piano: 0.35, bell: 0.75, choir: 0.8, tape: 0.55, drone: 0.6 };
+    this.voiceDelaySend = { pad: 0.35, piano: 0.12, bell: 0.4, choir: 0.25, tape: 0.65, drone: 0.15 };
     this.voiceInstrumentTrim = { ...DEFAULT_VOICE_INSTRUMENT_TRIM };
 
     // Multi-sampled Salamander Grand Piano v3 state
@@ -74,12 +79,14 @@ class AudioEngine {
     s.wowLfo = c.createOscillator(); s.wowLfo.frequency.value = 0.55;
     s.wowGain = c.createGain(); s.wowGain.gain.value = p.delayWow * 0.0035;
     s.wowLfo.connect(s.wowGain); s.wowGain.connect(s.delayNodeL.delayTime); s.wowGain.connect(s.delayNodeR.delayTime); s.wowLfo.start();
+    s.postFilterBus.connect(s.delaySend);
     s.delaySend.connect(s.delayNodeL); s.delaySend.connect(s.delayNodeR);
     s.delayNodeL.connect(s.delayMerger, 0, 0); s.delayNodeR.connect(s.delayMerger, 0, 1);
     s.delayMerger.connect(s.delayFilter); s.delayFilter.connect(s.delayFeedbackGain);
     s.delayFeedbackGain.connect(s.delayNodeL); s.delayFeedbackGain.connect(s.delayNodeR);
     s.delayFilter.connect(s.delayWetGain); s.delayWetGain.connect(s.stemOutput);
-    s.reverbInput = c.createGain(); s.delayFilter.connect(s.delayToReverb); s.delayToReverb.connect(s.reverbInput);
+    s.reverbInput = c.createGain(); s.postFilterBus.connect(s.reverbInput);
+    s.delayFilter.connect(s.delayToReverb); s.delayToReverb.connect(s.reverbInput);
     s.reverbDampFilter = c.createBiquadFilter(); s.reverbDampFilter.type = 'lowpass'; s.reverbDampFilter.frequency.value = p.reverbDamping;
     s.convolver = c.createConvolver(); s.reverbWetGain = c.createGain(); s.reverbWetGain.gain.value = p.reverbMix;
     s.reverbInput.connect(s.reverbDampFilter); s.reverbDampFilter.connect(s.convolver);
@@ -100,43 +107,41 @@ class AudioEngine {
 
   init(customCtx = null) {
     if (this.ctx) return;
-    this.ctx = customCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (customCtx) {
+      this.ctx = customCtx;
+    } else {
+      try { this.ctx = new AudioCtx({ latencyHint: 'playback' }); } catch (e) { this.ctx = new AudioCtx(); }
+    }
+    this.latencyHint = 'playback';
     const c = this.ctx, p = this.params, n = this.nodes;
 
-    // Dual Post-FX Live Mixer Stems: independent Filter + Delay + Convolver Reverb + Shimmer for Piano vs. All Other Sounds
-    this.otherStem = this._buildStemDsp(c, p);
-    this.pianoStem = this._buildStemDsp(c, p);
-    this.pianoStem.isPianoStem = true;
-    this.pianoStem.masterFilter.frequency.value = Math.min(18000, Math.max(p.cutoff * 2.2, 6800));
-    // Pure linear acoustic reverb & gentle warm delay on pianoStem (no waveshaper shimmer feedback distortion)
-    this.pianoStem.reverbInput.gain.value = 0.25;
-    this.pianoStem.delaySend.gain.value = 0.22;
-    this.pianoStem.delayToReverb.gain.value = 0.12;
-    this.pianoStem.delayFilter.frequency.value = 2000;
-    this.pianoStem.reverbDampFilter.frequency.value = Math.min(2600, p.reverbDamping);
-    this.pianoStem.shimmerFeedbackGain.gain.value = 0;
-    this.pianoStem.shimmerBus.gain.value = 0;
-    this.stems = [this.otherStem, this.pianoStem];
-    Object.assign(n, this.otherStem);
-    n.otherStem = this.otherStem;
-    n.pianoStem = this.pianoStem;
+    this.masterStem = this._buildStemDsp(c, p);
+    this.stems = [this.masterStem];
+    Object.assign(n, this.masterStem);
     this._buildImpulseResponse(p.reverbDecay);
 
     n.masterBus = c.createGain();
     n.voiceSum = c.createGain();
-    n.voiceSum.connect(this.otherStem.stemInput);
+    const pianoStemInput = c.createGain();
+    const otherStemOutput = c.createGain();
     n.pianoCrossfadeBus = c.createGain();
     n.otherCrossfadeBus = c.createGain();
-    this.pianoStem.stemOutput.connect(n.pianoCrossfadeBus);
-    this.otherStem.stemOutput.connect(n.otherCrossfadeBus);
-    n.pianoCrossfadeBus.connect(n.masterBus);
-    n.otherCrossfadeBus.connect(n.masterBus);
+    pianoStemInput.connect(n.pianoCrossfadeBus);
+    n.voiceSum.connect(otherStemOutput);
+    otherStemOutput.connect(n.otherCrossfadeBus);
+    n.pianoCrossfadeBus.connect(this.masterStem.stemInput);
+    n.otherCrossfadeBus.connect(this.masterStem.stemInput);
+    this.masterStem.stemOutput.connect(n.masterBus);
+
+    this.otherStem = Object.assign({}, this.masterStem, { stemOutput: otherStemOutput });
+    this.pianoStem = Object.assign({}, this.masterStem, { stemInput: pianoStemInput, isPianoStem: false });
+    n.otherStem = this.otherStem;
+    n.pianoStem = this.pianoStem;
 
     n.voiceFilters = {};
     n.voiceBuses = {};
     n.voiceBalanceBuses = {};
-    n.voiceReverbSends = {};
-    n.voiceDelaySends = {};
     n.voiceAnalysers = {};
     this.baseVoiceGains = this.baseVoiceGains || {
       pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65
@@ -155,23 +160,7 @@ class AudioEngine {
       this.effectiveVoiceGains[vId] = (this.voiceGains[vId] ?? 0.65) * mult;
 
       bus.connect(balanceBus);
-      balanceBus.connect(
-          vId === 'piano' ? this.pianoStem.stemInput : n.voiceSum);
-
-      const fxParams = (this.voiceFxParams && this.voiceFxParams[vId]) ||
-          DEFAULT_VOICE_FX[vId] || {reverb: 0.5, delay: 0.3};
-      const targetStem = vId === 'piano' ? this.pianoStem : this.otherStem;
-      const revSend = c.createGain();
-      revSend.gain.value = fxParams.reverb ?? 0.5;
-      balanceBus.connect(revSend);
-      revSend.connect(targetStem.reverbInput);
-      n.voiceReverbSends[vId] = revSend;
-
-      const delSend = c.createGain();
-      delSend.gain.value = fxParams.delay ?? 0.3;
-      balanceBus.connect(delSend);
-      delSend.connect(targetStem.delaySend);
-      n.voiceDelaySends[vId] = delSend;
+      balanceBus.connect(vId === 'piano' ? pianoStemInput : n.voiceSum);
 
       const analyser = c.createAnalyser();
       analyser.fftSize = 2048;
@@ -194,8 +183,8 @@ class AudioEngine {
 
     n.pianoShimmerCrossfade = c.createGain();
     n.otherShimmerCrossfade = c.createGain();
-    n.pianoShimmerCrossfade.connect(this.pianoStem.shimmerBus);
-    n.otherShimmerCrossfade.connect(this.otherStem.shimmerBus);
+    n.pianoShimmerCrossfade.connect(this.masterStem.shimmerBus);
+    n.otherShimmerCrossfade.connect(this.masterStem.shimmerBus);
     this._applyCrossfadeGains(p.pianoCrossfade ?? -0.62);
 
     // Master Transparent Peak Limiter (prevents inter-sample clipping without pumping or ducking)
@@ -291,32 +280,19 @@ class AudioEngine {
     if (this.ctx && filter) this._setParamImmediate(filter.Q, val, this.ctx.currentTime);
   }
   setVoiceReverbSend(voiceId, val) {
-    const v = Math.max(0, Math.min(1.0, Number(val)));
-    if (!this.voiceFxParams) this.voiceFxParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FX));
-    if (!this.voiceFxParams[voiceId]) this.voiceFxParams[voiceId] = {reverb: 0.5, delay: 0.3};
-    this.voiceFxParams[voiceId].reverb = v;
-    const send = this.nodes.voiceReverbSends && this.nodes.voiceReverbSends[voiceId];
-    if (this.ctx && send) this._setParamImmediate(send.gain, v, this.ctx.currentTime);
-    if (voiceId === 'piano' && this.ctx && this.pianoStem && this.pianoStem.delayToReverb) {
-      this._setParamImmediate(this.pianoStem.delayToReverb.gain, 0.12 * v, this.ctx.currentTime);
-    }
+    if (this.voiceReverbSend && this.voiceReverbSend[voiceId] !== undefined) this.voiceReverbSend[voiceId] = Math.max(0, Math.min(2, Number(val)));
+    if (this.voiceFxParams && this.voiceFxParams[voiceId]) this.voiceFxParams[voiceId].reverb = Math.max(0, Math.min(2, Number(val)));
   }
   setVoiceDelaySend(voiceId, val) {
-    const v = Math.max(0, Math.min(1.0, Number(val)));
-    if (!this.voiceFxParams) this.voiceFxParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FX));
-    if (!this.voiceFxParams[voiceId]) this.voiceFxParams[voiceId] = {reverb: 0.5, delay: 0.3};
-    this.voiceFxParams[voiceId].delay = v;
-    const send = this.nodes.voiceDelaySends && this.nodes.voiceDelaySends[voiceId];
-    if (this.ctx && send) this._setParamImmediate(send.gain, v, this.ctx.currentTime);
+    if (this.voiceDelaySend && this.voiceDelaySend[voiceId] !== undefined) this.voiceDelaySend[voiceId] = Math.max(0, Math.min(2, Number(val)));
+    if (this.voiceFxParams && this.voiceFxParams[voiceId]) this.voiceFxParams[voiceId].delay = Math.max(0, Math.min(2, Number(val)));
   }
   setFilterCutoff(hz) {
     this.params.cutoff = Math.max(40, Math.min(18000, hz));
     if (!this.ctx) return;
     const eff = Math.max(40, Math.min(18000, this.params.cutoff * (this.params.circadianMultipliers.cutoff || 1.0)));
     for (const st of (this.stems || [this.nodes])) {
-      if (!st || !st.masterFilter) continue;
-      const stemFreq = (st.isPianoStem && this.params.filterType === 'lowpass') ? Math.min(18000, Math.max(eff * 2.2, 6800)) : eff;
-      st.masterFilter.frequency.setTargetAtTime(stemFreq, this.ctx.currentTime, 0.03);
+      if (st && st.masterFilter) st.masterFilter.frequency.setTargetAtTime(eff, this.ctx.currentTime, 0.03);
     }
   }
   setFilterResonance(q) {
@@ -360,13 +336,22 @@ class AudioEngine {
       if (st && st.reverbWetGain) st.reverbWetGain.gain.setTargetAtTime(this.params.reverbMix, this.ctx.currentTime, 0.03);
     }
   }
-  setReverbDecay(sec) { this.params.reverbDecay = Math.max(1.5, Math.min(18.0, sec)); this._buildImpulseResponse(this.params.reverbDecay); }
+  setReverbDecay(val) {
+    this.params.reverbDecay = Math.max(0.5, Math.min(20.0, val));
+    if (!this.ctx) return;
+    if (typeof document !== 'undefined' && document.hidden) return;
+    if (this._reverbIrTimer) clearTimeout(this._reverbIrTimer);
+    this._reverbIrTimer = setTimeout(() => {
+      this._reverbIrTimer = null;
+      this._buildImpulseResponse(this.params.reverbDecay);
+    }, 60);
+  }
   setReverbShimmer(val) {
     this.params.reverbShimmer = Math.max(0, Math.min(1.0, val));
     if (!this.ctx) return;
     const eff = Math.min(1.0, this.params.reverbShimmer + (this.params.circadianMultipliers.shimmer || 0.0));
     for (const st of (this.stems || [this.nodes])) {
-      if (st && st.shimmerBus) st.shimmerBus.gain.setTargetAtTime(st.isPianoStem ? 0 : eff * 0.65, this.ctx.currentTime, 0.03);
+      if (st && st.shimmerBus) st.shimmerBus.gain.setTargetAtTime(eff * 0.65, this.ctx.currentTime, 0.03);
     }
   }
   setReverbDamping(hz) {
@@ -374,10 +359,7 @@ class AudioEngine {
     this.params.reverbDamping = Math.max(800, Math.min(14000, freq));
     if (!this.ctx) return;
     for (const st of (this.stems || [this.nodes])) {
-      if (st && st.reverbDampFilter) {
-        const dampFreq = st.isPianoStem ? Math.min(2600, this.params.reverbDamping) : this.params.reverbDamping;
-        st.reverbDampFilter.frequency.setTargetAtTime(dampFreq, this.ctx.currentTime, 0.03);
-      }
+      if (st && st.reverbDampFilter) st.reverbDampFilter.frequency.setTargetAtTime(this.params.reverbDamping, this.ctx.currentTime, 0.03);
     }
   }
   setDelayMix(val) {
@@ -552,7 +534,12 @@ class AudioEngine {
     }
     this.lastTriggeredNotes = (this.lastTriggeredNotes || []).slice(-199);
     this.lastTriggeredNotes.push({ voiceId, midi: midiNote, time: Date.now() });
-    const now = typeof startTime === 'number' ? startTime : this.ctx.currentTime, freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    let now = typeof startTime === 'number' ? startTime : this.ctx.currentTime;
+    if (typeof startTime !== 'number' && typeof document !== 'undefined' && document.hidden) {
+      now = Math.max(now, this._nextNoteScheduleTime || 0);
+      this._nextNoteScheduleTime = now + 0.018;
+    }
+    const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
     const archetypeFactors = { pad: 1.25, piano: 0.35, bell: 0.45, choir: 1.35, tape: 0.85, drone: 1.5 };
     const af = archetypeFactors[voiceId] || 1.0, circ = this.params.circadianMultipliers || {};
     const isPiano = voiceId === 'piano';

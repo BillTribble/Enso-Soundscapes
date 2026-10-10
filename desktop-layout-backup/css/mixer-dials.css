@@ -1,0 +1,653 @@
+/**
+ * Minimal Outside-Encoder Rotary Dials (Ableton Live Style)
+ * Adheres strictly to /billskill GM3 tokens, tonal surfaces, and typography.
+ * Renders a 30x30px 270-degree open-center SVG encoder ring with label + readout to the right.
+ */
+
+/* Align instrument controls in a clean 2-column grid */
+.voice-card .card-title-cluster {
+  flex-wrap: nowrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.voice-card .macro-rack-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.voice-card .macro-rack-grid-3 .control-row {
+  justify-content: space-between;
+}
+
+.voice-card .macro-rack-grid-3 .control-row.voice-octave-row {
+  /* Fits side-by-side with Octave shift in Row 3 */
+}
+
+.voice-octave-stepper {
+  order: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.voice-octave-step-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 7px;
+  background: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.14s ease, color 0.14s ease;
+}
+
+@media (hover: hover) {
+  .voice-octave-step-btn:hover:not(:disabled) {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+}
+
+.voice-octave-step-btn:disabled {
+  opacity: 0.36;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Hide underlying range inputs when rotary dial is mounted */
+.control-row.has-rotary-dial .cs-track,
+.control-row.has-rotary-dial input[type="range"] {
+  display: none !important;
+}
+
+/* Minimal Rotary Dial Widget (30x30px outside encoder ring, open center) */
+.rotary-dial-widget {
+  display: flex;
+  order: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: none;
+  cursor: ns-resize;
+  position: relative;
+}
+
+.rotary-dial-svg {
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+  transition: transform 0.12s ease;
+}
+
+@media (hover: hover) {
+  .rotary-dial-widget:hover .rotary-dial-svg {
+    transform: scale(1.07);
+  }
+}
+
+.rotary-dial-widget.is-dragging .rotary-dial-svg {
+  transform: scale(1.1);
+}
+
+.rotary-dial-track-arc {
+  fill: none;
+  stroke: var(--md-sys-color-surface-container-highest);
+  stroke-width: 6.4;
+  stroke-linecap: round;
+}
+
+.rotary-dial-value-arc {
+  fill: none;
+  stroke: var(--md-sys-color-primary);
+  stroke-width: 6.4;
+  stroke-linecap: round;
+}
+
+/* Horizontal Control Row Layout: 30x30px encoder on left, stacked label + value on right */
+.control-row.has-rotary-dial {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: var(--md-sys-color-surface-container-low);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.voice-card .control-row.has-rotary-dial {
+  background: var(--md-sys-color-surface-container);
+  padding: 6px 6px;
+  gap: 6px;
+}
+
+.control-row.has-rotary-dial .control-label-line {
+  order: 2;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 0;
+  gap: 1px;
+}
+
+.control-row.has-rotary-dial .control-label-line label {
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--md-sys-color-on-surface-variant);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.control-row.has-rotary-dial .control-value {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--md-sys-color-primary);
+}
+
+@media (max-width: 640px) {
+  .control-row.has-rotary-dial {
+    padding: 5px 4px;
+    gap: 4px;
+  }
+  .rotary-dial-widget,
+  .rotary-dial-svg {
+    width: 22px;
+    height: 22px;
+  }
+  .control-row.has-rotary-dial .control-label-line label {
+    font-size: 10px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .control-row.has-rotary-dial .control-value {
+    font-size: 11px;
+  }
+}
+
+/* Top-Bar Settings Cog & Floating Crossfade Popover (GM3 surface-container-lowest + subtle popover shadow) */
+.settings-popover-anchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+#btn-settings-toggle.is-active {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.settings-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 420px;
+  max-width: calc(100vw - 24px);
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  z-index: 220;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s ease;
+}
+
+html[data-theme="dark"] .settings-popover {
+  background: var(--md-sys-color-surface-container-high);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.48);
+}
+
+.settings-popover.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.settings-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.settings-popover-title {
+  font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+}
+
+.settings-popover-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-reset-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.settings-close-btn {
+  width: 30px;
+  height: 30px;
+}
+
+.settings-crossfade-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container-low);
+}
+
+.crossfade-endpoints-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.crossfade-endpoint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.crossfade-endpoint-right {
+  margin-left: auto;
+}
+
+.crossfade-status-pill {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.crossfade-slider-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.crossfade-slider-wrap input[type="range"] {
+  width: 100%;
+  margin: 0;
+  z-index: 2;
+}
+
+.crossfade-center-tick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  background: var(--md-sys-color-on-surface-variant);
+  opacity: 0.45;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Inset card divider inside Settings Popover */
+.settings-divider {
+  height: 1px;
+  margin: 2px 8px;
+  background: var(--md-sys-color-surface-container-highest);
+}
+
+/* Auto-cycle tracks (Circle of Fifths) section in Settings Popover */
+.settings-autocycle-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-autocycle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.settings-autocycle-title-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* GM3 Switch Component (.m3-switch) */
+.m3-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.m3-switch input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+
+.m3-switch-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 9999px;
+  background: var(--md-sys-color-surface-container-highest);
+  transition: background-color 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.m3-switch-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--md-sys-color-on-surface-variant);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.18s ease;
+}
+
+.m3-switch input[type="checkbox"]:checked + .m3-switch-track {
+  background: var(--md-sys-color-primary);
+}
+
+.m3-switch input[type="checkbox"]:checked + .m3-switch-track .m3-switch-thumb {
+  transform: translateX(20px);
+  background: var(--md-sys-color-on-primary);
+}
+
+.m3-switch input[type="checkbox"]:focus-visible + .m3-switch-track {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.settings-autocycle-group {
+  gap: 8px;
+}
+
+.autocycle-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.autocycle-time-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.autocycle-progress-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--md-sys-color-surface-container-highest);
+  overflow: hidden;
+}
+
+.autocycle-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 9999px;
+  background: var(--md-sys-color-primary);
+  transition: width 0.25s linear;
+}
+
+.autocycle-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.autocycle-meta-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.autocycle-elapsed-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  line-height: 1.3;
+  color: var(--md-sys-color-on-surface);
+}
+
+.autocycle-next-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  line-height: 1.3;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.autocycle-now-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 11.5px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.autocycle-now-btn .material-symbols-outlined {
+  font-size: 15px;
+}
+
+@media (max-width: 640px) {
+  .settings-popover {
+    right: -8px;
+    width: min(320px, calc(100vw - 24px));
+  }
+}
+
+/* Top-Bar Overall Volume Rotary Dial Pill */
+#top-bar-volume-row.control-row.has-rotary-dial.top-bar-volume-dial {
+  visibility: visible !important;
+  pointer-events: auto !important;
+  flex: 0 0 auto;
+  width: auto;
+  padding: 3px 9px 3px 6px;
+  gap: 6px;
+  border-radius: 10px;
+  background: var(--md-sys-color-surface-container);
+}
+
+#top-bar-volume-row.top-bar-volume-dial .rotary-dial-widget,
+#top-bar-volume-row.top-bar-volume-dial .rotary-dial-svg {
+  width: 24px;
+  height: 24px;
+}
+
+#top-bar-volume-row.top-bar-volume-dial .control-label-line {
+  flex: 0 0 auto;
+  gap: 0;
+}
+
+#top-bar-volume-row.top-bar-volume-dial .control-label-line label {
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+#top-bar-volume-row.top-bar-volume-dial .control-value {
+  font-size: 11px;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .top-app-bar .brand-cluster {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 6px;
+    overflow: hidden;
+  }
+  .top-app-bar .brand-cluster > div:last-child {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .top-app-bar .brand-mark {
+    width: 26px;
+    height: 26px;
+  }
+  .top-app-bar .brand-title {
+    font-size: 13px;
+  }
+  .top-app-bar .top-bar-actions {
+    gap: 3px;
+  }
+  .top-app-bar .top-bar-actions .icon-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .top-app-bar .top-bar-actions #btn-play-toggle {
+    min-width: 0;
+    height: 28px;
+    padding: 0 8px;
+    gap: 3px;
+    font-size: 11px;
+  }
+  #top-bar-volume-row.control-row.has-rotary-dial.top-bar-volume-dial {
+    padding: 2px 6px 2px 4px;
+    gap: 4px;
+  }
+  #top-bar-volume-row.top-bar-volume-dial .rotary-dial-widget,
+  #top-bar-volume-row.top-bar-volume-dial .rotary-dial-svg {
+    width: 20px;
+    height: 20px;
+  }
+  #top-bar-volume-row.top-bar-volume-dial .control-label-line label {
+    font-size: 9px;
+  }
+  #top-bar-volume-row.top-bar-volume-dial .control-value {
+    font-size: 10px;
+  }
+}
+
+/* Per-Voice Live Waveform Display (underneath the rotary dials) */
+.voice-waveform-box {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  margin-top: auto;
+  border-radius: 10px;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.voice-waveform-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .voice-waveform-box {
+    height: 28px;
+  }
+}
+
+/* Master Filter Power Button & Bypassed State */
+.master-filter-power-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.12s ease;
+}
+.master-filter-power-btn .material-symbols-outlined {
+  font-size: 17px;
+}
+.master-filter-power-btn:hover {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.master-filter-power-btn.active,
+.master-filter-power-btn[aria-pressed="true"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.master-filter-power-btn.active:hover,
+.master-filter-power-btn[aria-pressed="true"]:hover {
+  filter: brightness(0.95);
+}
+#master-filter-card.is-filter-bypassed [data-filter-type],
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-cutoff),
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-resonance),
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-drift) {
+  opacity: 0.52;
+  transition: opacity 0.18s ease;
+}
+

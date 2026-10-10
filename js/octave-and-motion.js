@@ -9,14 +9,13 @@
 const EnsoMotion = {
   setBadgeText(badgeOrId, newText, opts = {}) {
     if (typeof document === 'undefined') return;
-    const el = typeof badgeOrId === 'string' ?
-        document.getElementById(badgeOrId) :
-        badgeOrId;
+    const el = typeof badgeOrId === 'string' ? document.getElementById(badgeOrId) : badgeOrId;
     if (!el) return;
 
     const nextText = String(newText ?? '');
     if (opts.title !== undefined) el.title = opts.title;
     if (el.textContent === nextText && !opts.force) return;
+    if (document.hidden) { el.textContent = nextText; return; }
 
     const prevRect = el.getBoundingClientRect();
     const prevW = prevRect.width;

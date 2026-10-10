@@ -222,6 +222,11 @@ function createAurora(
   let lastNow = t0;
 
   function frame(now) {
+    if (typeof document !== 'undefined' && document.hidden) {
+      lastNow = now;
+      raf = requestAnimationFrame(frame);
+      return;
+    }
     const dt = Math.min(0.1, Math.max(0.001, (now - lastNow) / 1000));
     lastNow = now;
     const elapsedSec = (now - t0) / 1000;

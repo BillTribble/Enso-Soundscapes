@@ -8,6 +8,8 @@ window.EnsoPwaMedia = (function() {
   let bgWorkerActive = false;
   let bgKeepAliveAudio = null;
   let bgWorker = null;
+  let bgWorkletAttempted = false;
+  let bgWorkletReady = false;
   let lastBgTickTime = performance.now();
   let lastPositionUpdateTime = 0;
   const bgKeepAliveDurationSec = 30;
@@ -40,14 +42,23 @@ window.EnsoPwaMedia = (function() {
     const due = [];
     bgTimers.forEach((item, id) => {
       if (now >= item.dueAt) {
-        due.push({ id, fn: item.fn, nativeId: item.nativeId });
+        due.push({ id, dueAt: item.dueAt, fn: item.fn, nativeId: item.nativeId });
       }
     });
-    for (const d of due) {
+    if (!due.length) return;
+    due.sort((a, b) => a.dueAt - b.dueAt);
+    const ae = window.enoApp?.audioEngine;
+    const stagger = due.length > 1 && ae?.ctx && ae.isRunning;
+    for (let i = 0; i < due.length; i++) {
+      const d = due[i];
       clearTimeout(d.nativeId);
       bgTimers.delete(d.id);
+      if (stagger) {
+        ae._nextNoteScheduleTime = ae.ctx.currentTime + (i * 0.065);
+      }
       try { d.fn(); } catch (e) {}
     }
+    if (stagger) ae._nextNoteScheduleTime = 0;
   }
 
   function generateSilentWavBlobUrl() {
@@ -82,11 +93,11 @@ window.EnsoPwaMedia = (function() {
     writeString(36, 'data');
     view.setUint32(40, dataSize, true);
 
-    // Continuous sub-audible 18 Hz warm pilot wave + dither to defeat Android silence detector
+    // Pure sub-audible 1 Hz sine at 96 amplitude over 30s with NO high-frequency alternating dither
     let offset = 44;
-    const twoPi18 = 2 * Math.PI * 18;
+    const twoPi1 = 2 * Math.PI * 1;
     for (let i = 0; i < numSamples; i++) {
-      const sample = Math.round(Math.sin((twoPi18 * i) / sampleRate) * 28) + ((i % 2 === 0) ? 2 : -2);
+      const sample = Math.round(Math.sin((twoPi1 * i) / sampleRate) * 96);
       view.setInt16(offset, sample, true);     // Left
       view.setInt16(offset + 2, sample, true); // Right
       offset += 4;
@@ -99,7 +110,7 @@ window.EnsoPwaMedia = (function() {
   function initServiceWorker() {
     if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
       navigator.serviceWorker
-          .register('sw.js?v=20261009n', {updateViaCache: 'none'})
+          .register('sw.js?v=20261010r', {updateViaCache: 'none'})
           .then((reg) => {
             if (reg && typeof reg.update === 'function')
               reg.update().catch(() => {});
@@ -109,7 +120,7 @@ window.EnsoPwaMedia = (function() {
     if ('caches' in window) {
       caches.keys()
           .then((keys) => keys.forEach((k) => {
-            if (k !== 'enso-soundscapes-v20') caches.delete(k);
+            if (k !== 'enso-soundscapes-v21') caches.delete(k);
           }))
           .catch(() => {});
     }
@@ -126,7 +137,7 @@ window.EnsoPwaMedia = (function() {
     audio.setAttribute('loop', '');
     audio.setAttribute('preload', 'auto');
     audio.style.display = 'none';
-    audio.volume = 0.08;
+    audio.volume = 0.25;
     audio.muted = false;
     audio.loop = true;
     audio.src = generateSilentWavBlobUrl();
@@ -206,7 +217,7 @@ window.EnsoPwaMedia = (function() {
       audio.setAttribute('playsinline', '');
       audio.setAttribute('preload', 'auto');
       audio.style.display = 'none';
-      audio.volume = 0.002;
+      audio.volume = (typeof document !== 'undefined' && document.hidden) ? 1.0 : 0.02;
       audio.muted = false;
       document.body.appendChild(audio);
       bgStreamAudio = audio;
@@ -230,9 +241,9 @@ window.EnsoPwaMedia = (function() {
       }
       if (!engine.nodes.keepAliveOsc) {
         engine.nodes.keepAliveOsc = engine.ctx.createOscillator();
-        engine.nodes.keepAliveOsc.frequency.value = 18;
+        engine.nodes.keepAliveOsc.frequency.value = 1.0;
         engine.nodes.keepAliveGain = engine.ctx.createGain();
-        engine.nodes.keepAliveGain.gain.value = 0.0001;
+        engine.nodes.keepAliveGain.gain.value = 0.0015;
         engine.nodes.keepAliveOsc.connect(engine.nodes.keepAliveGain);
         engine.nodes.keepAliveGain.connect(engine.ctx.destination);
         if (engine.nodes.streamDest) {
@@ -240,20 +251,32 @@ window.EnsoPwaMedia = (function() {
         }
         engine.nodes.keepAliveOsc.start();
       }
-      if (!engine.nodes.bgClockNode && typeof engine.ctx.createScriptProcessor === 'function') {
-        engine.nodes.bgClockNode = engine.ctx.createScriptProcessor(4096, 1, 1);
-        if (engine.nodes.keepAliveGain) {
-          engine.nodes.keepAliveGain.connect(engine.nodes.bgClockNode);
+      if (engine.ctx.audioWorklet && typeof engine.ctx.audioWorklet.addModule === 'function' && !engine.nodes.bgClockWorklet) {
+        bgWorkletAttempted = true;
+        try {
+          const code = "class EnsoBgClockProcessor extends AudioWorkletProcessor{constructor(){super();this.f=0;}process(){this.f+=128;if(this.f>=3072){this.f=0;this.port.postMessage('tick');}return true;}}registerProcessor('enso-bg-clock-processor',EnsoBgClockProcessor);";
+          const dataUrl = 'data:text/javascript;charset=utf-8,' + encodeURIComponent(code);
+          const mountNode = () => {
+            try {
+              const node = new AudioWorkletNode(engine.ctx, 'enso-bg-clock-processor');
+              node.port.onmessage = () => { if (document.hidden) handleBackgroundTick(); };
+              if (engine.nodes.keepAliveGain) engine.nodes.keepAliveGain.connect(node);
+              node.connect(engine.ctx.destination);
+              engine.nodes.bgClockWorklet = node;
+              bgWorkletReady = true;
+            } catch (e) {
+              bgWorkletReady = false;
+            }
+          };
+          engine.ctx.audioWorklet.addModule(dataUrl).then(mountNode).catch(() => {
+            const blobUrl = URL.createObjectURL(new Blob([code], { type: 'application/javascript' }));
+            engine.ctx.audioWorklet.addModule(blobUrl).then(mountNode).catch(() => { bgWorkletReady = false; });
+          });
+        } catch (e) {
+          bgWorkletReady = false;
         }
-        engine.nodes.bgClockSink = engine.ctx.createGain();
-        engine.nodes.bgClockSink.gain.value = 0;
-        engine.nodes.bgClockNode.connect(engine.nodes.bgClockSink);
-        engine.nodes.bgClockSink.connect(engine.ctx.destination);
-        engine.nodes.bgClockNode.onaudioprocess = function() {
-          if (document.hidden) {
-            handleBackgroundTick();
-          }
-        };
+      } else {
+        bgWorkletAttempted = true;
       }
       if (!engine._hasStateChangeListener) {
         engine._hasStateChangeListener = true;
@@ -268,6 +291,8 @@ window.EnsoPwaMedia = (function() {
 
   function hookAudioEngine() {
     if (typeof window.AudioEngine === 'undefined') return;
+    if (window.AudioEngine.prototype._pwaMediaHooked) return;
+    window.AudioEngine.prototype._pwaMediaHooked = true;
 
     const originalInit = window.AudioEngine.prototype.init;
     window.AudioEngine.prototype.init = function() {
@@ -414,6 +439,12 @@ window.EnsoPwaMedia = (function() {
       },
       nexttrack: function() {
         cyclePreset(1);
+      },
+      seekto: function(details) {
+        if (details && typeof details.seekTime === 'number' && window.enoApp?.autoCycler) {
+          window.enoApp.autoCycler.trackElapsedSec = Math.max(0, details.seekTime);
+          updateMediaSessionPosition();
+        }
       }
     };
 
@@ -431,12 +462,21 @@ window.EnsoPwaMedia = (function() {
   function initListeners() {
     document.addEventListener('visibilitychange', () => {
       lastBgTickTime = performance.now();
+      if (bgStreamAudio) {
+        bgStreamAudio.volume = document.hidden ? 1.0 : 0.02;
+      }
       if (!document.hidden && window.enoApp && window.enoApp.audioEngine && window.enoApp.audioEngine.isRunning) {
         if (window.enoApp.audioEngine.ctx && window.enoApp.audioEngine.ctx.state === 'suspended') {
           window.enoApp.audioEngine.ctx.resume().catch(() => {});
         }
         if (bgKeepAliveAudio && bgKeepAliveAudio.paused) {
           bgKeepAliveAudio.play().catch(() => {});
+        }
+        if (bgStreamAudio && bgStreamAudio.paused) {
+          bgStreamAudio.play().catch(() => {});
+        }
+        if ('wakeLock' in navigator) {
+          navigator.wakeLock.request('screen').catch(() => {});
         }
       }
     });
@@ -466,7 +506,10 @@ window.EnsoPwaMedia = (function() {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+    document.addEventListener('DOMContentLoaded', hookAudioEngine);
   }
+  window.addEventListener('load', hookAudioEngine);
+  setTimeout(hookAudioEngine, 0);
 
   return {
     get mediaSessionConfigured() { return mediaSessionConfigured; },
@@ -474,6 +517,21 @@ window.EnsoPwaMedia = (function() {
     get keepAliveDurationSec() { return bgKeepAliveDurationSec; },
     isKeepAliveReady: function() {
       return Boolean(bgKeepAliveAudio && (!bgKeepAliveAudio.error || bgKeepAliveAudio.src));
+    },
+    getSelfTestDiagnostics: function() {
+      const ae = window.enoApp?.audioEngine;
+      return {
+        audioLatencyHint: ae?.latencyHint || 'playback',
+        mediaSessionConfigured: Boolean(mediaSessionConfigured),
+        bgWorkerActive: Boolean(bgWorkerActive),
+        bgKeepAliveReady: Boolean(bgKeepAliveAudio && (!bgKeepAliveAudio.error || bgKeepAliveAudio.src)),
+        bgWorkletAttempted: Boolean(bgWorkletAttempted),
+        bgWorkletReady: Boolean(bgWorkletReady),
+        carrierOscHz: ae?.nodes?.keepAliveOsc ? ae.nodes.keepAliveOsc.frequency.value : 1.0,
+        noScriptProcessorNode: !ae?.nodes?.bgClockNode,
+        keepAliveDurationSec: bgKeepAliveDurationSec,
+        streamAudioAttached: Boolean(bgStreamAudio && bgStreamAudio.srcObject)
+      };
     },
     setBgTimeout,
     clearBgTimeout,

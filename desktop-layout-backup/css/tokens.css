@@ -1,0 +1,193 @@
+/* Google Material 3 (GM3) Canonical Color Tokens — Light + Dark.
+   Link this from entry HTML <head>. Never hardcode hex; use var(--md-sys-color-*). */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url('../fonts/InterVariable.woff2') format('woff2-variations'), url('../fonts/InterVariable.woff2') format('woff2'), local('Inter');
+}
+
+@font-face {
+  font-family: 'Google Sans Code';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+  src: url('../fonts/GoogleSansCode.ttf') format('truetype'), local('Google Sans Code'), local('Google Sans Mono');
+}
+
+@font-face {
+  font-family: 'Google Sans Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: block;
+  src: url('../fonts/GoogleSansCode.ttf') format('truetype'), local('Google Sans Mono'), local('Google Sans Code');
+}
+
+:root {
+  --md-sys-color-primary: #0E57D0;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #D3E3FD;
+  --md-sys-color-on-primary-container: #0842A1;
+  --md-sys-color-secondary: #01639C;
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #C1E7FF;
+  --md-sys-color-on-secondary-container: #004A76;
+  --md-sys-color-tertiary: #146C2E;
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #C4EED1;
+  --md-sys-color-on-tertiary-container: #125223;
+  --md-sys-color-error: #B3261E;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #F9DEDC;
+  --md-sys-color-on-error-container: #8C1D18;
+  --md-sys-color-background: #FFFFFF;
+  --md-sys-color-on-background: #1F1F1F;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-on-surface: #1F1F1F;
+  --md-sys-color-surface-variant: #E0E3E1;
+  --md-sys-color-on-surface-variant: #444746;
+  --md-sys-color-outline: #747775;
+  --md-sys-color-outline-variant: #C4C7C5;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #303030;
+  --md-sys-color-inverse-on-surface: #F2F2F2;
+  --md-sys-color-inverse-primary: #A9C7FB;
+  --md-sys-color-surface-tint: #6991D6;
+  --md-sys-color-surface-dim: #D4DBE4;
+  --md-sys-color-surface-bright: #FFFFFF;
+
+  /* Tonal Surface Container Hierarchy */
+  --md-sys-color-surface-container-lowest: #FFFFFF;
+  --md-sys-color-surface-container-low: #F9FAFD;
+  --md-sys-color-surface-container: #F0F4F9;
+  --md-sys-color-surface-container-high: #E8EEF6;
+  --md-sys-color-surface-container-highest: #DDE3E9;
+
+  /* Paired Tonal Status & Category Badge Tokens */
+  --md-sys-color-blue-tonal: #DBEAFE;
+  --md-sys-color-on-blue-tonal: #1E40AF;
+  --md-sys-color-green-tonal: #DCFCE7;
+  --md-sys-color-on-green-tonal: #166534;
+  --md-sys-color-yellow-tonal: #FEF3C7;
+  --md-sys-color-on-yellow-tonal: #92400E;
+  --md-sys-color-orange-tonal: #FFEDD5;
+  --md-sys-color-on-orange-tonal: #9A3412;
+  --md-sys-color-red-tonal: #FFE4E6;
+  --md-sys-color-on-red-tonal: #9F1239;
+  --md-sys-color-purple-tonal: #F3E8FF;
+  --md-sys-color-on-purple-tonal: #6B21A8;
+  --md-sys-color-teal-tonal: #CCFBF1;
+  --md-sys-color-on-teal-tonal: #115E59;
+
+  /* Typography Family Tokens */
+  --md-ref-typeface-brand: 'Google Sans Flex', 'Google Sans', sans-serif;
+  --md-ref-typeface-plain: 'Inter', sans-serif;
+  --md-ref-typeface-mono: 'Google Sans Code', 'Google Sans Mono', 'Roboto Mono', monospace;
+  --font-family-display: var(--md-ref-typeface-brand);
+  --font-family-body: var(--md-ref-typeface-plain);
+  --font-family-mono: var(--md-ref-typeface-mono);
+
+  /* 1:1 Shorthand Aliases */
+  --color-primary: var(--md-sys-color-primary);
+  --color-on-primary: var(--md-sys-color-on-primary);
+  --color-primary-container: var(--md-sys-color-primary-container);
+  --color-on-primary-container: var(--md-sys-color-on-primary-container);
+  --color-secondary: var(--md-sys-color-secondary);
+  --color-on-secondary: var(--md-sys-color-on-secondary);
+  --color-secondary-container: var(--md-sys-color-secondary-container);
+  --color-on-secondary-container: var(--md-sys-color-on-secondary-container);
+  --color-tertiary: var(--md-sys-color-tertiary);
+  --color-on-tertiary: var(--md-sys-color-on-tertiary);
+  --color-tertiary-container: var(--md-sys-color-tertiary-container);
+  --color-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+  --color-error: var(--md-sys-color-error);
+  --color-on-error: var(--md-sys-color-on-error);
+  --color-error-container: var(--md-sys-color-error-container);
+  --color-on-error-container: var(--md-sys-color-on-error-container);
+  --color-background: var(--md-sys-color-background);
+  --color-on-background: var(--md-sys-color-on-background);
+  --color-surface: var(--md-sys-color-surface);
+  --color-on-surface: var(--md-sys-color-on-surface);
+  --color-surface-variant: var(--md-sys-color-surface-variant);
+  --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
+  --color-outline: var(--md-sys-color-outline);
+  --color-outline-variant: var(--md-sys-color-outline-variant);
+  --color-surface-container-lowest: var(--md-sys-color-surface-container-lowest);
+  --color-surface-container-low: var(--md-sys-color-surface-container-low);
+  --color-surface-container: var(--md-sys-color-surface-container);
+  --color-surface-container-high: var(--md-sys-color-surface-container-high);
+  --color-surface-container-highest: var(--md-sys-color-surface-container-highest);
+  --color-blue-tonal: var(--md-sys-color-blue-tonal);
+  --color-on-blue-tonal: var(--md-sys-color-on-blue-tonal);
+  --color-green-tonal: var(--md-sys-color-green-tonal);
+  --color-on-green-tonal: var(--md-sys-color-on-green-tonal);
+  --color-yellow-tonal: var(--md-sys-color-yellow-tonal);
+  --color-on-yellow-tonal: var(--md-sys-color-on-yellow-tonal);
+  --color-orange-tonal: var(--md-sys-color-orange-tonal);
+  --color-on-orange-tonal: var(--md-sys-color-on-orange-tonal);
+  --color-red-tonal: var(--md-sys-color-red-tonal);
+  --color-on-red-tonal: var(--md-sys-color-on-red-tonal);
+  --color-purple-tonal: var(--md-sys-color-purple-tonal);
+  --color-on-purple-tonal: var(--md-sys-color-on-purple-tonal);
+  --color-teal-tonal: var(--md-sys-color-teal-tonal);
+  --color-on-teal-tonal: var(--md-sys-color-on-teal-tonal);
+}
+
+[data-theme='dark'] {
+  --md-sys-color-primary: #A7C7FA;
+  --md-sys-color-on-primary: #072E70;
+  --md-sys-color-primary-container: #0842A1;
+  --md-sys-color-on-primary-container: #D3E3FD;
+  --md-sys-color-secondary: #80CFFF;
+  --md-sys-color-on-secondary: #003355;
+  --md-sys-color-secondary-container: #004A77;
+  --md-sys-color-on-secondary-container: #C1E7FF;
+  --md-sys-color-tertiary: #6DD58C;
+  --md-sys-color-on-tertiary: #0A3818;
+  --md-sys-color-tertiary-container: #125223;
+  --md-sys-color-on-tertiary-container: #C4EED1;
+  --md-sys-color-error: #F1B8B5;
+  --md-sys-color-on-error: #5F1410;
+  --md-sys-color-error-container: #8C1D18;
+  --md-sys-color-on-error-container: #F9DEDC;
+  --md-sys-color-background: #131314;
+  --md-sys-color-on-background: #E3E3E3;
+  --md-sys-color-surface: #131314;
+  --md-sys-color-on-surface: #E3E3E3;
+  --md-sys-color-surface-variant: #444746;
+  --md-sys-color-on-surface-variant: #C4C7C5;
+  --md-sys-color-outline: #8E918F;
+  --md-sys-color-outline-variant: #444746;
+  --md-sys-color-shadow: #000000;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-inverse-surface: #E3E3E3;
+  --md-sys-color-inverse-on-surface: #131314;
+  --md-sys-color-inverse-primary: #0E57D0;
+  --md-sys-color-surface-tint: #A7C7FA;
+  --md-sys-color-surface-dim: #131314;
+  --md-sys-color-surface-bright: #39393A;
+
+  --md-sys-color-surface-container-lowest: #0D0E0E;
+  --md-sys-color-surface-container-low: #1C1C1D;
+  --md-sys-color-surface-container: #202021;
+  --md-sys-color-surface-container-high: #2A2B2C;
+  --md-sys-color-surface-container-highest: #353637;
+
+  --md-sys-color-blue-tonal: rgba(30, 58, 138, 0.45);
+  --md-sys-color-on-blue-tonal: #93C5FD;
+  --md-sys-color-green-tonal: rgba(20, 83, 45, 0.45);
+  --md-sys-color-on-green-tonal: #86EFAC;
+  --md-sys-color-yellow-tonal: rgba(120, 53, 15, 0.45);
+  --md-sys-color-on-yellow-tonal: #FCD34D;
+  --md-sys-color-orange-tonal: rgba(124, 45, 18, 0.45);
+  --md-sys-color-on-orange-tonal: #FDBA74;
+  --md-sys-color-red-tonal: rgba(136, 19, 55, 0.45);
+  --md-sys-color-on-red-tonal: #FDA4AF;
+  --md-sys-color-purple-tonal: rgba(88, 28, 135, 0.45);
+  --md-sys-color-on-purple-tonal: #D8B4FE;
+  --md-sys-color-teal-tonal: rgba(19, 78, 74, 0.45);
+  --md-sys-color-on-teal-tonal: #5EEAD4;
+}

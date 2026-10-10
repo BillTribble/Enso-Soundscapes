@@ -17,7 +17,7 @@ import urllib.request
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 ARTIFACT_DIR = os.environ.get(
     'ARTIFACT_DIR',
-    '/usr/local/google/home/tribble/.gemini/jetski/brain/9cd6620b-dc0d-43d0-8753-ccb0d4dcc75c',
+    '/usr/local/google/home/tribble/.gemini/jetski/brain/ed99bfaa-cf62-4c45-bd95-a3ce78cfcab8',
 )
 SERVER_URL = 'http://bat.c.googlers.com:8094'
 LOCAL_URL = 'http://127.0.0.1:8094'
@@ -106,7 +106,13 @@ def check_http_server():
       line_count = sum(1 for _ in f)
       assert line_count < 800, f'File {sf} exceeds 800-line ceiling ({line_count} lines)'
 
-  print(f'1. Live HTTP server, line ceilings (<800), & {len(flac_files)} FLAC samples verified (200 OK).')
+  # Verify desktop-layout-backup preserves the pre-change desktop layout
+  backup_dir = os.path.join(APP_DIR, 'desktop-layout-backup')
+  for rel_path in ('index.html', 'css/styles.css', 'css/mixer-dials.css', 'css/phrases.css', 'css/patch-storage.css', 'css/slider-styles.css', 'js/app.js'):
+    bp = os.path.join(backup_dir, rel_path)
+    assert os.path.exists(bp) and os.path.getsize(bp) > 100, f'Missing desktop backup file: {bp}'
+
+  print(f'1. Live HTTP server, line ceilings (<800), desktop-layout-backup, & {len(flac_files)} FLAC samples verified (200 OK).')
 
 
 def _run_chrome_dom_dump(window_size):
@@ -161,17 +167,26 @@ def run_browser_selftest():
       payload.get('voiceResonanceSlidersCount') == 6
   ), f'Expected 6 per-voice resonance controls: {payload}'
   assert (
-      payload.get('voiceReverbSlidersCount') == 6
-  ), f'Expected 6 per-voice reverb controls: {payload}'
+      payload.get('voiceReverbSlidersCount') == 0
+  ), f'Expected 0 per-voice reverb controls: {payload}'
   assert (
-      payload.get('voiceDelaySlidersCount') == 6
-  ), f'Expected 6 per-voice delay controls: {payload}'
+      payload.get('voiceDelaySlidersCount') == 0
+  ), f'Expected 0 per-voice delay controls: {payload}'
+  assert (
+      payload.get('masterReverbAndDelayShared') is True
+  ), f'Expected shared master reverb and delay: {payload}'
+  assert (
+      payload.get('audioLatencyHint') == 'playback'
+  ), f'Expected playback latency hint: {payload}'
+  assert (
+      payload.get('noScriptProcessorNode') is True
+  ), f'Expected no ScriptProcessorNode: {payload}'
+  assert (
+      payload.get('carrierOscHz') == 1.0
+  ), f'Expected 1.0 Hz carrier oscillator: {payload}'
   assert (
       payload.get('voiceFiltersConnected') == 6
   ), f'Expected 6 per-voice resonant filters connected: {payload}'
-  assert (
-      payload.get('voiceFxSendsConnected') == 6
-  ), f'Expected 6 per-voice FX sends connected: {payload}'
   assert (
       payload.get('pianoReverbCleanVerified') is True
   ), f'Expected clean piano reverb/delay verified: {payload}'
@@ -198,7 +213,12 @@ def run_browser_selftest():
   ), f'Expected Voice balance to be global across all tracks: {payload}'
   assert payload.get('rotaryDialsCount', 0) >= 34, f'Expected >=34 rotary dial widgets: {payload}'
   assert payload.get('minimalOutsideEncoderOnly') is True, f'Expected minimal outside-encoder-only dials: {payload}'
-  assert payload.get('dialSmallAndLabelRight') is True, f'Expected small dials with label to right: {payload}'
+  assert payload.get('dialSmallAndLabelRight') is True, f'Expected >=40px dials with label to right: {payload}'
+  assert payload.get('dialWidthPx', 0) >= 40, f'Expected dialWidthPx >= 40: {payload}'
+  assert payload.get('allDialsMin40Px') is True, f'Expected allDialsMin40Px=True: {payload}'
+  assert payload.get('toggleSwitchTapTargetMin40') is True, f'Expected toggleSwitchTapTargetMin40=True: {payload}'
+  assert payload.get('toggleSwitchVisualHeightPreserved') is True, f'Expected toggleSwitchVisualHeightPreserved=True (24px): {payload}'
+  assert payload.get('minTouchTargetsVerified') is True, f'Expected all interactive elements >= 40x40px on desktop, found: {payload.get("smallTouchTargets")}'
   assert abs(payload.get('pianoDefaultGain', 0) - 2.00) < 0.02, f'Expected 200% (2.00) default piano gain: {payload}'
   assert abs(payload.get('pianoSliderMax', 0) - 5.00) < 0.02, f'Expected 500% (5.00) max piano slider: {payload}'
   assert payload.get('allPresetsPiano200') is True, f'Expected all presets to default piano to 200%: {payload}'
@@ -335,6 +355,11 @@ def run_browser_selftest():
   assert payload_m.get('playPauseLabelsShortVerified') is True, f'Expected playPauseLabelsShortVerified=True at 375px mobile: {payload_m}'
   assert payload_m.get('masterFilterDefaultOff') is True, f'Expected masterFilterDefaultOff=True at 375px mobile: {payload_m}'
   assert payload_m.get('masterFilterPowerBtnVerified') is True, f'Expected masterFilterPowerBtnVerified=True at 375px mobile: {payload_m}'
+  assert payload_m.get('dialWidthPx', 0) >= 40, f'Expected mobile dialWidthPx >= 40: {payload_m}'
+  assert payload_m.get('allDialsMin40Px') is True, f'Expected mobile allDialsMin40Px=True: {payload_m}'
+  assert payload_m.get('toggleSwitchTapTargetMin40') is True, f'Expected mobile toggleSwitchTapTargetMin40=True: {payload_m}'
+  assert payload_m.get('toggleSwitchVisualHeightPreserved') is True, f'Expected mobile toggleSwitchVisualHeightPreserved=True (24px): {payload_m}'
+  assert payload_m.get('minTouchTargetsVerified') is True, f'Expected all interactive elements >= 40x40px on mobile, found: {payload_m.get("smallTouchTargets")}'
   print(f'2. Browser self-test assertions passed (1440px desktop + 375px mobile): {json.dumps(payload)}')
 
 
@@ -392,8 +417,9 @@ def capture_screenshots():
       ('enso_voices_octave_mobile.png', 'bloom=1&scroll=voices', 375, 920),
       ('enso_mobile_top.png', 'bloom=1', 375, 812),
       ('enso_mobile_cards.png', 'bloom=1&scroll=cards', 375, 812),
+      ('enso_settings_mobile.png', 'bloom=1&settings=open', 375, 812),
   ]
-  with ThreadPoolExecutor(max_workers=2) as pool:
+  with ThreadPoolExecutor(max_workers=6) as pool:
     paths = list(pool.map(capture_one_screenshot, specs))
   print(f'3. Captured {len(paths)} live screenshots in {ARTIFACT_DIR}.')
 

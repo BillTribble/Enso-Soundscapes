@@ -191,6 +191,7 @@
     }
 
     render(now = performance.now()) {
+      if (typeof document !== 'undefined' && document.hidden) return;
       const rect = this.primaryCanvas?.getBoundingClientRect();
       if (rect && rect.width > 0 && rect.height > 0) this.renderPrimary(rect.width, rect.height, now);
       const envRect = this.envelopeCanvas?.getBoundingClientRect();
