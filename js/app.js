@@ -28,6 +28,7 @@
       this.globalVoiceBalance = -0.62;
       this.globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
       this.globalVoiceFilters = { pad: {cutoff: 5200, resonance: 1.2}, piano: {cutoff: 12000, resonance: 0.8}, bell: {cutoff: 9500, resonance: 1.4}, choir: {cutoff: 6400, resonance: 1.2}, tape: {cutoff: 4200, resonance: 1.6}, drone: {cutoff: 1800, resonance: 1.8} };
+      this.globalVoiceFx = { pad: {reverb: 0.70, delay: 0.35}, piano: {reverb: 0.35, delay: 0.12}, bell: {reverb: 0.75, delay: 0.40}, choir: {reverb: 0.80, delay: 0.25}, tape: {reverb: 0.55, delay: 0.65}, drone: {reverb: 0.60, delay: 0.15} };
       this.xyTarget = 'filter';
       this.logFilterText = '';
       this.researchFilterText = '';
@@ -199,17 +200,9 @@
       }
     }
 
-    renderVoicesGrid() {
-      window.EnsoVoiceCards?.renderVoicesGrid(this);
-    }
-
-    syncVoiceGainSlidersFromCrossfade() {
-      window.EnsoVoiceCards?.syncVoiceGainSlidersFromCrossfade(this);
-    }
-
-    syncVoiceFilterSliders() {
-      window.EnsoVoiceCards?.syncVoiceFilterSliders(this);
-    }
+    renderVoicesGrid() { window.EnsoVoiceCards?.renderVoicesGrid(this); }
+    syncVoiceGainSlidersFromCrossfade() { window.EnsoVoiceCards?.syncVoiceGainSlidersFromCrossfade(this); }
+    syncVoiceFilterSliders() { window.EnsoVoiceCards?.syncVoiceFilterSliders(this); }
 
     setGlobalVoiceGain(vId, val) {
       if (!this.globalVoiceGains) this.globalVoiceGains = {};
@@ -220,10 +213,16 @@
     setGlobalVoiceFilter(vId, cutoff, resonance) {
       if (!this.globalVoiceFilters) this.globalVoiceFilters = {};
       if (!this.globalVoiceFilters[vId]) this.globalVoiceFilters[vId] = {};
-      if (typeof cutoff === 'number')
-        this.globalVoiceFilters[vId].cutoff = cutoff;
-      if (typeof resonance === 'number')
-        this.globalVoiceFilters[vId].resonance = resonance;
+      if (typeof cutoff === 'number') this.globalVoiceFilters[vId].cutoff = cutoff;
+      if (typeof resonance === 'number') this.globalVoiceFilters[vId].resonance = resonance;
+      window.saveGlobalVoiceSettings?.();
+    }
+
+    setGlobalVoiceFx(vId, reverb, delay) {
+      if (!this.globalVoiceFx) this.globalVoiceFx = {};
+      if (!this.globalVoiceFx[vId]) this.globalVoiceFx[vId] = {};
+      if (typeof reverb === 'number') this.globalVoiceFx[vId].reverb = reverb;
+      if (typeof delay === 'number') this.globalVoiceFx[vId].delay = delay;
       window.saveGlobalVoiceSettings?.();
     }
 
@@ -339,6 +338,10 @@
       onClick('btn-startup-play', (e) => { e.stopPropagation(); this.toggleTransport(true); });
       onClick('startup-play-banner', () => this.toggleTransport(true));
       onClick('btn-bloom-chord', () => this.triggerAmbientCluster());
+      onClick('btn-master-filter-power', () => {
+        this.setMasterFilterEnabled(!this.audioEngine.params.masterFilterEnabled);
+        window.enoPatchStorage?.markDirty?.(true);
+      });
       onClick('btn-deep-listening', () => {
         const shell = document.getElementById('app-root');
         if (!shell) return;
@@ -349,6 +352,20 @@
       this.syncStartupBannerBounds();
       window.addEventListener('resize', () => this.syncStartupBannerBounds());
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.syncStartupBannerBounds());
+    }
+
+    setMasterFilterEnabled(enabled) {
+      const on = Boolean(enabled);
+      this.audioEngine.setMasterFilterEnabled(on);
+      const btn = document.getElementById('btn-master-filter-power'), card = document.getElementById('master-filter-card');
+      if (btn) {
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const label = on ? 'Master filter: On · Click to turn off' : 'Master filter: Off · Click to turn on';
+        btn.title = label; btn.setAttribute('aria-label', label);
+      }
+      if (card) card.classList.toggle('is-filter-bypassed', !on);
+      if (this.visualizer) this.visualizer.render();
     }
 
     showStartupBanner() {
@@ -540,73 +557,55 @@
     applyPreset(presetId, triggerPreview = false) {
       const preset = ((window.ENO_DATA && window.ENO_DATA.PRESETS) || {})[presetId];
       if (!preset) return;
-      if (this.audioEngine && typeof this.audioEngine.setTrackStyle === 'function') {
-        this.audioEngine.setTrackStyle(presetId);
-      }
+      if (this.audioEngine?.setTrackStyle) this.audioEngine.setTrackStyle(presetId);
       this.activePresetId = presetId;
       document.querySelectorAll('#preset-buttons-container [data-preset-id]').forEach((btn) => {
         const isSelected = btn.dataset.presetId === presetId;
-        btn.classList.toggle('active', isSelected);
-        btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        btn.classList.toggle('active', isSelected); btn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
       });
       if (preset.scale) {
         this.probEngine.setScale(preset.scale, true);
-        const selScale = document.getElementById('select-scale');
-        if (selScale) selScale.value = preset.scale;
+        const selScale = document.getElementById('select-scale'); if (selScale) selScale.value = preset.scale;
       }
       if (preset.circadian) {
         this.probEngine.setCircadianMode(preset.circadian);
-        const selCirc = document.getElementById('select-circadian');
-        if (selCirc) selCirc.value = preset.circadian;
+        const selCirc = document.getElementById('select-circadian'); if (selCirc) selCirc.value = preset.circadian;
       }
       const g = preset.global || {};
       const sliderMap = { attack: 'global-attack', release: 'global-release', sustain: 'global-sustain', masterVolume: 'master-volume', cutoff: 'filter-cutoff', resonance: 'filter-resonance', filterDrift: 'filter-drift', reverbMix: 'reverb-mix', reverbShimmer: 'reverb-shimmer', reverbDecay: 'reverb-decay', reverbDamping: 'reverb-damping', delayMix: 'delay-mix', delayTime: 'delay-time', delayFeedback: 'delay-feedback', delayWow: 'delay-wow' };
-      Object.entries(sliderMap).forEach(([k, id]) => {
-        if (g[k] !== undefined) this.setSliderAndDispatch(id, g[k]);
-      });
-      if (g.envelopeMode) {
-        this.audioEngine.setEnvelopeMode(g.envelopeMode);
-      }
+      Object.entries(sliderMap).forEach(([k, id]) => { if (g[k] !== undefined) this.setSliderAndDispatch(id, g[k]); });
+      if (g.envelopeMode) this.audioEngine.setEnvelopeMode(g.envelopeMode);
       if (g.filterType) {
         this.audioEngine.setFilterType(g.filterType);
         document.querySelectorAll('.m3-pill-tab[data-filter-type]').forEach((b) => b.classList.toggle('active', b.dataset.filterType === g.filterType));
       }
+      this.setMasterFilterEnabled(Boolean(g.masterFilterEnabled));
       const pr = preset.probability || {};
       if (Array.isArray(pr.voiceOrder)) this.probEngine.voiceOrder = [...pr.voiceOrder];
       if (preset.voices) {
         Object.entries(preset.voices).forEach(([vId, vCfg]) => {
-          ['prob', 'cycle', 'gain', 'release', 'octave', 'octaveShiftProb',
-           'noteOctaveShiftProb', 'chordOctaveShiftProb', 'muted']
-              .forEach((k) => {
-                if (vCfg[k] !== undefined)
-                  this.probEngine.setVoiceParam(vId, k, vCfg[k]);
-              });
+          ['prob', 'cycle', 'gain', 'release', 'octave', 'octaveShiftProb', 'noteOctaveShiftProb', 'chordOctaveShiftProb', 'muted']
+              .forEach((k) => { if (vCfg[k] !== undefined) this.probEngine.setVoiceParam(vId, k, vCfg[k]); });
           if (vCfg.octave === undefined) {
             const vObj = this.probEngine.voices.find((v) => v.id === vId);
-            if (vObj)
-              this.probEngine.setVoiceParam(
-                  vId, 'octave', vCfg.octaveOffset ?? vObj.defaultOctave ?? 0);
+            if (vObj) this.probEngine.setVoiceParam(vId, 'octave', vCfg.octaveOffset ?? vObj.defaultOctave ?? 0);
           }
-          if (vCfg.release !== undefined)
-            this.audioEngine.setVoiceRelease(vId, vCfg.release);
+          if (vCfg.release !== undefined) this.audioEngine.setVoiceRelease(vId, vCfg.release);
         });
       }
       if (this.globalVoiceGains) {
-        Object.entries(this.globalVoiceGains).forEach(([vId, val]) => {
-          this.probEngine.setVoiceParam(vId, 'gain', val);
-          this.audioEngine.setVoiceVolume(vId, val);
-        });
+        Object.entries(this.globalVoiceGains).forEach(([vId, val]) => { this.probEngine.setVoiceParam(vId, 'gain', val); this.audioEngine.setVoiceVolume(vId, val); });
       }
       if (this.globalVoiceFilters) {
         Object.entries(this.globalVoiceFilters).forEach(([vId, flt]) => {
-          if (typeof flt.cutoff === 'number') {
-            this.probEngine.setVoiceParam(vId, 'cutoff', flt.cutoff);
-            this.audioEngine.setVoiceFilterCutoff(vId, flt.cutoff);
-          }
-          if (typeof flt.resonance === 'number') {
-            this.probEngine.setVoiceParam(vId, 'resonance', flt.resonance);
-            this.audioEngine.setVoiceFilterResonance(vId, flt.resonance);
-          }
+          if (typeof flt.cutoff === 'number') { this.probEngine.setVoiceParam(vId, 'cutoff', flt.cutoff); this.audioEngine.setVoiceFilterCutoff(vId, flt.cutoff); }
+          if (typeof flt.resonance === 'number') { this.probEngine.setVoiceParam(vId, 'resonance', flt.resonance); this.audioEngine.setVoiceFilterResonance(vId, flt.resonance); }
+        });
+      }
+      if (this.globalVoiceFx) {
+        Object.entries(this.globalVoiceFx).forEach(([vId, fx]) => {
+          if (typeof fx.reverb === 'number') { this.probEngine.setVoiceParam(vId, 'reverb', fx.reverb); this.audioEngine.setVoiceReverbSend?.(vId, fx.reverb); }
+          if (typeof fx.delay === 'number') { this.probEngine.setVoiceParam(vId, 'delay', fx.delay); this.audioEngine.setVoiceDelaySend?.(vId, fx.delay); }
         });
       }
       if (pr.activeVoiceCount !== undefined) {

@@ -354,28 +354,37 @@
         ctx.globalAlpha = 1.0;
       }
 
-      const cutoff = audio?.params?.cutoff ?? 2000, resonance = audio?.params?.resonance ?? 1.4;
-      const minF = 40, maxF = 18000, steps = 80;
-      ctx.beginPath(); ctx.strokeStyle = this.colors.primary; ctx.lineWidth = 1.6;
+      const filterOn = Boolean(audio?.params?.masterFilterEnabled);
+      if (!filterOn) {
+        ctx.strokeStyle = this.colors.outline; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        const midY = topY + overlayH * 0.52;
+        ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke(); ctx.setLineDash([]);
+        ctx.font = '500 10px Inter, sans-serif'; ctx.fillStyle = this.colors.onSurfaceVar; ctx.textAlign = 'right';
+        ctx.fillText('Master filter: Off', w - 8, topY + 12);
+      } else {
+        const cutoff = audio?.params?.cutoff ?? 2000, resonance = audio?.params?.resonance ?? 1.4;
+        const minF = 40, maxF = 18000, steps = 80;
+        ctx.beginPath(); ctx.strokeStyle = this.colors.primary; ctx.lineWidth = 1.6;
 
-      let cutoffX = 0;
-      for (let i = 0; i <= steps; i++) {
-        const norm = i / steps, freq = minF * Math.pow(maxF / minF, norm), x = norm * w;
-        const ratio = freq / Math.max(10, cutoff);
-        const mag = 1 / Math.sqrt(Math.pow(1 - ratio * ratio, 2) + Math.pow(ratio / Math.max(0.1, resonance), 2));
-        const db = 20 * Math.log10(Math.max(0.001, mag));
-        const y = h - (Math.max(0, Math.min(1, (db + 36) / 48)) * (overlayH - 14) + 6);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        if (Math.abs(freq - cutoff) < (cutoff * 0.08) && !cutoffX) cutoffX = x;
-      }
-      ctx.stroke();
+        let cutoffX = 0;
+        for (let i = 0; i <= steps; i++) {
+          const norm = i / steps, freq = minF * Math.pow(maxF / minF, norm), x = norm * w;
+          const ratio = freq / Math.max(10, cutoff);
+          const mag = 1 / Math.sqrt(Math.pow(1 - ratio * ratio, 2) + Math.pow(ratio / Math.max(0.1, resonance), 2));
+          const db = 20 * Math.log10(Math.max(0.001, mag));
+          const y = h - (Math.max(0, Math.min(1, (db + 36) / 48)) * (overlayH - 14) + 6);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          if (Math.abs(freq - cutoff) < (cutoff * 0.08) && !cutoffX) cutoffX = x;
+        }
+        ctx.stroke();
 
-      if (cutoffX > 0) {
-        ctx.strokeStyle = this.colors.primary; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
-        ctx.beginPath(); ctx.moveTo(cutoffX, topY + 4); ctx.lineTo(cutoffX, h); ctx.stroke(); ctx.setLineDash([]);
-        ctx.font = '500 10px Inter, sans-serif'; ctx.fillStyle = this.colors.onSurface;
-        ctx.textAlign = cutoffX > w - 100 ? 'right' : 'left';
-        ctx.fillText(`Filter ${Math.round(cutoff)}Hz (Q: ${resonance.toFixed(1)})`, cutoffX + (cutoffX > w - 100 ? -6 : 6), topY + 12);
+        if (cutoffX > 0) {
+          ctx.strokeStyle = this.colors.primary; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
+          ctx.beginPath(); ctx.moveTo(cutoffX, topY + 4); ctx.lineTo(cutoffX, h); ctx.stroke(); ctx.setLineDash([]);
+          ctx.font = '500 10px Inter, sans-serif'; ctx.fillStyle = this.colors.onSurface;
+          ctx.textAlign = cutoffX > w - 100 ? 'right' : 'left';
+          ctx.fillText(`Filter ${Math.round(cutoff)}Hz (Q: ${resonance.toFixed(1)})`, cutoffX + (cutoffX > w - 100 ? -6 : 6), topY + 12);
+        }
       }
       ctx.restore();
     }

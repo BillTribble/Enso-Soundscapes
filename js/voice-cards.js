@@ -67,6 +67,12 @@ function renderVoicesGrid(app) {
     const resVal = (app.globalVoiceFilters &&
                     app.globalVoiceFilters[voice.id]?.resonance) ??
         (voice.resonance ?? voice.defaultResonance ?? 1.0);
+    const reverbVal =
+        (app.globalVoiceFx && app.globalVoiceFx[voice.id]?.reverb) ??
+        (voice.reverb ?? voice.defaultReverb ?? (voice.id === 'piano' ? 0.35 : 0.65));
+    const delayVal =
+        (app.globalVoiceFx && app.globalVoiceFx[voice.id]?.delay) ??
+        (voice.delay ?? voice.defaultDelay ?? (voice.id === 'piano' ? 0.12 : 0.35));
 
     card.innerHTML = `
         <div class="card-header-row">
@@ -140,6 +146,24 @@ function renderVoicesGrid(app) {
         voice.id}" data-default-value="${
         voice.defaultResonance ??
         1.0}" min="0.1" max="14.0" step="0.1" value="${resVal.toFixed(1)}">
+          </div>
+          <div class="control-row">
+            <div class="control-label-line"><label for="voice-reverb-${
+        voice.id}">Reverb</label><span id="val-voice-reverb-${
+        voice.id}" class="control-value">${Math.round(reverbVal * 100)}%</span></div>
+            <input type="range" id="voice-reverb-${
+        voice.id}" class="voice-reverb-slider" data-voice-id="${
+        voice.id}" data-default-value="${
+        (voice.defaultReverb ?? (voice.id === 'piano' ? 0.35 : 0.65)).toFixed(2)}" min="0" max="1" step="0.01" value="${reverbVal.toFixed(2)}">
+          </div>
+          <div class="control-row">
+            <div class="control-label-line"><label for="voice-delay-${
+        voice.id}">Delay</label><span id="val-voice-delay-${
+        voice.id}" class="control-value">${Math.round(delayVal * 100)}%</span></div>
+            <input type="range" id="voice-delay-${
+        voice.id}" class="voice-delay-slider" data-voice-id="${
+        voice.id}" data-default-value="${
+        (voice.defaultDelay ?? (voice.id === 'piano' ? 0.12 : 0.35)).toFixed(2)}" min="0" max="1" step="0.01" value="${delayVal.toFixed(2)}">
           </div>
           <div class="control-row">
             <div class="control-label-line"><label for="voice-cycle-${
@@ -230,10 +254,12 @@ function renderVoicesGrid(app) {
     app.audioEngine.setVoiceRelease(voice.id, voice.release ?? 7.0);
     app.audioEngine.setVoiceFilterCutoff(voice.id, cutoffVal);
     app.audioEngine.setVoiceFilterResonance(voice.id, resVal);
+    app.audioEngine.setVoiceReverbSend?.(voice.id, reverbVal);
+    app.audioEngine.setVoiceDelaySend?.(voice.id, delayVal);
   });
 
-  ['gain', 'prob', 'cutoff', 'resonance', 'cycle', 'release', 'octave',
-   'octave-shift', 'note-octave-shift', 'chord-octave-shift']
+  ['gain', 'prob', 'cutoff', 'resonance', 'reverb', 'delay', 'cycle', 'release',
+   'octave', 'octave-shift', 'note-octave-shift', 'chord-octave-shift']
       .forEach((param) => {
         container.querySelectorAll(`.voice-${param}-slider`).forEach((slider) => {
           slider.addEventListener('input', () => {
@@ -256,6 +282,14 @@ function renderVoicesGrid(app) {
               if (typeof app.setGlobalVoiceFilter === 'function') {
                 app.setGlobalVoiceFilter(vId, undefined, val);
               }
+            } else if (param === 'reverb') {
+              app.probEngine.setVoiceParam(vId, 'reverb', val);
+              app.audioEngine.setVoiceReverbSend?.(vId, val);
+              app.setGlobalVoiceFx?.(vId, val, undefined);
+            } else if (param === 'delay') {
+              app.probEngine.setVoiceParam(vId, 'delay', val);
+              app.audioEngine.setVoiceDelaySend?.(vId, val);
+              app.setGlobalVoiceFx?.(vId, undefined, val);
             } else if (param === 'octave-shift') {
               app.probEngine.setVoiceParam(vId, 'octaveShiftProb', val);
             } else if (param === 'note-octave-shift') {
@@ -435,6 +469,28 @@ function syncVoiceFilterSliders(app) {
           ?._syncVisual?.();
     }
     if (lblRes) lblRes.textContent = `Q ${resonance.toFixed(1)}`;
+
+    const gFx = app.globalVoiceFx?.[v.id] || {};
+    const reverb = gFx.reverb ?? v.reverb ?? v.defaultReverb ?? (v.id === 'piano' ? 0.35 : 0.65);
+    const delay = gFx.delay ?? v.delay ?? v.defaultDelay ?? (v.id === 'piano' ? 0.12 : 0.35);
+
+    const slRev = document.getElementById(`voice-reverb-${v.id}`);
+    const lblRev = document.getElementById(`val-voice-reverb-${v.id}`);
+    if (slRev) {
+      slRev.value = reverb.toFixed(2);
+      slRev.style.setProperty('--pct', `${Math.max(0, Math.min(100, reverb * 100)).toFixed(2)}%`);
+      slRev.closest('.control-row')?.querySelector('.rotary-dial-widget')?._syncVisual?.();
+    }
+    if (lblRev) lblRev.textContent = `${Math.round(reverb * 100)}%`;
+
+    const slDel = document.getElementById(`voice-delay-${v.id}`);
+    const lblDel = document.getElementById(`val-voice-delay-${v.id}`);
+    if (slDel) {
+      slDel.value = delay.toFixed(2);
+      slDel.style.setProperty('--pct', `${Math.max(0, Math.min(100, delay * 100)).toFixed(2)}%`);
+      slDel.closest('.control-row')?.querySelector('.rotary-dial-widget')?._syncVisual?.();
+    }
+    if (lblDel) lblDel.textContent = `${Math.round(delay * 100)}%`;
   });
 }
 

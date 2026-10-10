@@ -306,38 +306,6 @@ function synthesizeTrackVoice(engine, {
   const ctx = engine.ctx;
   const profile = getTrackProfile(engine.activeTrackStyle);
 
-  // Apply per-track shimmer cascade (e.g. Weightless Orbit +12/+19/+24st Eventide bloom)
-  const sc = profile.shimmerCascade || {};
-  if ((sc.upperOctaveGain > 0.01 || sc.fifthOctaveGain > 0.01) && shimmerTarget) {
-    const bloomStart = Math.min(tSustainEnd, now + (sc.bloomDelaySec || 0.4));
-    if (sc.upperOctaveGain > 0.01 && freq * 4 < 14000) {
-      const o24 = engine._makeOsc('sine', freq * 4, sc.detuneCents || 5, now);
-      const g24 = ctx.createGain();
-      const pk24 = Math.max(
-          0.0001, peakGain * Math.min(2.5, baseGain) * sc.upperOctaveGain);
-      g24.gain.setValueAtTime(0.0001, now);
-      g24.gain.linearRampToValueAtTime(pk24, Math.min(tReleaseEnd - 0.05, bloomStart + 0.8));
-      g24.gain.exponentialRampToValueAtTime(0.0001, tReleaseEnd);
-      o24.connect(g24);
-      g24.connect(shimmerTarget);
-      oscs.push(o24);
-      internalNodes.push(g24);
-    }
-    if (sc.fifthOctaveGain > 0.01 && freq * 3 < 14000) {
-      const o19 = engine._makeOsc('sine', freq * 3, -(sc.detuneCents || 5), now);
-      const g19 = ctx.createGain();
-      const pk19 = Math.max(
-          0.0001, peakGain * Math.min(2.5, baseGain) * sc.fifthOctaveGain);
-      g19.gain.setValueAtTime(0.0001, now);
-      g19.gain.linearRampToValueAtTime(pk19, Math.min(tReleaseEnd - 0.05, bloomStart + 0.6));
-      g19.gain.exponentialRampToValueAtTime(0.0001, tReleaseEnd);
-      o19.connect(g19);
-      g19.connect(shimmerTarget);
-      oscs.push(o19);
-      internalNodes.push(g19);
-    }
-  }
-
   if (voiceId === 'pad') {
     const ps = profile.padSynth;
     const det = ps.detuneCents || 7;
@@ -556,15 +524,6 @@ function attachToAudioEngine(AE) {
   AE.prototype.setTrackStyle = function(styleId) {
     const prof = getTrackProfile(styleId);
     this.activeTrackStyle = prof.id;
-    const tankFb = prof.shimmerCascade?.tankFeedback ?? 0.16;
-    if (this.ctx && Array.isArray(this.stems)) {
-      for (const st of this.stems) {
-        if (st && st.shimmerFeedbackGain) {
-          st.shimmerFeedbackGain.gain.setTargetAtTime(
-              tankFb, this.ctx.currentTime, 0.05);
-        }
-      }
-    }
     return prof;
   };
   AE.prototype._synthesizeTrackVoice = function(opts) {

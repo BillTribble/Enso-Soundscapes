@@ -566,7 +566,48 @@
             };
           })();
 
+          const masterFilterCheck = (() => {
+            const app = window.enoApp, ae = app?.audioEngine;
+            const presets = window.ENO_DATA?.PRESETS || {};
+            const pKeys = ['thursday', 'reflection', 'installations', 'apollo_shimmer', 'mixing_colours', 'discreet_loops'];
+            const allPresetsOff = pKeys.every((k) => presets[k]?.global?.masterFilterEnabled === false);
+            const btn = document.getElementById('btn-master-filter-power');
+            const card = document.getElementById('master-filter-card');
+            if (!app || !ae || !btn || !card) return { masterFilterDefaultOff: false, masterFilterPowerBtnVerified: false };
+            ae.init();
+            const bootOff = ae.params.masterFilterEnabled === false &&
+                btn.getAttribute('aria-pressed') === 'false' &&
+                !btn.classList.contains('active') &&
+                card.classList.contains('is-filter-bypassed') &&
+                ae.otherStem?.filterBypassGain?.gain?.value === 1 &&
+                ae.otherStem?.filterWetGain?.gain?.value === 0;
+            const defaultOff = allPresetsOff && bootOff;
+
+            btn.click();
+            const afterClickOn = ae.params.masterFilterEnabled === true &&
+                btn.getAttribute('aria-pressed') === 'true' &&
+                btn.classList.contains('active') &&
+                !card.classList.contains('is-filter-bypassed') &&
+                ae.otherStem?.filterWetGain?.gain?.value === 1 &&
+                ae.otherStem?.filterBypassGain?.gain?.value === 0;
+
+            btn.click();
+            const afterClickOff = ae.params.masterFilterEnabled === false &&
+                btn.getAttribute('aria-pressed') === 'false' &&
+                !btn.classList.contains('active') &&
+                card.classList.contains('is-filter-bypassed') &&
+                ae.otherStem?.filterBypassGain?.gain?.value === 1 &&
+                ae.otherStem?.filterWetGain?.gain?.value === 0;
+
+            return {
+              masterFilterDefaultOff: defaultOff,
+              masterFilterPowerBtnVerified: afterClickOn && afterClickOff
+            };
+          })();
+
           Object.assign(data, {
+            masterFilterDefaultOff: masterFilterCheck.masterFilterDefaultOff,
+            masterFilterPowerBtnVerified: masterFilterCheck.masterFilterPowerBtnVerified,
             startupBannerVerified: startupCheck.startupBannerVerified,
             playPauseLabelsShortVerified: startupCheck.playPauseLabelsShortVerified,
             hudGateCounterRemoved,
@@ -618,10 +659,43 @@
                 document.querySelectorAll('.voice-cutoff-slider').length,
             voiceResonanceSlidersCount:
                 document.querySelectorAll('.voice-resonance-slider').length,
+            voiceReverbSlidersCount:
+                document.querySelectorAll('.voice-reverb-slider').length,
+            voiceDelaySlidersCount:
+                document.querySelectorAll('.voice-delay-slider').length,
             voiceFiltersConnected:
                 Object
                     .keys(window.enoApp?.audioEngine?.nodes?.voiceFilters || {})
                     .length,
+            voiceFxSendsConnected:
+                Object
+                    .keys(window.enoApp?.audioEngine?.nodes?.voiceReverbSends || {})
+                    .length,
+            pianoReverbCleanVerified: (() => {
+              const ae = window.enoApp?.audioEngine;
+              if (!ae || !ae.pianoStem || !ae.nodes?.voiceReverbSends?.piano || !ae.nodes?.voiceDelaySends?.piano) return false;
+              const revEl = document.getElementById('voice-reverb-piano');
+              const delEl = document.getElementById('voice-delay-piano');
+              if (!revEl || !delEl) return false;
+              const origRev = parseFloat(revEl.value);
+              const origDel = parseFloat(delEl.value);
+              revEl.value = '0.50';
+              revEl.dispatchEvent(new Event('input', { bubbles: true }));
+              delEl.value = '0.20';
+              delEl.dispatchEvent(new Event('input', { bubbles: true }));
+              const updatedOk = Math.abs((ae.voiceFxParams?.piano?.reverb ?? 0) - 0.50) < 0.01 &&
+                  Math.abs((ae.voiceFxParams?.piano?.delay ?? 0) - 0.20) < 0.01;
+              revEl.value = String(origRev);
+              revEl.dispatchEvent(new Event('input', { bubbles: true }));
+              delEl.value = String(origDel);
+              delEl.dispatchEvent(new Event('input', { bubbles: true }));
+              return Boolean(
+                  updatedOk &&
+                  Math.abs(origRev - 0.35) < 0.01 &&
+                  Math.abs(origDel - 0.12) < 0.01 &&
+                  ae.pianoStem.shimmerFeedbackGain.gain.value === 0 &&
+                  ae.pianoStem.shimmerBus.gain.value === 0);
+            })(),
             bloomTextRemoved:
                 Array.from(document.querySelectorAll('.voice-pluck-btn'))
                     .every((b) => !b.textContent.includes('Bloom')),

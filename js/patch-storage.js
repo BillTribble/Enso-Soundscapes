@@ -19,6 +19,7 @@
   let globalVoiceBalance = -0.62;
   let globalVoiceGains = null;
   let globalVoiceFilters = null;
+  let globalVoiceFx = null;
   let savedAutoCycle = null;
 
   const SLIDER_MAP = {
@@ -63,6 +64,7 @@
     });
     globalParams.envelopeMode = app.audioEngine?.envelopeMode || 'override';
     globalParams.filterType = app.audioEngine?.filterType || 'lowpass';
+    globalParams.masterFilterEnabled = Boolean(app.audioEngine?.params?.masterFilterEnabled);
     const xfEl = document.getElementById('piano-other-crossfade');
     const domXf = xfEl && xfEl.value !== '' ? parseFloat(xfEl.value) : NaN;
     const rawXf = Number.isFinite(domXf)
@@ -113,6 +115,8 @@
           cutoff,
           resonance,
           release: typeof v.release === 'number' ? v.release : (defaultRelease[v.id] || 7.0),
+          reverb: typeof v.reverb === 'number' ? v.reverb : (v.defaultReverb ?? (v.id === 'piano' ? 0.35 : 0.65)),
+          delay: typeof v.delay === 'number' ? v.delay : (v.defaultDelay ?? (v.id === 'piano' ? 0.12 : 0.35)),
           octave: oct,
           octaveShiftProb: typeof v.octaveShiftProb === 'number' ? v.octaveShiftProb : (v.defaultOctaveShiftProb ?? 0.10),
           noteOctaveShiftProb: typeof v.noteOctaveShiftProb === 'number' ? v.noteOctaveShiftProb : (v.defaultNoteOctaveShiftProb ?? 0.03),
@@ -122,7 +126,7 @@
       });
     }
     if (!voices.piano) {
-      voices.piano = { prob: 0.62, cycle: 7.9, gain: 2.00, cutoff: 12000, resonance: 0.8, release: 4.5, octave: 0, octaveShiftProb: 0.10, noteOctaveShiftProb: 0.03, chordOctaveShiftProb: 0.10, muted: false };
+      voices.piano = { prob: 0.62, cycle: 7.9, gain: 2.00, cutoff: 12000, resonance: 0.8, release: 4.5, reverb: 0.35, delay: 0.12, octave: 0, octaveShiftProb: 0.10, noteOctaveShiftProb: 0.03, chordOctaveShiftProb: 0.10, muted: false };
     } else if (typeof voices.piano.gain !== 'number' || voices.piano.gain <= 0) {
       voices.piano.gain = 2.00;
     }
@@ -194,7 +198,7 @@
   function persistToLocalStorage() {
     try {
       const payload = {
-        version: 3, globalVoiceBalance, globalVoiceGains, globalVoiceFilters,
+        version: 4, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
         autoCycle: savedAutoCycle, patchOverrides, customPresets, customTrackPatterns
       };
       localStorage.setItem(LOCAL_STORAGE_PATCHES_KEY, JSON.stringify(payload));
@@ -202,9 +206,7 @@
       if (app?.activePresetId) {
         localStorage.setItem(LOCAL_STORAGE_SESSION_KEY, JSON.stringify({ activePresetId: app.activePresetId, globalVoiceBalance }));
       }
-    } catch (e) {
-      console.warn('[patch-storage] localStorage write failed:', e);
-    }
+    } catch (e) {}
   }
 
   function persistToDisk() {
@@ -216,35 +218,17 @@
 
     const app = getApp();
     const payload = {
-      version: 3, globalVoiceBalance, globalVoiceGains, globalVoiceFilters,
+      version: 4, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
       autoCycle: savedAutoCycle, patchOverrides, customPresets, customTrackPatterns, activePresetId: app?.activePresetId || null
     };
-    fetch(API_PATCHES_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).catch((e) => {
-      console.warn('[patch-storage] disk write failed:', e);
-    });
+    fetch(API_PATCHES_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
   }
 
   function propagateVoiceBalanceToPresets(xf) {
-    if (window.ENO_DATA?.PRESETS) {
-      Object.values(window.ENO_DATA.PRESETS).forEach((p) => {
-        if (p && p.global) p.global.pianoCrossfade = xf;
-      });
-    }
-    if (FACTORY_PRESETS) {
-      Object.values(FACTORY_PRESETS).forEach((p) => {
-        if (p && p.global) p.global.pianoCrossfade = xf;
-      });
-    }
-    Object.values(patchOverrides).forEach((ov) => {
-      if (ov && ov.global) ov.global.pianoCrossfade = xf;
-    });
-    Object.values(customPresets).forEach((cp) => {
-      if (cp && cp.global) cp.global.pianoCrossfade = xf;
-    });
+    if (window.ENO_DATA?.PRESETS) Object.values(window.ENO_DATA.PRESETS).forEach((p) => { if (p && p.global) p.global.pianoCrossfade = xf; });
+    if (FACTORY_PRESETS) Object.values(FACTORY_PRESETS).forEach((p) => { if (p && p.global) p.global.pianoCrossfade = xf; });
+    Object.values(patchOverrides).forEach((ov) => { if (ov && ov.global) ov.global.pianoCrossfade = xf; });
+    Object.values(customPresets).forEach((cp) => { if (cp && cp.global) cp.global.pianoCrossfade = xf; });
   }
 
   function saveGlobalVoiceSettings() {
@@ -252,6 +236,7 @@
     if (!app) return;
     if (app.globalVoiceGains) globalVoiceGains = JSON.parse(JSON.stringify(app.globalVoiceGains));
     if (app.globalVoiceFilters) globalVoiceFilters = JSON.parse(JSON.stringify(app.globalVoiceFilters));
+    if (app.globalVoiceFx) globalVoiceFx = JSON.parse(JSON.stringify(app.globalVoiceFx));
     persistToLocalStorage();
     persistToDisk();
   }
@@ -508,11 +493,12 @@
 
   function ingestSavedPayload(data, isMerge = false) {
     if (!data) return;
-    if ((data.version || 1) < 3) {
+    if ((data.version || 1) < 4) {
       globalVoiceBalance = -0.62;
       globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
       patchOverrides = {};
       if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
+      if (data.globalVoiceFx) globalVoiceFx = data.globalVoiceFx;
       if (data.customPresets) customPresets = isMerge ? { ...customPresets, ...data.customPresets } : data.customPresets;
       if (data.customTrackPatterns) customTrackPatterns = isMerge ? { ...customTrackPatterns, ...data.customTrackPatterns } : data.customTrackPatterns;
     } else {
@@ -521,10 +507,16 @@
       }
       if (data.globalVoiceGains) globalVoiceGains = data.globalVoiceGains;
       if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
+      if (data.globalVoiceFx) globalVoiceFx = data.globalVoiceFx;
       if (data.autoCycle) savedAutoCycle = data.autoCycle;
       if (data.patchOverrides) patchOverrides = isMerge ? { ...patchOverrides, ...data.patchOverrides } : data.patchOverrides;
       if (data.customPresets) customPresets = isMerge ? { ...customPresets, ...data.customPresets } : data.customPresets;
       if (data.customTrackPatterns) customTrackPatterns = isMerge ? { ...customTrackPatterns, ...data.customTrackPatterns } : data.customTrackPatterns;
+    }
+    if ((data.version || 1) < 4) {
+      const sanitize = (obj) => { if (obj) Object.values(obj).forEach((p) => { if (p?.global) p.global.masterFilterEnabled = false; }); };
+      sanitize(patchOverrides);
+      sanitize(customPresets);
     }
   }
 
@@ -629,6 +621,7 @@
         if (typeof savedAutoCycle.transitionMinutes === 'number') app.autoCycler.transitionMinutes = savedAutoCycle.transitionMinutes;
         app.autoCycler.syncUI?.();
       }
+      if (globalVoiceFx) app.globalVoiceFx = { ...app.globalVoiceFx, ...globalVoiceFx };
       app.syncVoiceGainSlidersFromCrossfade?.();
       app.syncVoiceFilterSliders?.();
     }

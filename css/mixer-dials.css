@@ -613,3 +613,41 @@ html[data-theme="dark"] .settings-popover {
     height: 28px;
   }
 }
+
+/* Master Filter Power Button & Bypassed State */
+.master-filter-power-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.12s ease;
+}
+.master-filter-power-btn .material-symbols-outlined {
+  font-size: 17px;
+}
+.master-filter-power-btn:hover {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+.master-filter-power-btn.active,
+.master-filter-power-btn[aria-pressed="true"] {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.master-filter-power-btn.active:hover,
+.master-filter-power-btn[aria-pressed="true"]:hover {
+  filter: brightness(0.95);
+}
+#master-filter-card.is-filter-bypassed [data-filter-type],
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-cutoff),
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-resonance),
+#master-filter-card.is-filter-bypassed .control-row:has(#filter-drift) {
+  opacity: 0.52;
+  transition: opacity 0.18s ease;
+}
+

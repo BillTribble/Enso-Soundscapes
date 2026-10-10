@@ -299,7 +299,7 @@
       circadian: pickRandom(['morning', 'afternoon', 'dusk', 'night']),
       global: {
         attack: rndRange(2.8, 5.5, 1), release: rndRange(6.8, 11.8, 1), sustain: rndRange(0.65, 0.76, 2), masterVolume: 0.84,
-        cutoff: Math.round(rndRange(1650, 2400, 0)), resonance: rndRange(1.0, 1.8, 1), filterDrift: 0.22, filterType: 'lowpass', envelopeMode: 'override',
+        cutoff: Math.round(rndRange(1650, 2400, 0)), resonance: rndRange(1.0, 1.8, 1), filterDrift: 0.22, filterType: 'lowpass', envelopeMode: 'override', masterFilterEnabled: false,
         reverbMix: rndRange(0.48, 0.68, 2), reverbShimmer: rndRange(0.12, 0.38, 2), reverbDecay: rndRange(8.5, 15.0, 1), reverbDamping: 5800,
         delayMix: rndRange(0.30, 0.45, 2), delayTime: 0.84, delayFeedback: 0.54, delayWow: 0.16,
         pianoCrossfade: xf

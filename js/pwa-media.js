@@ -109,7 +109,7 @@ window.EnsoPwaMedia = (function() {
     if ('caches' in window) {
       caches.keys()
           .then((keys) => keys.forEach((k) => {
-            if (k !== 'enso-soundscapes-v19') caches.delete(k);
+            if (k !== 'enso-soundscapes-v20') caches.delete(k);
           }))
           .catch(() => {});
     }

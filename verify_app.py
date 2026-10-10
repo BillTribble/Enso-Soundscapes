@@ -161,8 +161,20 @@ def run_browser_selftest():
       payload.get('voiceResonanceSlidersCount') == 6
   ), f'Expected 6 per-voice resonance controls: {payload}'
   assert (
+      payload.get('voiceReverbSlidersCount') == 6
+  ), f'Expected 6 per-voice reverb controls: {payload}'
+  assert (
+      payload.get('voiceDelaySlidersCount') == 6
+  ), f'Expected 6 per-voice delay controls: {payload}'
+  assert (
       payload.get('voiceFiltersConnected') == 6
   ), f'Expected 6 per-voice resonant filters connected: {payload}'
+  assert (
+      payload.get('voiceFxSendsConnected') == 6
+  ), f'Expected 6 per-voice FX sends connected: {payload}'
+  assert (
+      payload.get('pianoReverbCleanVerified') is True
+  ), f'Expected clean piano reverb/delay verified: {payload}'
   assert (
       payload.get('bloomTextRemoved') is True
   ), f'Expected "Bloom" text removed from voice pluck button: {payload}'
@@ -306,6 +318,8 @@ def run_browser_selftest():
   assert (
       payload.get('playPauseLabelsShortVerified') is True
   ), f'Expected playPauseLabelsShortVerified=True (Play / Pause without engine): {payload}'
+  assert payload.get('masterFilterDefaultOff') is True, f'Expected masterFilterDefaultOff=True on desktop: {payload}'
+  assert payload.get('masterFilterPowerBtnVerified') is True, f'Expected masterFilterPowerBtnVerified=True on desktop: {payload}'
   # Second self-test pass at 375x812 mobile viewport to verify real mobile geometry
   proc_m = _run_chrome_dom_dump('375,812')
   assert proc_m.returncode == 0, f'Mobile Chrome exited {proc_m.returncode}'
@@ -319,6 +333,8 @@ def run_browser_selftest():
   assert payload_m.get('newPatchBtnPresent') is True, f'Expected newPatchBtnPresent=True at 375px: {payload_m}'
   assert payload_m.get('startupBannerVerified') is True, f'Expected startupBannerVerified=True at 375px mobile: {payload_m}'
   assert payload_m.get('playPauseLabelsShortVerified') is True, f'Expected playPauseLabelsShortVerified=True at 375px mobile: {payload_m}'
+  assert payload_m.get('masterFilterDefaultOff') is True, f'Expected masterFilterDefaultOff=True at 375px mobile: {payload_m}'
+  assert payload_m.get('masterFilterPowerBtnVerified') is True, f'Expected masterFilterPowerBtnVerified=True at 375px mobile: {payload_m}'
   print(f'2. Browser self-test assertions passed (1440px desktop + 375px mobile): {json.dumps(payload)}')
 
 

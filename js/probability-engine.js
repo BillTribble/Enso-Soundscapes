@@ -155,6 +155,18 @@ class ProbabilityEngine {
               typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
           resonance:
               typeof v.defaultResonance === 'number' ? v.defaultResonance : 1.0,
+          defaultReverb: typeof v.defaultReverb === 'number' ?
+              v.defaultReverb :
+              (v.id === 'piano' ? 0.35 : 0.60),
+          reverb: typeof v.defaultReverb === 'number' ?
+              v.defaultReverb :
+              (v.id === 'piano' ? 0.35 : 0.60),
+          defaultDelay: typeof v.defaultDelay === 'number' ?
+              v.defaultDelay :
+              (v.id === 'piano' ? 0.12 : 0.35),
+          delay: typeof v.defaultDelay === 'number' ?
+              v.defaultDelay :
+              (v.id === 'piano' ? 0.12 : 0.35),
           muted: false,
           solo: false,
           phase: INITIAL_PHASES[idx % INITIAL_PHASES.length],
@@ -350,18 +362,6 @@ class ProbabilityEngine {
         }
         if (this.audioEngine && typeof this.audioEngine.triggerVoice === 'function') {
           this.audioEngine.triggerVoice(voice.id, pitchData.midi, velocity, pan, voice.gain);
-          if (genRules && genRules.scripterEchoProb > 0 && voice.id !== 'drone' && Math.random() < genRules.scripterEchoProb) {
-            const echoVoice = genRules.scripterEchoVoice || voice.id;
-            const echoDelay = genRules.scripterEchoDelayMs || 650;
-            const echoDegs = Array.isArray(genRules.scripterEchoDegrees) ? genRules.scripterEchoDegrees : [4, 2];
-            const shiftSemitones = (echoDegs.length > 0 ? (echoDegs[Math.floor(Math.random() * echoDegs.length)] * 2) : 7);
-            const echoMidi = pitchData.midi + shiftSemitones;
-            setTimeout(() => {
-              if (this.isRunning && this.audioEngine) {
-                this.audioEngine.triggerVoice(echoVoice, echoMidi, velocity * 0.62, -pan * 0.8, voice.gain);
-              }
-            }, echoDelay);
-          }
         }
       }
 
@@ -654,7 +654,17 @@ class ProbabilityEngine {
       voice.cutoff = Math.max(80, Math.min(16000, Number(val) || 8000));
     else if (key === 'resonance')
       voice.resonance = Math.max(0.1, Math.min(14.0, Number(val) || 1.0));
-    else if (key === 'octave' || key === 'octaveOffset') {
+    else if (key === 'reverb') {
+      voice.reverb = Math.max(0.0, Math.min(1.0, Number(val) || 0));
+      if (this.audioEngine && typeof this.audioEngine.setVoiceReverb === 'function') {
+        this.audioEngine.setVoiceReverb(voiceId, voice.reverb);
+      }
+    } else if (key === 'delay') {
+      voice.delay = Math.max(0.0, Math.min(1.0, Number(val) || 0));
+      if (this.audioEngine && typeof this.audioEngine.setVoiceDelay === 'function') {
+        this.audioEngine.setVoiceDelay(voiceId, voice.delay);
+      }
+    } else if (key === 'octave' || key === 'octaveOffset') {
       const parsed = Number(val);
       voice.octaveOffset = Math.max(-4, Math.min(4, Math.round(Number.isNaN(parsed) ? 0 : parsed)));
     } else if (key === 'octaveShiftProb' || key === 'octaveShift') {

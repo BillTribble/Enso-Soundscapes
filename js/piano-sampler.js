@@ -214,10 +214,7 @@ function triggerPianoSample(engine, {
   now,
   tReleaseEnd,
   baseGain,
-  peakGain,
-  velScale,
   envGain,
-  voiceNode,
   shimmerTarget,
   bufferSources,
   internalNodes
@@ -225,29 +222,18 @@ function triggerPianoSample(engine, {
   const match = findClosestPianoSample(engine, midiNote);
   if (!match || !match.buffer) return false;
 
-  const styleProf = engine.getTrackStyleProfile ? engine.getTrackStyleProfile() : null;
-  const cfg = Object.assign({}, engine.feltPianoConfig || {}, (styleProf && styleProf.pianoEq) || {});
+  const cfg = engine.feltPianoConfig || {
+    bodyWarmthHz: 240,
+    bodyWarmthGainDb: 3.2,
+    highShelfHz: 1850,
+    highShelfCutDb: -11.5,
+    makeupGain: 1.55,
+    mechReleaseGain: 0.022
+  };
 
   const src = engine.ctx.createBufferSource();
   src.buffer = match.buffer;
-
-  let baseRate = match.playbackRate;
-  if (cfg.chorusDetuneCents) {
-    const detuneCents = (Math.random() - 0.5) * cfg.chorusDetuneCents;
-    baseRate *= Math.pow(2, detuneCents / 1200);
-  }
-  src.playbackRate.setValueAtTime(baseRate, now);
-
-  if (cfg.tapeWowHz > 0 && cfg.tapeWowDepth > 0) {
-    const wowOsc = engine._makeOsc('sine', cfg.tapeWowHz, 0, now);
-    const wowGain = engine.ctx.createGain();
-    wowGain.gain.setValueAtTime(baseRate * cfg.tapeWowDepth, now);
-    wowOsc.connect(wowGain);
-    wowGain.connect(src.playbackRate);
-    wowOsc.start(now);
-    wowOsc.stop(tReleaseEnd + 0.15);
-    internalNodes.push(wowOsc, wowGain);
-  }
+  src.playbackRate.setValueAtTime(match.playbackRate, now);
 
   const bodyEq =
       engine._makeFilter('peaking', cfg.bodyWarmthHz, 0.85);
@@ -267,40 +253,16 @@ function triggerPianoSample(engine, {
   silkShelf.connect(sampleMakeup);
   sampleMakeup.connect(envGain);
 
-  const pianoShimSend = engine.ctx.createGain();
-  const shimMult = (typeof cfg.shimmerSend === 'number') ? cfg.shimmerSend : 0.28;
-  pianoShimSend.gain.value = 0.5 * shimMult * Math.min(2.5, baseGain * 0.5);
-  envGain.connect(pianoShimSend);
-  pianoShimSend.connect(shimmerTarget);
   src.start(now);
   src.stop(tReleaseEnd + 0.15);
   bufferSources.push(src);
-  internalNodes.push(bodyEq, silkShelf, sampleMakeup, pianoShimSend);
-
-  if (cfg.feltThumpGain > 0) {
-    const vNode = voiceNode || envGain;
-    const thumpOsc = engine._makeOsc('sine', 115, 0, now);
-    thumpOsc.frequency.exponentialRampToValueAtTime(52, now + 0.055);
-    const thumpLp = engine._makeFilter('lowpass', 180, 0.7);
-    const thumpGain = engine.ctx.createGain();
-    const effVel = typeof velScale === 'number' ? velScale : velocity;
-    const effPk = typeof peakGain === 'number' ? peakGain : 0.4;
-    const tGainVal = Math.max(0.001, effPk * cfg.feltThumpGain * (0.6 + 0.4 * effVel));
-    thumpGain.gain.setValueAtTime(tGainVal, now);
-    thumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
-    thumpOsc.connect(thumpLp);
-    thumpLp.connect(thumpGain);
-    thumpGain.connect(vNode);
-    thumpOsc.start(now);
-    thumpOsc.stop(now + 0.06);
-    internalNodes.push(thumpOsc, thumpLp, thumpGain);
-  }
+  internalNodes.push(bodyEq, silkShelf, sampleMakeup);
 
   if (match.deccaBuffer) {
     const dSrc = engine.ctx.createBufferSource(),
           dGain = engine.ctx.createGain();
     dSrc.buffer = match.deccaBuffer;
-    dSrc.playbackRate.setValueAtTime(baseRate, now);
+    dSrc.playbackRate.setValueAtTime(match.playbackRate, now);
     dGain.gain.value = 0.58;
     dSrc.connect(dGain);
     dGain.connect(bodyEq);
