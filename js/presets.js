@@ -135,12 +135,12 @@ const ENO_DATA = (function() {
   };
 
   const VOICES = [
-    { id: 'pad', name: 'CS-80 Ribbon Pad', role: 'Warm detuned saw/triangle swell', badgeHue: 'blue', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 17.3, defaultProb: 0.74, defaultGain: 0.72, defaultCutoff: 5200, defaultResonance: 1.2, defaultReverb: 0.70, defaultDelay: 0.35, panSpread: 0.35, defaultRelease: 8.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
+    { id: 'pad', name: 'CS-80 Ribbon Pad', role: 'Warm detuned saw/triangle swell', badgeHue: 'blue', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 17.3, defaultProb: 0.74, defaultGain: 0.65, defaultCutoff: 5200, defaultResonance: 1.2, defaultReverb: 0.70, defaultDelay: 0.35, panSpread: 0.35, defaultRelease: 8.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
     { id: 'piano', name: 'Felt Piano', role: 'Damped Felt Piano + Shimmer', badgeHue: 'teal', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 7.9, defaultProb: 0.62, defaultGain: 2.00, defaultCutoff: 12000, defaultResonance: 0.8, defaultReverb: 0.35, defaultDelay: 0.12, panSpread: 0.45, defaultRelease: 4.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'bell', name: 'DX7 Glass Bell', role: 'FM crystalline chime (Chilvers/Lanois patch)', badgeHue: 'purple', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 11.3, defaultProb: 0.46, defaultGain: 0.54, defaultCutoff: 9500, defaultResonance: 1.4, defaultReverb: 0.75, defaultDelay: 0.40, panSpread: 0.65, defaultRelease: 5.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'choir', name: 'Spectral Choir', role: 'Staggered additive harmonic bloom', badgeHue: 'green', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 23.9, defaultProb: 0.52, defaultGain: 0.60, defaultCutoff: 6400, defaultResonance: 1.2, defaultReverb: 0.80, defaultDelay: 0.25, panSpread: 0.50, defaultRelease: 9.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'tape', name: 'Revox Tape Loop', role: 'Varispeed sound-on-sound fragment', badgeHue: 'orange', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 13.7, defaultProb: 0.60, defaultGain: 0.64, defaultCutoff: 4200, defaultResonance: 1.6, defaultReverb: 0.55, defaultDelay: 0.65, panSpread: 0.40, defaultRelease: 6.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
-    { id: 'drone', name: 'Sub-Bass Pedal', role: 'Deep foundational root + fifth anchor', badgeHue: 'yellow', octaveOffset: -1, defaultOctave: -1, defaultPrimeCycle: 31.1, defaultProb: 0.82, defaultGain: 0.70, defaultCutoff: 1800, defaultResonance: 1.8, defaultReverb: 0.60, defaultDelay: 0.15, panSpread: 0.15, defaultRelease: 11.0, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 }
+    { id: 'bell', name: 'DX7 Glass Bell', role: 'FM crystalline chime (Chilvers/Lanois patch)', badgeHue: 'purple', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 11.3, defaultProb: 0.46, defaultGain: 0.65, defaultCutoff: 9500, defaultResonance: 1.4, defaultReverb: 0.75, defaultDelay: 0.40, panSpread: 0.65, defaultRelease: 5.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
+    { id: 'choir', name: 'Spectral Choir', role: 'Staggered additive harmonic bloom', badgeHue: 'green', octaveOffset: 1, defaultOctave: 1, defaultPrimeCycle: 23.9, defaultProb: 0.52, defaultGain: 0.65, defaultCutoff: 6400, defaultResonance: 1.2, defaultReverb: 0.80, defaultDelay: 0.25, panSpread: 0.50, defaultRelease: 9.5, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
+    { id: 'tape', name: 'Revox Tape Loop', role: 'Varispeed sound-on-sound fragment', badgeHue: 'orange', octaveOffset: 0, defaultOctave: 0, defaultPrimeCycle: 13.7, defaultProb: 0.60, defaultGain: 0.65, defaultCutoff: 4200, defaultResonance: 1.6, defaultReverb: 0.55, defaultDelay: 0.65, panSpread: 0.40, defaultRelease: 6.2, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 },
+    { id: 'drone', name: 'Sub-Bass Pedal', role: 'Deep foundational root + fifth anchor', badgeHue: 'yellow', octaveOffset: -1, defaultOctave: -1, defaultPrimeCycle: 31.1, defaultProb: 0.82, defaultGain: 0.65, defaultCutoff: 1800, defaultResonance: 1.8, defaultReverb: 0.60, defaultDelay: 0.15, panSpread: 0.15, defaultRelease: 11.0, defaultOctaveShiftProb: 0.10, defaultNoteOctaveShiftProb: 0.03, defaultChordOctaveShiftProb: 0.10 }
   ];
 
   const CIRCADIAN_MODES = {
@@ -221,10 +221,10 @@ const ENO_DATA = (function() {
       voices: {
         pad: { prob: 0.68, cycle: 19.1, gain: 0.65, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.76, cycle: 6.7, gain: 2.00, release: 4.2, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.40, cycle: 13.1, gain: 0.50, release: 4.8, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.92, cycle: 10.7, gain: 0.56, release: 9.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.50, cycle: 17.9, gain: 0.58, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.70, cycle: 37.3, gain: 0.62, release: 10.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.40, cycle: 13.1, gain: 0.65, release: 4.8, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.92, cycle: 10.7, gain: 0.65, release: 9.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.50, cycle: 17.9, gain: 0.65, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.70, cycle: 37.3, gain: 0.65, release: 10.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     reflection: {
@@ -279,12 +279,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.98, 0.86, 0.42, 0.78, 0.92, 0.48, 0.32]
       },
       voices: {
-        pad: { prob: 0.74, cycle: 17.3, gain: 0.72, release: 9.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        pad: { prob: 0.74, cycle: 17.3, gain: 0.65, release: 9.5, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.62, cycle: 7.9, gain: 2.00, release: 4.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.46, cycle: 11.3, gain: 0.54, release: 5.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.52, cycle: 23.9, gain: 0.60, release: 10.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.60, cycle: 13.7, gain: 0.64, release: 6.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.82, cycle: 31.1, gain: 0.70, release: 12.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.46, cycle: 11.3, gain: 0.65, release: 5.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.52, cycle: 23.9, gain: 0.65, release: 10.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.60, cycle: 13.7, gain: 0.65, release: 6.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.82, cycle: 31.1, gain: 0.65, release: 12.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     installations: {
@@ -325,7 +325,7 @@ const ENO_DATA = (function() {
         delayTime: 1.15,
         delayFeedback: 0.64,
         delayWow: 0.35,
-        masterVolume: 0.78,
+        masterVolume: 0.84,
         pianoCrossfade: -0.62
       },
       probability: {
@@ -339,12 +339,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.85, 0.75, 0.70, 0.50, 0.90, 0.60, 0.35]
       },
       voices: {
-        pad: { prob: 0.78, cycle: 23.9, gain: 0.75, release: 12.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        pad: { prob: 0.78, cycle: 23.9, gain: 0.65, release: 12.0, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.68, cycle: 11.3, gain: 2.00, release: 6.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.58, cycle: 7.9, gain: 0.60, release: 7.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.66, cycle: 31.1, gain: 0.70, release: 13.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.62, cycle: 17.3, gain: 0.68, release: 8.5, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.88, cycle: 43.1, gain: 0.75, release: 15.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.58, cycle: 7.9, gain: 0.65, release: 7.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.66, cycle: 31.1, gain: 0.65, release: 13.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.62, cycle: 17.3, gain: 0.65, release: 8.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.88, cycle: 43.1, gain: 0.65, release: 15.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     apollo_shimmer: {
@@ -385,7 +385,7 @@ const ENO_DATA = (function() {
         delayTime: 0.75,
         delayFeedback: 0.68,
         delayWow: 0.22,
-        masterVolume: 0.76,
+        masterVolume: 0.84,
         pianoCrossfade: -0.62
       },
       probability: {
@@ -399,12 +399,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.90, 0.82, 0.65, 0.20, 0.85, 0.70, 0.30]
       },
       voices: {
-        pad: { prob: 0.82, cycle: 21.1, gain: 0.78, release: 12.5, octave: 0, octaveShiftProb: 0.10, muted: false },
+        pad: { prob: 0.82, cycle: 21.1, gain: 0.65, release: 12.5, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.72, cycle: 8.9, gain: 2.00, release: 5.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.65, cycle: 14.9, gain: 0.62, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.70, cycle: 27.7, gain: 0.72, release: 14.0, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.58, cycle: 16.3, gain: 0.60, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.85, cycle: 37.9, gain: 0.74, release: 15.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.65, cycle: 14.9, gain: 0.65, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.70, cycle: 27.7, gain: 0.65, release: 14.0, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.58, cycle: 16.3, gain: 0.65, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.85, cycle: 37.9, gain: 0.65, release: 15.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     mixing_colours: {
@@ -459,12 +459,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.95, 0.70, 0.80, 0.35, 0.85, 0.65, 0.45]
       },
       voices: {
-        pad: { prob: 0.55, cycle: 13.9, gain: 0.60, release: 7.2, octave: 0, octaveShiftProb: 0.10, muted: false },
+        pad: { prob: 0.55, cycle: 13.9, gain: 0.65, release: 7.2, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.88, cycle: 5.3, gain: 2.00, release: 3.8, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.35, cycle: 11.3, gain: 0.45, release: 4.2, octave: 1, octaveShiftProb: 0.10, muted: false },
-        choir: { prob: 0.42, cycle: 23.1, gain: 0.52, release: 8.0, octave: 1, octaveShiftProb: 0.10, muted: false },
-        tape: { prob: 0.72, cycle: 9.7, gain: 0.70, release: 5.2, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.65, cycle: 29.3, gain: 0.62, release: 9.0, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.35, cycle: 11.3, gain: 0.65, release: 4.2, octave: 1, octaveShiftProb: 0.10, muted: false },
+        choir: { prob: 0.42, cycle: 23.1, gain: 0.65, release: 8.0, octave: 1, octaveShiftProb: 0.10, muted: false },
+        tape: { prob: 0.72, cycle: 9.7, gain: 0.65, release: 5.2, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.65, cycle: 29.3, gain: 0.65, release: 9.0, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     },
     discreet_loops: {
@@ -505,7 +505,7 @@ const ENO_DATA = (function() {
         delayTime: 1.18,
         delayFeedback: 0.78,
         delayWow: 0.56,
-        masterVolume: 0.87,
+        masterVolume: 0.84,
         pianoCrossfade: -0.62
       },
       phraseParams: {
@@ -531,12 +531,12 @@ const ENO_DATA = (function() {
         degreeWeights: [0.90, 0.50, 0.75, 0.45, 0.85, 0.60, 0.40]
       },
       voices: {
-        pad: { prob: 0.66, cycle: 13.7, gain: 0.64, release: 7.9, octave: 0, octaveShiftProb: 0.10, muted: false },
+        pad: { prob: 0.66, cycle: 13.7, gain: 0.65, release: 7.9, octave: 0, octaveShiftProb: 0.10, muted: false },
         piano: { prob: 0.97, cycle: 11.7, gain: 2.00, release: 3.6, octave: 0, octaveShiftProb: 0.10, muted: false },
-        bell: { prob: 0.45, cycle: 11.3, gain: 0.48, release: 0.2, octave: 1, octaveShiftProb: 0.10, muted: true },
-        choir: { prob: 0.48, cycle: 23.9, gain: 0.56, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: true },
-        tape: { prob: 0.84, cycle: 8.9, gain: 0.86, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
-        drone: { prob: 0.74, cycle: 19.3, gain: 0.74, release: 9.5, octave: -1, octaveShiftProb: 0.10, muted: false }
+        bell: { prob: 0.45, cycle: 11.3, gain: 0.65, release: 0.2, octave: 1, octaveShiftProb: 0.10, muted: true },
+        choir: { prob: 0.48, cycle: 23.9, gain: 0.65, release: 7.5, octave: 1, octaveShiftProb: 0.10, muted: true },
+        tape: { prob: 0.84, cycle: 8.9, gain: 0.65, release: 8.0, octave: 0, octaveShiftProb: 0.10, muted: false },
+        drone: { prob: 0.74, cycle: 19.3, gain: 0.65, release: 9.5, octave: -1, octaveShiftProb: 0.10, muted: false }
       }
     }
   };

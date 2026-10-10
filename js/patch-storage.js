@@ -87,7 +87,7 @@
     };
 
     const voices = {};
-    const defaultGain = { pad: 0.72, piano: 2.00, bell: 0.54, choir: 0.60, tape: 0.64, drone: 0.70 };
+    const defaultGain = { pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65 };
     const defaultRelease = { pad: 8.5, piano: 4.5, bell: 5.2, choir: 9.5, tape: 6.2, drone: 11.0 };
     const defaultOctave = { pad: 0, piano: 0, bell: 1, choir: 1, tape: 0, drone: -1 };
     if (!app.globalVoiceGains) app.globalVoiceGains = {};
@@ -99,7 +99,7 @@
         const rawG = Number.isFinite(domGain) && domGain > 0
           ? domGain
           : (typeof v.baseGain === 'number' && v.baseGain > 0 ? v.baseGain : v.gain);
-        const g = typeof rawG === 'number' && rawG > 0 ? Number(rawG.toFixed(2)) : (defaultGain[v.id] || 0.35);
+        const g = typeof rawG === 'number' && rawG > 0 ? Number(rawG.toFixed(2)) : (defaultGain[v.id] || 0.65);
         const finalGain = v.id === 'piano' ? (g || 2.00) : g;
         const cutEl = document.getElementById(`voice-cutoff-${v.id}`);
         const resEl = document.getElementById(`voice-resonance-${v.id}`);
@@ -198,7 +198,7 @@
   function persistToLocalStorage() {
     try {
       const payload = {
-        version: 4, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
+        version: 5, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
         autoCycle: savedAutoCycle, patchOverrides, customPresets, customTrackPatterns
       };
       localStorage.setItem(LOCAL_STORAGE_PATCHES_KEY, JSON.stringify(payload));
@@ -218,7 +218,7 @@
 
     const app = getApp();
     const payload = {
-      version: 4, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
+      version: 5, globalVoiceBalance, globalVoiceGains, globalVoiceFilters, globalVoiceFx,
       autoCycle: savedAutoCycle, patchOverrides, customPresets, customTrackPatterns, activePresetId: app?.activePresetId || null
     };
     fetch(API_PATCHES_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }).catch(() => {});
@@ -493,9 +493,9 @@
 
   function ingestSavedPayload(data, isMerge = false) {
     if (!data) return;
-    if ((data.version || 1) < 4) {
+    if ((data.version || 1) < 5) {
       globalVoiceBalance = -0.62;
-      globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+      globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65 };
       patchOverrides = {};
       if (data.globalVoiceFilters) globalVoiceFilters = data.globalVoiceFilters;
       if (data.globalVoiceFx) globalVoiceFx = data.globalVoiceFx;

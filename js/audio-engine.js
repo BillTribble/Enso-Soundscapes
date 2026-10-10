@@ -6,20 +6,17 @@
 'use strict';
 
 const DEFAULT_VOICE_FILTERS = {
-  pad: {cutoff: 5200, resonance: 1.2},
-  piano: {cutoff: 12000, resonance: 0.8},
-  bell: {cutoff: 9500, resonance: 1.4},
-  choir: {cutoff: 6400, resonance: 1.2},
-  tape: {cutoff: 4200, resonance: 1.6},
-  drone: {cutoff: 1800, resonance: 1.8}
+  pad: {cutoff: 5200, resonance: 1.2}, piano: {cutoff: 12000, resonance: 0.8},
+  bell: {cutoff: 9500, resonance: 1.4}, choir: {cutoff: 6400, resonance: 1.2},
+  tape: {cutoff: 4200, resonance: 1.6}, drone: {cutoff: 1800, resonance: 1.8}
 };
 const DEFAULT_VOICE_FX = {
-  pad: {reverb: 0.70, delay: 0.35},
-  piano: {reverb: 0.35, delay: 0.12},
-  bell: {reverb: 0.75, delay: 0.40},
-  choir: {reverb: 0.80, delay: 0.25},
-  tape: {reverb: 0.55, delay: 0.65},
-  drone: {reverb: 0.60, delay: 0.15}
+  pad: {reverb: 0.70, delay: 0.35}, piano: {reverb: 0.35, delay: 0.12},
+  bell: {reverb: 0.75, delay: 0.40}, choir: {reverb: 0.80, delay: 0.25},
+  tape: {reverb: 0.55, delay: 0.65}, drone: {reverb: 0.60, delay: 0.15}
+};
+const DEFAULT_VOICE_INSTRUMENT_TRIM = {
+  pad: 0.420, piano: 0.290, bell: 0.528, choir: 0.528, tape: 0.715, drone: 0.527
 };
 
 class AudioEngine {
@@ -45,6 +42,7 @@ class AudioEngine {
     this.voiceReleases = { pad: 8.5, piano: 4.5, bell: 5.2, choir: 9.5, tape: 6.2, drone: 11.0 };
     this.voiceFilterParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FILTERS));
     this.voiceFxParams = JSON.parse(JSON.stringify(DEFAULT_VOICE_FX));
+    this.voiceInstrumentTrim = { ...DEFAULT_VOICE_INSTRUMENT_TRIM };
 
     // Multi-sampled Salamander Grand Piano v3 state
     this.pianoSamples = new Map();
@@ -100,10 +98,9 @@ class AudioEngine {
     return s;
   }
 
-  init() {
+  init(customCtx = null) {
     if (this.ctx) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    this.ctx = new AudioCtx();
+    this.ctx = customCtx || new (window.AudioContext || window.webkitAudioContext)();
     const c = this.ctx, p = this.params, n = this.nodes;
 
     // Dual Post-FX Live Mixer Stems: independent Filter + Delay + Convolver Reverb + Shimmer for Piano vs. All Other Sounds
@@ -142,20 +139,20 @@ class AudioEngine {
     n.voiceDelaySends = {};
     n.voiceAnalysers = {};
     this.baseVoiceGains = this.baseVoiceGains || {
-      pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62
+      pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65
     };
     this.voiceGains = this.voiceGains || { ...this.baseVoiceGains };
     this.voiceBalanceGains = this.voiceBalanceGains || {};
     this.effectiveVoiceGains = this.effectiveVoiceGains || {};
     ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'].forEach((vId) => {
       const bus = c.createGain();
-      bus.gain.value = this.voiceGains[vId] ?? (vId === 'piano' ? 2.00 : 0.60);
+      bus.gain.value = this.voiceGains[vId] ?? (vId === 'piano' ? 2.00 : 0.65);
 
       const balanceBus = c.createGain();
       const mult = this.getCrossfadeMultiplier(vId);
       balanceBus.gain.value = mult;
       this.voiceBalanceGains[vId] = mult;
-      this.effectiveVoiceGains[vId] = (this.voiceGains[vId] ?? 0.60) * mult;
+      this.effectiveVoiceGains[vId] = (this.voiceGains[vId] ?? 0.65) * mult;
 
       bus.connect(balanceBus);
       balanceBus.connect(
@@ -201,10 +198,10 @@ class AudioEngine {
     n.otherShimmerCrossfade.connect(this.otherStem.shimmerBus);
     this._applyCrossfadeGains(p.pianoCrossfade ?? -0.62);
 
-    // Master Dynamics Limiter, Gain & Analyser (fast 3ms attack prevents chord transient clipping)
+    // Master Transparent Peak Limiter (prevents inter-sample clipping without pumping or ducking)
     n.compressor = c.createDynamicsCompressor();
-    n.compressor.threshold.value = -14; n.compressor.knee.value = 12; n.compressor.ratio.value = 8;
-    n.compressor.attack.value = 0.003; n.compressor.release.value = 0.20;
+    n.compressor.threshold.value = -1.0; n.compressor.knee.value = 0.0; n.compressor.ratio.value = 20;
+    n.compressor.attack.value = 0.002; n.compressor.release.value = 0.05;
     n.masterGain = c.createGain(); n.masterGain.gain.value = p.masterVolume;
     n.analyser = c.createAnalyser(); n.analyser.fftSize = 1024; n.analyser.smoothingTimeConstant = 0.85;
     n.masterBus.connect(n.compressor); n.compressor.connect(n.masterGain);
@@ -219,7 +216,7 @@ class AudioEngine {
         30;
     const mechLen =
         (typeof window !== 'undefined' &&
-         Object.keys(window.EnsoPianoSampler?.MECH_FILES || {}).length) ||
+          Object.keys(window.EnsoPianoSampler?.MECH_FILES || {}).length) ||
         7;
     this.pianoSampleCount = zonesLen * 3 + mechLen;
     if (typeof this.loadPianoSamples === 'function') {
@@ -490,13 +487,13 @@ class AudioEngine {
   }
 
   _syncVoiceBusGains() {
-    this.baseVoiceGains = this.baseVoiceGains || { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+    this.baseVoiceGains = this.baseVoiceGains || { pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65 };
     this.voiceGains = this.voiceGains || {};
     this.voiceBalanceGains = this.voiceBalanceGains || {};
     this.effectiveVoiceGains = this.effectiveVoiceGains || {};
     const now = this.ctx ? this.ctx.currentTime : 0;
     ['pad', 'piano', 'bell', 'choir', 'tape', 'drone'].forEach((vId) => {
-      const base = this.baseVoiceGains[vId] ?? (vId === 'piano' ? 2.00 : 0.60);
+      const base = this.baseVoiceGains[vId] ?? (vId === 'piano' ? 2.00 : 0.65);
       const mult = this.getCrossfadeMultiplier(vId);
       this.voiceGains[vId] = base;
       this.voiceBalanceGains[vId] = mult;
@@ -510,7 +507,7 @@ class AudioEngine {
 
   setVoiceVolume(voiceId, val) {
     const v = Math.max(0, Math.min(5.0, Number(val) || 0));
-    this.baseVoiceGains = this.baseVoiceGains || { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+    this.baseVoiceGains = this.baseVoiceGains || { pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65 };
     this.baseVoiceGains[voiceId] = v;
     this._syncVoiceBusGains();
   }
@@ -526,8 +523,12 @@ class AudioEngine {
       const now = this.ctx.currentTime;
       this._setParamImmediate(n.pianoCrossfadeBus.gain, pianoMult <= 0.001 ? 0 : 1.0, now);
       this._setParamImmediate(n.otherCrossfadeBus.gain, otherMult <= 0.001 ? 0 : 1.0, now);
-      if (this.pianoStem && this.pianoStem.stemInput) this._setParamImmediate(this.pianoStem.stemInput.gain, pianoBoost, now);
-      if (this.otherStem && this.otherStem.stemOutput) this._setParamImmediate(this.otherStem.stemOutput.gain, otherStemTaper, now);
+      const effPianoStemBoost = x <= -0.80 ? pianoBoost : 1.0;
+      const effOtherStemGain = (x < 0 && otherMult > 0.001)
+        ? (x >= -0.70 ? (1.0 / otherMult) : Math.pow(otherMult / 0.30, 0.8) * (1.0 / 0.30))
+        : (1.0 + Math.max(0, x) * 0.5);
+      if (this.pianoStem && this.pianoStem.stemInput) this._setParamImmediate(this.pianoStem.stemInput.gain, effPianoStemBoost, now);
+      if (this.otherStem && this.otherStem.stemOutput) this._setParamImmediate(this.otherStem.stemOutput.gain, effOtherStemGain, now);
       if (n.pianoShimmerCrossfade && n.otherShimmerCrossfade) {
         this._setParamImmediate(n.pianoShimmerCrossfade.gain, pianoMult, now);
         this._setParamImmediate(n.otherShimmerCrossfade.gain, otherMult, now);
@@ -543,7 +544,7 @@ class AudioEngine {
     return this._applyCrossfadeGains(x);
   }
 
-  triggerVoice(voiceId, midiNote, velocity = 0.7, pan = 0, voiceGain = 0.7, voiceRelease = null) {
+  triggerVoice(voiceId, midiNote, velocity = 0.7, pan = 0, voiceGain = 0.7, voiceRelease = null, startTime = null) {
     if (!this.ctx) this.init();
     this.resume();
     if (window.enoPhraseEngine && typeof window.enoPhraseEngine.quantizeMidiToKey === 'function') {
@@ -551,7 +552,7 @@ class AudioEngine {
     }
     this.lastTriggeredNotes = (this.lastTriggeredNotes || []).slice(-199);
     this.lastTriggeredNotes.push({ voiceId, midi: midiNote, time: Date.now() });
-    const now = this.ctx.currentTime, freq = 440 * Math.pow(2, (midiNote - 69) / 12);
+    const now = typeof startTime === 'number' ? startTime : this.ctx.currentTime, freq = 440 * Math.pow(2, (midiNote - 69) / 12);
     const archetypeFactors = { pad: 1.25, piano: 0.35, bell: 0.45, choir: 1.35, tape: 0.85, drone: 1.5 };
     const af = archetypeFactors[voiceId] || 1.0, circ = this.params.circadianMultipliers || {};
     const isPiano = voiceId === 'piano';
@@ -569,7 +570,7 @@ class AudioEngine {
     const busNode = (this.nodes.voiceBuses && this.nodes.voiceBuses[voiceId]) || null;
     const baseGain = (this.baseVoiceGains && typeof this.baseVoiceGains[voiceId] === 'number')
       ? this.baseVoiceGains[voiceId]
-      : (typeof voiceGain === 'number' ? voiceGain : (isPiano ? 2.0 : 0.35));
+      : (typeof voiceGain === 'number' ? voiceGain : (isPiano ? 2.0 : 0.65));
     const effBusGain = (this.voiceGains && typeof this.voiceGains[voiceId] === 'number')
       ? this.voiceGains[voiceId]
       : baseGain * this.getCrossfadeMultiplier(voiceId);
@@ -578,7 +579,8 @@ class AudioEngine {
       : 1.0;
     const styleProf = this.getTrackStyleProfile ? this.getTrackStyleProfile() : null;
     const styleTrim = (styleProf && styleProf.voiceTrim && typeof styleProf.voiceTrim[voiceId] === 'number') ? styleProf.voiceTrim[voiceId] : 1.0;
-    const peakGain = Math.max(0.0001, velocity * (busNode ? 0.82 * noteGainScale : effBusGain * noteGainScale * 0.75) * styleTrim);
+    const instTrim = (this.voiceInstrumentTrim && typeof this.voiceInstrumentTrim[voiceId] === 'number') ? this.voiceInstrumentTrim[voiceId] : 1.0;
+    const peakGain = Math.max(0.0001, velocity * (busNode ? 0.82 * noteGainScale : effBusGain * noteGainScale * 0.75) * styleTrim * instTrim);
 
     const envGain = this.ctx.createGain();
     if (isPiano) {

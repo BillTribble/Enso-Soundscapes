@@ -117,7 +117,7 @@ function loadPianoSamples() {
   if (this._pianoLoadPromise) return this._pianoLoadPromise;
   if (!this.ctx) this.init();
   if (typeof window !== 'undefined' && window.location &&
-      (window.location.protocol === 'file:' ||
+      ((window.location.protocol === 'file:' && !window.__ENSO_ALLOW_FILE_SAMPLES__) ||
        window.location.hash.includes('selftest=1'))) {
     return Promise.resolve(true);
   }

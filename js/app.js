@@ -26,7 +26,7 @@
 
       this.activePresetId = 'thursday';
       this.globalVoiceBalance = -0.62;
-      this.globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.50, choir: 0.56, tape: 0.58, drone: 0.62 };
+      this.globalVoiceGains = { pad: 0.65, piano: 2.00, bell: 0.65, choir: 0.65, tape: 0.65, drone: 0.65 };
       this.globalVoiceFilters = { pad: {cutoff: 5200, resonance: 1.2}, piano: {cutoff: 12000, resonance: 0.8}, bell: {cutoff: 9500, resonance: 1.4}, choir: {cutoff: 6400, resonance: 1.2}, tape: {cutoff: 4200, resonance: 1.6}, drone: {cutoff: 1800, resonance: 1.8} };
       this.globalVoiceFx = { pad: {reverb: 0.70, delay: 0.35}, piano: {reverb: 0.35, delay: 0.12}, bell: {reverb: 0.75, delay: 0.40}, choir: {reverb: 0.80, delay: 0.25}, tape: {reverb: 0.55, delay: 0.65}, drone: {reverb: 0.60, delay: 0.15} };
       this.xyTarget = 'filter';
@@ -772,5 +772,9 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => { window.enoApp = new EnoSoundscapeApp(); });
+  const initApp = () => { if (!window.enoApp && typeof document !== 'undefined') window.enoApp = new EnoSoundscapeApp(); };
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
+    else initApp();
+  }
 })();

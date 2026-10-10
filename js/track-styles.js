@@ -13,9 +13,9 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'Circadian & Seasonal Generative Rule Shifting',
     pianoEq: { bodyWarmthHz: 265, bodyWarmthGainDb: 2.2, highShelfHz: 2800, highShelfCutDb: -5.5, mechReleaseGain: 0.030, shimmerSend: 0.24, chorusDetuneCents: 3.8, tapeWowHz: 0, tapeWowDepth: 0, feltThumpGain: 0.06 },
     voiceTrim:
-        {pad: 1.12, piano: 1.08, bell: 0.92, choir: 1.28, tape: 0.76, drone: 0.95},
-    padSynth: { wave1: 'sawtooth', wave2: 'triangle', detuneCents: 6, subGain: 0.34, fifthGain: 0.24, lydianSharp11Gain: 0, filterMult: 4.2, filterQ: 1.0, glideRatio: 1.0, glideDurationSec: 0 },
-    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.35, mod2Ratio: 3.0, mod2Index: 0.48, attackBloomSec: 0.035 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'sawtooth', wave2: 'triangle', detuneCents: 6, oscGain: 1.0, subGain: 0.34, fifthGain: 0.24, lydianSharp11Gain: 0, filterMult: 4.2, filterQ: 1.0, glideRatio: 1.0, glideDurationSec: 0 },
+    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.35, mod2Ratio: 3.0, mod2Index: 0.48, attackBloomSec: 0.035, carrierGain: 1.0 },
     choirSynth: {
       partials: [
         {type: 'sine', r: 1, det: 0, g: 0.65},
@@ -58,15 +58,15 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'Logic Pro X Scripter Probability Gates (with Peter Chilvers)',
     pianoEq: { bodyWarmthHz: 245, bodyWarmthGainDb: 3.0, highShelfHz: 2150, highShelfCutDb: -8.8, mechReleaseGain: 0.036, shimmerSend: 0.18, chorusDetuneCents: 2.2, tapeWowHz: 0, tapeWowDepth: 0, feltThumpGain: 0.10 },
     voiceTrim:
-        {pad: 1.32, piano: 1.02, bell: 1.22, choir: 0.92, tape: 0.84, drone: 1.16},
-    padSynth: { wave1: 'triangle', wave2: 'sawtooth', detuneCents: 8, subGain: 0.44, fifthGain: 0.32, lydianSharp11Gain: 0.18, filterMult: 3.0, filterQ: 1.35, glideRatio: 1.0, glideDurationSec: 0 },
-    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.10, mod2Ratio: 3.0, mod2Index: 0.42, attackBloomSec: 0.12 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'triangle', wave2: 'sawtooth', detuneCents: 8, oscGain: 0.99, subGain: 0.43, fifthGain: 0.31, lydianSharp11Gain: 0.17, filterMult: 3.0, filterQ: 1.35, glideRatio: 1.0, glideDurationSec: 0 },
+    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.10, mod2Ratio: 3.0, mod2Index: 0.42, attackBloomSec: 0.12, carrierGain: 0.992 },
     choirSynth: {
       partials: [
-        {type: 'sine', r: 1, det: 0, g: 0.70},
-        {type: 'sine', r: 1.498, det: -3, g: 0.34},
-        {type: 'sine', r: 2, det: 4, g: 0.42},
-        {type: 'triangle', r: 3, det: -5, g: 0.20}
+        {type: 'sine', r: 1, det: 0, g: 0.73},
+        {type: 'sine', r: 1.498, det: -3, g: 0.355},
+        {type: 'sine', r: 2, det: 4, g: 0.44},
+        {type: 'triangle', r: 3, det: -5, g: 0.21}
       ],
       filterMult: 3.1,
       filterQ: 1.1,
@@ -74,8 +74,8 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 2.5
     },
     tapeSynth: {
-      triGain: 0.86,
-      sawGain: 0.20,
+      triGain: 0.756,
+      sawGain: 0.176,
       squareGain: 0,
       wowHz: 0.28,
       wowCents: 3.2,
@@ -84,7 +84,7 @@ const TRACK_STYLE_PROFILES = {
       filterHz: 2500,
       filterQ: 1.05
     },
-    droneSynth: { rootGain: 0.92, fifthGain: 0.56, octaveGain: 0.25, subOctaveGain: 0.32, filterMult: 2.5, filterQ: 0.85, breathLfoHz: 0.04 },
+    droneSynth: { rootGain: 0.799, fifthGain: 0.486, octaveGain: 0.217, subOctaveGain: 0.278, filterMult: 2.5, filterQ: 0.85, breathLfoHz: 0.04 },
     shimmerCascade: { baseOctaveGain: 0.24, upperOctaveGain: 0.08, fifthOctaveGain: 0.14, bloomDelaySec: 0.35, tankFeedback: 0.18, detuneCents: 4.0 },
     generativeRules: {
       markovGravity: [0.98, 0.86, 0.35, 0.78, 0.92, 0.42, 0.28],
@@ -102,17 +102,17 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'Incommensurable Prime-Length Tape Loops',
     pianoEq: { bodyWarmthHz: 215, bodyWarmthGainDb: 1.2, highShelfHz: 3500, highShelfCutDb: -3.5, mechReleaseGain: 0.022, shimmerSend: 0.30, chorusDetuneCents: 4.8, tapeWowHz: 0.34, tapeWowDepth: 0.0010, feltThumpGain: 0.03 },
     voiceTrim:
-        {pad: 1.05, piano: 1.06, bell: 1.38, choir: 1.36, tape: 1.18, drone: 1.08},
-    padSynth: { wave1: 'sawtooth', wave2: 'sawtooth', detuneCents: 11, subGain: 0.26, fifthGain: 0.38, lydianSharp11Gain: 0.14, filterMult: 5.0, filterQ: 1.55, glideRatio: 1.0, glideDurationSec: 0 },
-    bellSynth: { mod1Ratio: 3.0, mod1Index: 1.85, mod2Ratio: 4.02, mod2Index: 0.95, attackBloomSec: 0.18 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'sawtooth', wave2: 'sawtooth', detuneCents: 11, oscGain: 1.18, subGain: 0.35, fifthGain: 0.44, lydianSharp11Gain: 0.16, filterMult: 5.0, filterQ: 1.55, glideRatio: 1.0, glideDurationSec: 0 },
+    bellSynth: { mod1Ratio: 3.0, mod1Index: 1.85, mod2Ratio: 4.02, mod2Index: 0.95, attackBloomSec: 0.18, carrierGain: 1.008 },
     choirSynth: {
       partials: [
-        {type: 'sine', r: 1, det: 0, g: 0.62},
-        {type: 'sine', r: 1.498, det: -4, g: 0.40},
-        {type: 'sine', r: 2, det: 4, g: 0.50},
-        {type: 'triangle', r: 3, det: -6, g: 0.34},
-        {type: 'sine', r: 4, det: 7, g: 0.25},
-        {type: 'sine', r: 6, det: -8, g: 0.16}
+        {type: 'sine', r: 1, det: 0, g: 0.629},
+        {type: 'sine', r: 1.498, det: -4, g: 0.406},
+        {type: 'sine', r: 2, det: 4, g: 0.508},
+        {type: 'triangle', r: 3, det: -6, g: 0.345},
+        {type: 'sine', r: 4, det: 7, g: 0.254},
+        {type: 'sine', r: 6, det: -8, g: 0.162}
       ],
       filterMult: 5.4,
       filterQ: 1.2,
@@ -120,9 +120,9 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 4.2
     },
     tapeSynth: {
-      triGain: 0.68,
-      sawGain: 0.44,
-      squareGain: 0.12,
+      triGain: 0.583,
+      sawGain: 0.377,
+      squareGain: 0.103,
       wowHz: 0.48,
       wowCents: 6.2,
       flutterHz: 4.7,
@@ -130,7 +130,7 @@ const TRACK_STYLE_PROFILES = {
       filterHz: 2950,
       filterQ: 1.35
     },
-    droneSynth: { rootGain: 0.84, fifthGain: 0.60, octaveGain: 0.38, subOctaveGain: 0.34, filterMult: 3.5, filterQ: 0.95, breathLfoHz: 0.06 },
+    droneSynth: { rootGain: 0.743, fifthGain: 0.531, octaveGain: 0.336, subOctaveGain: 0.301, filterMult: 3.5, filterQ: 0.95, breathLfoHz: 0.06 },
     shimmerCascade: { baseOctaveGain: 0.32, upperOctaveGain: 0.16, fifthOctaveGain: 0.18, bloomDelaySec: 0.32, tankFeedback: 0.22, detuneCents: 5.0 },
     generativeRules: {
       markovGravity: {0: 1.40, 1: 1.32, 3: 1.44, 4: 1.55},
@@ -155,16 +155,16 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'The Eno / Lanois Octave-Feedback "Shimmer" Reverb Chain',
     pianoEq: { bodyWarmthHz: 250, bodyWarmthGainDb: 2.8, highShelfHz: 2450, highShelfCutDb: -7.2, mechReleaseGain: 0.028, shimmerSend: 0.46, chorusDetuneCents: 5.2, tapeWowHz: 0.24, tapeWowDepth: 0.0007, feltThumpGain: 0.07 },
     voiceTrim:
-        {pad: 1.36, piano: 1.05, bell: 1.18, choir: 1.34, tape: 0.95, drone: 1.28},
-    padSynth: { wave1: 'sawtooth', wave2: 'sawtooth', detuneCents: 12, subGain: 0.50, fifthGain: 0.40, lydianSharp11Gain: 0, filterMult: 3.9, filterQ: 1.45, glideRatio: 0.992, glideDurationSec: 0.52 },
-    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.65, mod2Ratio: 3.005, mod2Index: 0.88, attackBloomSec: 0.09 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'sawtooth', wave2: 'sawtooth', detuneCents: 12, oscGain: 1.09, subGain: 0.54, fifthGain: 0.44, lydianSharp11Gain: 0, filterMult: 3.9, filterQ: 1.45, glideRatio: 0.992, glideDurationSec: 0.52 },
+    bellSynth: { mod1Ratio: 2.0, mod1Index: 1.65, mod2Ratio: 3.005, mod2Index: 0.88, attackBloomSec: 0.09, carrierGain: 1.005 },
     choirSynth: {
       partials: [
-        {type: 'sine', r: 1, det: 0, g: 0.64},
-        {type: 'sine', r: 2, det: -6, g: 0.56},
-        {type: 'sine', r: 2, det: 6, g: 0.56},
-        {type: 'triangle', r: 3, det: -8, g: 0.40},
-        {type: 'sine', r: 4, det: 9, g: 0.34}
+        {type: 'sine', r: 1, det: 0, g: 0.548},
+        {type: 'sine', r: 2, det: -6, g: 0.479},
+        {type: 'sine', r: 2, det: 6, g: 0.479},
+        {type: 'triangle', r: 3, det: -8, g: 0.342},
+        {type: 'sine', r: 4, det: 9, g: 0.291}
       ],
       filterMult: 4.9,
       filterQ: 1.05,
@@ -172,8 +172,8 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 5.8
     },
     tapeSynth: {
-      triGain: 0.80,
-      sawGain: 0.36,
+      triGain: 0.739,
+      sawGain: 0.333,
       squareGain: 0,
       wowHz: 0.36,
       wowCents: 4.8,
@@ -184,7 +184,7 @@ const TRACK_STYLE_PROFILES = {
       glideRatio: 0.994,
       glideDurationSec: 0.42
     },
-    droneSynth: { rootGain: 0.95, fifthGain: 0.56, octaveGain: 0.36, subOctaveGain: 0.50, filterMult: 2.8, filterQ: 1.1, breathLfoHz: 0.045 },
+    droneSynth: { rootGain: 0.758, fifthGain: 0.447, octaveGain: 0.287, subOctaveGain: 0.399, filterMult: 2.8, filterQ: 1.1, breathLfoHz: 0.045 },
     shimmerCascade: { baseOctaveGain: 0.52, upperOctaveGain: 0.38, fifthOctaveGain: 0.28, bloomDelaySec: 0.55, tankFeedback: 0.28, detuneCents: 6.5 },
     generativeRules: {
       markovGravity: {0: 1.55, 1: 1.42, 2: 1.32, 4: 1.60, 5: 1.35},
@@ -202,14 +202,14 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'Damped Felt Piano & DX7 FM Glass Miniatures (with Roger Eno)',
     pianoEq: { bodyWarmthHz: 230, bodyWarmthGainDb: 4.8, highShelfHz: 1350, highShelfCutDb: -15.5, mechReleaseGain: 0.085, shimmerSend: 0.05, chorusDetuneCents: 0, tapeWowHz: 0, tapeWowDepth: 0, feltThumpGain: 0.28 },
     voiceTrim:
-        {pad: 0.76, piano: 1.24, bell: 1.46, choir: 0.56, tape: 0.72, drone: 0.82},
-    padSynth: { wave1: 'triangle', wave2: 'sine', detuneCents: 4, subGain: 0.36, fifthGain: 0.14, lydianSharp11Gain: 0, filterMult: 2.1, filterQ: 0.8, glideRatio: 1.0, glideDurationSec: 0 },
-    bellSynth: { mod1Ratio: 2.76, mod1Index: 2.95, mod2Ratio: 5.41, mod2Index: 1.42, attackBloomSec: 0.006 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'triangle', wave2: 'sine', detuneCents: 4, oscGain: 0.83, subGain: 0.22, fifthGain: 0.11, lydianSharp11Gain: 0, filterMult: 2.1, filterQ: 0.8, glideRatio: 1.0, glideDurationSec: 0 },
+    bellSynth: { mod1Ratio: 2.76, mod1Index: 2.95, mod2Ratio: 5.41, mod2Index: 1.42, attackBloomSec: 0.006, carrierGain: 1.02 },
     choirSynth: {
       partials: [
-        {type: 'sine', r: 1, det: 0, g: 0.72},
-        {type: 'sine', r: 2, det: -3, g: 0.26},
-        {type: 'triangle', r: 3, det: 3, g: 0.12}
+        {type: 'sine', r: 1, det: 0, g: 0.878},
+        {type: 'sine', r: 2, det: -3, g: 0.317},
+        {type: 'triangle', r: 3, det: 3, g: 0.146}
       ],
       filterMult: 2.0,
       filterQ: 0.75,
@@ -217,8 +217,8 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 2.0
     },
     tapeSynth: {
-      triGain: 0.88,
-      sawGain: 0.16,
+      triGain: 0.777,
+      sawGain: 0.141,
       squareGain: 0,
       wowHz: 0.42,
       wowCents: 4.8,
@@ -227,7 +227,7 @@ const TRACK_STYLE_PROFILES = {
       filterHz: 1850,
       filterQ: 0.95
     },
-    droneSynth: { rootGain: 0.88, fifthGain: 0.34, octaveGain: 0.14, subOctaveGain: 0.24, filterMult: 1.85, filterQ: 0.68, breathLfoHz: 0.04 },
+    droneSynth: { rootGain: 0.915, fifthGain: 0.354, octaveGain: 0.146, subOctaveGain: 0.250, filterMult: 1.85, filterQ: 0.68, breathLfoHz: 0.04 },
     shimmerCascade: { baseOctaveGain: 0.08, upperOctaveGain: 0.0, fifthOctaveGain: 0.0, bloomDelaySec: 0.20, tankFeedback: 0.08, detuneCents: 2.0 },
     generativeRules: {
       markovGravity: {0: 1.48, 2: 1.55, 4: 1.42, 5: 1.38},
@@ -245,13 +245,13 @@ const TRACK_STYLE_PROFILES = {
     methodTitle: 'Pauline Oliveros & Brian Eno: Deep Listening & Attention',
     pianoEq: { bodyWarmthHz: 212, bodyWarmthGainDb: 4.5, highShelfHz: 1420, highShelfCutDb: -14.2, mechReleaseGain: 0.068, shimmerSend: 0.04, chorusDetuneCents: 0, tapeWowHz: 0.58, tapeWowDepth: 0.0042, feltThumpGain: 0.20 },
     voiceTrim:
-        {pad: 1.12, piano: 1.06, bell: 0.50, choir: 0.50, tape: 1.46, drone: 1.38},
-    padSynth: { wave1: 'sawtooth', wave2: 'triangle', detuneCents: 9, subGain: 0.48, fifthGain: 0.28, lydianSharp11Gain: 0, filterMult: 2.0, filterQ: 1.85, glideRatio: 1.0, glideDurationSec: 0 },
-    bellSynth: { mod1Ratio: 2.76, mod1Index: 1.20, mod2Ratio: 1.41, mod2Index: 0.40, attackBloomSec: 0.05 },
+        {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
+    padSynth: { wave1: 'sawtooth', wave2: 'triangle', detuneCents: 9, oscGain: 1.005, subGain: 0.48, fifthGain: 0.28, lydianSharp11Gain: 0, filterMult: 2.0, filterQ: 1.85, glideRatio: 1.0, glideDurationSec: 0 },
+    bellSynth: { mod1Ratio: 2.76, mod1Index: 1.20, mod2Ratio: 1.41, mod2Index: 0.40, attackBloomSec: 0.05, carrierGain: 0.998 },
     choirSynth: {
       partials: [
-        {type: 'sine', r: 1, det: 0, g: 0.66},
-        {type: 'triangle', r: 2, det: -6, g: 0.34}
+        {type: 'sine', r: 1, det: 0, g: 0.823},
+        {type: 'triangle', r: 2, det: -6, g: 0.424}
       ],
       filterMult: 1.9,
       filterQ: 1.2,
@@ -259,9 +259,9 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 6.2
     },
     tapeSynth: {
-      triGain: 0.64,
-      sawGain: 0.54,
-      squareGain: 0.30,
+      triGain: 0.511,
+      sawGain: 0.431,
+      squareGain: 0.240,
       wowHz: 0.62,
       wowCents: 12.0,
       flutterHz: 5.4,
@@ -269,7 +269,7 @@ const TRACK_STYLE_PROFILES = {
       filterHz: 1380,
       filterQ: 2.70
     },
-    droneSynth: { rootGain: 0.96, fifthGain: 0.62, octaveGain: 0.28, subOctaveGain: 0.60, filterMult: 1.75, filterQ: 1.50, breathLfoHz: 0.085 },
+    droneSynth: { rootGain: 0.673, fifthGain: 0.435, octaveGain: 0.196, subOctaveGain: 0.421, filterMult: 1.75, filterQ: 1.50, breathLfoHz: 0.085 },
     shimmerCascade: { baseOctaveGain: 0.05, upperOctaveGain: 0.0, fifthOctaveGain: 0.0, bloomDelaySec: 0.40, tankFeedback: 0.06, detuneCents: 3.0 },
     generativeRules: {
       markovGravity: {0: 1.58, 2: 1.48, 4: 1.52, 5: 1.38, 6: 1.32},
@@ -305,6 +305,7 @@ function synthesizeTrackVoice(engine, {
 }) {
   const ctx = engine.ctx;
   const profile = getTrackProfile(engine.activeTrackStyle);
+  const voiceSynthDest = envGain;
 
   if (voiceId === 'pad') {
     const ps = profile.padSynth;
@@ -318,6 +319,8 @@ function synthesizeTrackVoice(engine, {
       s1.frequency.exponentialRampToValueAtTime(freq, now + ps.glideDurationSec);
       s2.frequency.exponentialRampToValueAtTime(freq, now + ps.glideDurationSec);
     }
+    const oscG = ctx.createGain();
+    oscG.gain.value = ps.oscGain ?? 1.0;
     const sub = engine._makeOsc('sine', freq * 0.5, 0, now);
     const subG = ctx.createGain();
     subG.gain.value = ps.subGain ?? 0.4;
@@ -326,10 +329,11 @@ function synthesizeTrackVoice(engine, {
         ps.filterQ || 1.2);
     sub.connect(subG);
     subG.connect(vFilt);
-    s1.connect(vFilt);
-    s2.connect(vFilt);
+    s1.connect(oscG);
+    s2.connect(oscG);
+    oscG.connect(vFilt);
     oscs.push(s1, s2, sub);
-    internalNodes.push(subG, vFilt);
+    internalNodes.push(oscG, subG, vFilt);
 
     if (ps.fifthGain > 0.01) {
       const f5 = engine._makeOsc('sine', freq * 1.4983, 2, now);
@@ -349,13 +353,15 @@ function synthesizeTrackVoice(engine, {
       oscs.push(f11);
       internalNodes.push(g11);
     }
-    vFilt.connect(envGain);
+    vFilt.connect(voiceSynthDest);
     return true;
   }
 
   if (voiceId === 'bell') {
     const bs = profile.bellSynth;
     const carrier = engine._makeOsc('sine', freq, 0, now);
+    const carrierG = ctx.createGain();
+    carrierG.gain.value = bs.carrierGain ?? 1.0;
     const mod1 = engine._makeOsc('sine', freq * (bs.mod1Ratio || 2.76), 0, now);
     const mod1G = ctx.createGain();
     const peakMod1 = Math.max(1, freq * (bs.mod1Index || 2.2) * velocity);
@@ -370,7 +376,7 @@ function synthesizeTrackVoice(engine, {
     mod1.connect(mod1G);
     mod1G.connect(carrier.frequency);
     oscs.push(carrier, mod1);
-    internalNodes.push(mod1G);
+    internalNodes.push(carrierG, mod1G);
 
     if (bs.mod2Ratio && bs.mod2Index > 0.01) {
       const mod2 = engine._makeOsc('sine', freq * bs.mod2Ratio, 3, now);
@@ -384,7 +390,8 @@ function synthesizeTrackVoice(engine, {
       oscs.push(mod2);
       internalNodes.push(mod2G);
     }
-    carrier.connect(envGain);
+    carrier.connect(carrierG);
+    carrierG.connect(voiceSynthDest);
     return true;
   }
 
@@ -412,7 +419,7 @@ function synthesizeTrackVoice(engine, {
       oscs.push(osc);
       internalNodes.push(g);
     }
-    vFilt.connect(envGain);
+    vFilt.connect(voiceSynthDest);
     internalNodes.push(vFilt);
     return true;
   }
@@ -466,7 +473,7 @@ function synthesizeTrackVoice(engine, {
       oscs.push(sq);
       internalNodes.push(sqG);
     }
-    vFilt.connect(envGain);
+    vFilt.connect(voiceSynthDest);
     return true;
   }
 
@@ -509,7 +516,7 @@ function synthesizeTrackVoice(engine, {
       oscs.push(subOsc);
       internalNodes.push(subG);
     }
-    vFilt.connect(envGain);
+    vFilt.connect(voiceSynthDest);
     return true;
   }
 

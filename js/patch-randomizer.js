@@ -271,11 +271,11 @@
     const primeDrone = [19.3, 29.3, 31.1, 37.3, 37.9, 43.1];
 
     const pianoGain = 2.00;
-    const padGain = app.globalVoiceGains?.pad ?? 0.68;
-    const bellGain = app.globalVoiceGains?.bell ?? 0.50;
-    const choirGain = app.globalVoiceGains?.choir ?? 0.58;
-    const tapeGain = app.globalVoiceGains?.tape ?? 0.62;
-    const droneGain = app.globalVoiceGains?.drone ?? 0.66;
+    const padGain = app.globalVoiceGains?.pad ?? 0.65;
+    const bellGain = app.globalVoiceGains?.bell ?? 0.65;
+    const choirGain = app.globalVoiceGains?.choir ?? 0.65;
+    const tapeGain = app.globalVoiceGains?.tape ?? 0.65;
+    const droneGain = app.globalVoiceGains?.drone ?? 0.65;
     const xf = typeof app.globalVoiceBalance === 'number' ? app.globalVoiceBalance : -0.62;
 
     const phraseTypes = ['longer_pattern', 'chord_progression', 'short_motif'];

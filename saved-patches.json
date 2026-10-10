@@ -20,13 +20,13 @@
     "tape": { "reverb": 0.55, "delay": 0.65 }
   },
   "globalVoiceGains": {
-    "bell": 0.5,
-    "choir": 0.56,
-    "drone": 0.62,
+    "bell": 0.65,
+    "choir": 0.65,
+    "drone": 0.65,
     "pad": 0.65,
-    "piano": 2,
-    "tape": 0.58
+    "piano": 2.0,
+    "tape": 0.65
   },
   "patchOverrides": {},
-  "version": 4
+  "version": 5
 }

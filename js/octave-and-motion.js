@@ -104,39 +104,23 @@ const EnsoMotion = {
               icon || 'music_note'}</span>`;
       el.style.display = '';
       if (wasHidden && typeof el.animate === 'function') {
-        el.animate(
-            [
-              {opacity: 0, transform: 'scale(0.8)'},
-              {opacity: 1, transform: 'scale(1)'}
-            ],
-            {duration: 200, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
+        el.animate([{opacity: 0, transform: 'scale(0.8)'}, {opacity: 1, transform: 'scale(1)'}], {duration: 200, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
       }
     }
 
     siblings.forEach((sib) => {
-      const r2 = sib.el.getBoundingClientRect();
-      const dx = sib.rect.left - r2.left;
-      const dy = sib.rect.top - r2.top;
-      if (typeof sib.el.animate === 'function' &&
-          (Math.abs(dx) > 0.75 || Math.abs(dy) > 0.75)) {
+      const r2 = sib.el.getBoundingClientRect(), dx = sib.rect.left - r2.left, dy = sib.rect.top - r2.top;
+      if (typeof sib.el.animate === 'function' && (Math.abs(dx) > 0.75 || Math.abs(dy) > 0.75)) {
         if (sib.el._flipAnim) sib.el._flipAnim.cancel();
-        sib.el._flipAnim = sib.el.animate(
-            [
-              {transform: `translate(${dx}px, ${dy}px)`},
-              {transform: 'translate(0, 0)'}
-            ],
-            {duration: 220, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
+        sib.el._flipAnim = sib.el.animate([{transform: `translate(${dx}px, ${dy}px)`}, {transform: 'translate(0, 0)'}], {duration: 220, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
       }
     });
 
     if (card && typeof card.animate === 'function') {
       const nextCardH = card.getBoundingClientRect().height;
-      if (prevCardH > 0 && nextCardH > 0 &&
-          Math.abs(nextCardH - prevCardH) > 0.5) {
+      if (prevCardH > 0 && nextCardH > 0 && Math.abs(nextCardH - prevCardH) > 0.5) {
         if (card._heightAnim) card._heightAnim.cancel();
-        card._heightAnim = card.animate(
-            [{height: `${prevCardH}px`}, {height: `${nextCardH}px`}],
-            {duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
+        card._heightAnim = card.animate([{height: `${prevCardH}px`}, {height: `${nextCardH}px`}], {duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)'});
       }
     }
   },
