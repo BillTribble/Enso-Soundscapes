@@ -267,10 +267,9 @@ const EnsoUrlState = {
       app.dismissStartupBanner?.();
       app.toggleTransport(false);
     }
-    if (q.includes('tab=probability'))
-      app.switchTab('probability');
-    else if (q.includes('tab=research'))
-      app.switchTab('research');
+    window.EnsoPatchesBanner?.applyUrlFlags(app, q);
+    if (q.includes('tab=probability')) app.switchTab('probability');
+    else if (q.includes('tab=research')) app.switchTab('research');
     if (q.includes('scroll=topbar')) {
       const presetCard = document.querySelector('.preset-strip-card');
       if (presetCard) presetCard.style.marginTop = '-48px';

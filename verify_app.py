@@ -339,6 +339,9 @@ def run_browser_selftest():
   assert (
       payload.get('playPauseLabelsShortVerified') is True
   ), f'Expected playPauseLabelsShortVerified=True (Play / Pause without engine): {payload}'
+  assert (
+      payload.get('patchesOnboardingBannerVerified') is True
+  ), f'Expected patchesOnboardingBannerVerified=True on desktop: {payload}'
   assert payload.get('masterFilterDefaultOff') is True, f'Expected masterFilterDefaultOff=True on desktop: {payload}'
   assert payload.get('masterFilterPowerBtnVerified') is True, f'Expected masterFilterPowerBtnVerified=True on desktop: {payload}'
   # Second self-test pass at 375x812 mobile viewport to verify real mobile geometry
@@ -354,6 +357,7 @@ def run_browser_selftest():
   assert payload_m.get('newPatchBtnPresent') is True, f'Expected newPatchBtnPresent=True at 375px: {payload_m}'
   assert payload_m.get('startupBannerVerified') is True, f'Expected startupBannerVerified=True at 375px mobile: {payload_m}'
   assert payload_m.get('playPauseLabelsShortVerified') is True, f'Expected playPauseLabelsShortVerified=True at 375px mobile: {payload_m}'
+  assert payload_m.get('patchesOnboardingBannerVerified') is True, f'Expected patchesOnboardingBannerVerified=True at 375px mobile: {payload_m}'
   assert payload_m.get('masterFilterDefaultOff') is True, f'Expected masterFilterDefaultOff=True at 375px mobile: {payload_m}'
   assert payload_m.get('masterFilterPowerBtnVerified') is True, f'Expected masterFilterPowerBtnVerified=True at 375px mobile: {payload_m}'
   assert payload_m.get('dialWidthPx', 0) >= 40, f'Expected mobile dialWidthPx >= 40: {payload_m}'
@@ -395,6 +399,10 @@ def capture_screenshots():
   """Capture light and dark mode screenshots across all views with default minimal outside-encoder rotary dials."""
   os.makedirs(ARTIFACT_DIR, exist_ok=True)
   specs = [
+      ('enso_first_play_patches_banner_desktop_light.png', 'bloom=1&firstplay=1', 1440, 940),
+      ('enso_first_play_patches_banner_desktop_dark.png', 'bloom=1&theme=dark&firstplay=1', 1440, 940),
+      ('enso_first_play_patches_banner_mobile_light.png', 'bloom=1&firstplay=1', 375, 812),
+      ('enso_first_play_patches_banner_mobile_dark.png', 'bloom=1&theme=dark&firstplay=1', 375, 812),
       ('enso_startup_banner_desktop_light.png', 'bloom=1&startup=1', 1440, 940),
       ('enso_startup_banner_desktop_dark.png', 'bloom=1&theme=dark&startup=1', 1440, 940),
       ('enso_startup_banner_mobile_light.png', 'bloom=1&startup=1', 375, 812),

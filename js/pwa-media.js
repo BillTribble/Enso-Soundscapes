@@ -113,7 +113,7 @@ window.EnsoPwaMedia = (function() {
   function initServiceWorker() {
     if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
       navigator.serviceWorker
-          .register('sw.js?v=20261011p', {updateViaCache: 'none'})
+          .register('sw.js?v=20261012a', {updateViaCache: 'none'})
           .then((reg) => {
             if (reg && typeof reg.update === 'function')
               reg.update().catch(() => {});
@@ -123,7 +123,7 @@ window.EnsoPwaMedia = (function() {
     if ('caches' in window) {
       caches.keys()
           .then((keys) => keys.forEach((k) => {
-            if (k !== 'enso-soundscapes-v23') caches.delete(k);
+            if (k !== 'enso-soundscapes-v24') caches.delete(k);
           }))
           .catch(() => {});
     }

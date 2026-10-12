@@ -154,7 +154,7 @@
           } else {
             btn.innerHTML = `<span>${preset.name}</span>`;
           }
-          btn.addEventListener('click', () => this.applyPreset(preset.id, true));
+          btn.addEventListener('click', () => { window.EnsoPatchesBanner?.dismiss(this); this.applyPreset(preset.id, true); });
           presetContainer.appendChild(btn);
         });
       }
@@ -349,9 +349,9 @@
         if (this.visualizer) { this.visualizer.setMode(active ? 'deep' : 'orbits'); setTimeout(() => this.visualizer.resize(), 50); }
         document.querySelectorAll('.m3-pill-tab[data-canvas-mode]').forEach((b) => b.classList.toggle('active', b.dataset.canvasMode === (active ? 'deep' : 'orbits')));
       });
-      this.syncStartupBannerBounds();
+      this.syncStartupBannerBounds(); window.EnsoPatchesBanner?.bind(this);
       window.addEventListener('resize', () => this.syncStartupBannerBounds());
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.syncStartupBannerBounds());
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { this.syncStartupBannerBounds(); window.EnsoPatchesBanner?.syncBounds(this); });
     }
 
     setMasterFilterEnabled(enabled) {
@@ -372,7 +372,7 @@
       const banner = document.getElementById('startup-play-banner');
       document.body.classList.add('startup-banner-active');
       if (banner) { banner.classList.remove('is-dismissed'); banner.setAttribute('aria-hidden', 'false'); }
-      this.syncStartupBannerBounds();
+      this.syncStartupBannerBounds(); window.EnsoPatchesBanner?.resetForStartup(this);
     }
 
     dismissStartupBanner() {
@@ -399,7 +399,7 @@
     toggleTransport(forceState) {
       const next = typeof forceState === 'boolean' ? forceState : !this.probEngine.isRunning;
       this.audioEngine.setRunning(next);
-      if (next) { this.dismissStartupBanner(); this.probEngine.start(); this.triggerAmbientCluster(); } else { this.probEngine.stop(); }
+      if (next) { this.dismissStartupBanner(); window.EnsoPatchesBanner?.showOnFirstPlay(this); this.probEngine.start(); this.triggerAmbientCluster(); } else { this.probEngine.stop(); }
       const btn = document.getElementById('btn-play-toggle'), icon = document.getElementById('play-icon'), lbl = document.getElementById('play-label');
       if (btn) { btn.classList.toggle('is-playing', next); btn.setAttribute('aria-pressed', next ? 'true' : 'false'); }
       if (icon) icon.textContent = next ? 'pause' : 'play_arrow';

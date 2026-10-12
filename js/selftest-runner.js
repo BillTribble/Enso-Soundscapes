@@ -536,6 +536,8 @@
             app.toggleTransport(false);
             const pausedLabel = (playLbl.textContent || '').trim();
             app.showStartupBanner();
+            const pBanner = document.getElementById('patches-onboarding-banner');
+            const hiddenBeforePlay = Boolean(pBanner && !pBanner.classList.contains('is-visible') && getComputedStyle(pBanner).display === 'none');
             const bRect = banner.getBoundingClientRect();
             const btnRect = startupBtn.getBoundingClientRect();
             const tRect = topBar.getBoundingClientRect();
@@ -562,6 +564,7 @@
                 getComputedStyle(presetCard).visibility === 'visible' &&
                 Boolean(app.probEngine?.isRunning);
             const playingLabel = (playLbl.textContent || '').trim();
+            const patchesOnboardingBannerVerified = Boolean(window.EnsoPatchesBanner?.verifyFromStartupState?.(app, hiddenBeforePlay));
             return {
               startupBannerVerified: Boolean(
                   app.startupBannerBootVisible &&
@@ -574,7 +577,8 @@
                   playingLabel === 'Pause' &&
                   startupBtnText === 'Play' &&
                   !/engine/i.test(pausedLabel) &&
-                  !/engine/i.test(playingLabel))
+                  !/engine/i.test(playingLabel)),
+              patchesOnboardingBannerVerified
             };
           })();
 
@@ -678,6 +682,7 @@
             masterFilterPowerBtnVerified: masterFilterCheck.masterFilterPowerBtnVerified,
             startupBannerVerified: startupCheck.startupBannerVerified,
             playPauseLabelsShortVerified: startupCheck.playPauseLabelsShortVerified,
+            patchesOnboardingBannerVerified: startupCheck.patchesOnboardingBannerVerified,
             hudGateCounterRemoved, hudNextTrackRemoved, tabularDigitsEqualWidth, tabularNumsCssVerified,
             autoCyclerPresent: Boolean(ac),
             autoCycleEnabledDefault: Boolean(ac && ac.enabled === true && toggleEl && toggleEl.checked === true),

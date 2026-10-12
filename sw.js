@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'enso-soundscapes-v23';
+const CACHE_NAME = 'enso-soundscapes-v24';
 const APP_SHELL = [
   './',
   'index.html',
