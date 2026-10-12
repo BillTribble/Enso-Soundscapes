@@ -273,6 +273,7 @@ def run_browser_selftest():
   assert payload.get('fadeVoicesBtnRemoved') is True, f'Expected #btn-fade-voices and priority_high removed: {payload}'
   assert payload.get('bgKeepAliveDurationSec', 0) >= 25, f'Expected bgKeepAliveDurationSec >= 25: {payload}'
   assert payload.get('bgAudioBridgeReady') is True, f'Expected bgAudioBridgeReady=True: {payload}'
+  assert payload.get('bgSingleOutputNoResample') is True, f'Expected bgSingleOutputNoResample=True: {payload}'
   assert payload.get('brandTitleText') == 'Enso Soundscapes', f'Expected brandTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('documentTitleText') == 'Enso Soundscapes', f'Expected documentTitleText=="Enso Soundscapes": {payload}'
   assert payload.get('researchBadgesRemoved') is True, f'Expected research homage badges removed: {payload}'

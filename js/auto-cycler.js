@@ -427,6 +427,7 @@ class EnsoAutoCycler {
     const gB = this.toSnapshot.global;
 
     Object.entries(GLOBAL_SLIDER_IDS).forEach(([key, domId]) => {
+      if (key === 'delayTime') return;
       if (typeof gA[key] === 'number' && typeof gB[key] === 'number') {
         let val;
         if (key === 'cutoff' || key === 'reverbDamping') {
@@ -436,9 +437,7 @@ class EnsoAutoCycler {
         } else {
           val = lerp(gA[key], gB[key], alpha);
         }
-        const decimals = (key === 'cutoff' || key === 'reverbDamping') ?
-            0 :
-            (key === 'reverbDecay' ? 1 : 2);
+        const decimals = (key === 'cutoff' || key === 'reverbDamping') ? 0 : (key === 'reverbDecay' ? 1 : 2);
         app.setSliderAndDispatch(domId, Number(val.toFixed(decimals)));
       }
     });
@@ -503,6 +502,10 @@ class EnsoAutoCycler {
 
     if (p >= 0.5 && !this.midpointSwitched) {
       this.midpointSwitched = true;
+      if (typeof gB.delayTime === 'number') {
+        app.setSliderAndDispatch('delay-time', Number(gB.delayTime.toFixed(2)));
+      }
+      app.audioEngine?.setTrackStyle?.(this.toPresetId);
       if (app.probEngine) {
         app.probEngine.setScale(this.toScaleId, false);
         const selScale = document.getElementById('select-scale');
@@ -597,8 +600,7 @@ class EnsoAutoCycler {
     }
   }
 
-  simulateTransitionForTest(
-      fromPresetId = 'thursday', toPresetId = 'reflection') {
+  simulateTransitionForTest(fromPresetId = 'thursday', toPresetId = 'reflection') {
     const app = this.app || window.enoApp;
     if (!app) return {ok: false};
     const origPreset = app.activePresetId || 'thursday';
@@ -609,16 +611,14 @@ class EnsoAutoCycler {
     const started = this.startTransition(toPresetId, 20);
     this._applyBlendAtProgress(0.25);
     const cutoffAt25 = app.audioEngine?.params?.cutoff || 0;
+    const delayTimeSteady = Math.abs((app.audioEngine?.params?.delayTime || 0) - (this.fromSnapshot?.global?.delayTime || 0)) < 0.005;
     const pitchSample = app.phraseEngine ?
-        this.selectBlendedSinglePitch(
-            app.phraseEngine, app.probEngine?.voices?.[0], {octaveBias: 0},
-            app.probEngine) :
+        this.selectBlendedSinglePitch(app.phraseEngine, app.probEngine?.voices?.[0], {octaveBias: 0}, app.probEngine) :
         null;
-    const sharedSet =
-        new Set(this.getSharedPitchClasses(this.fromScaleId, this.toScaleId));
-    const pitchInSharedModalPivots = pitchSample ?
-        sharedSet.has(((pitchSample.midi % 12) + 12) % 12) :
-        false;
+    const sharedSet = new Set(this.getSharedPitchClasses(this.fromScaleId, this.toScaleId));
+    const pitchInSharedModalPivots = pitchSample ? sharedSet.has(((pitchSample.midi % 12) + 12) % 12) : false;
+    const deg6Midi = app.phraseEngine ? app.phraseEngine.degreeToMidi(6, 0, this.fromScaleId) : 0;
+    const phraseDegSnapped = sharedSet.has(((deg6Midi % 12) + 12) % 12);
     this._applyBlendAtProgress(0.55);
     const midpointSwitchedOk = this.midpointSwitched === true;
     this._completeTransition();
@@ -631,15 +631,9 @@ class EnsoAutoCycler {
     this.syncUI();
 
     return {
-      ok: Boolean(
-          started && cutoffAt25 > 0 && pitchSample &&
-          pitchInSharedModalPivots && midpointSwitchedOk && landedOnTarget),
-      started,
-      cutoffAt25,
-      pitchSampleMidi: pitchSample ? pitchSample.midi : null,
-      pitchInSharedModalPivots,
-      midpointSwitchedOk,
-      landedOnTarget
+      ok: Boolean(started && cutoffAt25 > 0 && delayTimeSteady && pitchSample && pitchInSharedModalPivots && phraseDegSnapped && midpointSwitchedOk && landedOnTarget),
+      started, cutoffAt25, delayTimeSteady, pitchSampleMidi: pitchSample ? pitchSample.midi : null,
+      pitchInSharedModalPivots, phraseDegSnapped, midpointSwitchedOk, landedOnTarget
     };
   }
 

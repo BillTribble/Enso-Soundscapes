@@ -16,7 +16,7 @@ const DEFAULT_VOICE_FX = {
   tape: {reverb: 0.55, delay: 0.65}, drone: {reverb: 0.60, delay: 0.15}
 };
 const DEFAULT_VOICE_INSTRUMENT_TRIM = {
-  pad: 0.420, piano: 0.290, bell: 0.528, choir: 0.528, tape: 0.715, drone: 0.527
+  pad: 0.395, piano: 0.271, bell: 0.635, choir: 0.485, tape: 0.655, drone: 0.510
 };
 
 class AudioEngine {
@@ -77,7 +77,7 @@ class AudioEngine {
     s.delayMerger = c.createChannelMerger(2); s.delayWetGain = c.createGain(); s.delayWetGain.gain.value = p.delayMix;
     s.delayToReverb = c.createGain(); s.delayToReverb.gain.value = 0.35;
     s.wowLfo = c.createOscillator(); s.wowLfo.frequency.value = 0.55;
-    s.wowGain = c.createGain(); s.wowGain.gain.value = p.delayWow * 0.0035;
+    s.wowGain = c.createGain(); s.wowGain.gain.value = p.delayWow * 0.0008;
     s.wowLfo.connect(s.wowGain); s.wowGain.connect(s.delayNodeL.delayTime); s.wowGain.connect(s.delayNodeR.delayTime); s.wowLfo.start();
     s.postFilterBus.connect(s.delaySend);
     s.delaySend.connect(s.delayNodeL); s.delaySend.connect(s.delayNodeR);
@@ -95,7 +95,7 @@ class AudioEngine {
     s.shimmerBandpass = c.createBiquadFilter(); s.shimmerBandpass.type = 'bandpass'; s.shimmerBandpass.frequency.value = 1800; s.shimmerBandpass.Q.value = 1.0;
     s.shimmerPreDelay = c.createDelay(1.0); s.shimmerPreDelay.delayTime.value = 0.09;
     s.shimmerChorusLfo = c.createOscillator(); s.shimmerChorusLfo.frequency.value = 0.8;
-    s.shimmerChorusLfoGain = c.createGain(); s.shimmerChorusLfoGain.gain.value = 0.0018;
+    s.shimmerChorusLfoGain = c.createGain(); s.shimmerChorusLfoGain.gain.value = 0.0005;
     s.shimmerChorusLfo.connect(s.shimmerChorusLfoGain); s.shimmerChorusLfoGain.connect(s.shimmerPreDelay.delayTime); s.shimmerChorusLfo.start();
     s.shimmerBus.connect(s.shimmerBandpass); s.shimmerBandpass.connect(s.shimmerPreDelay); s.shimmerPreDelay.connect(s.convolver);
     s.shimmerHp = c.createBiquadFilter(); s.shimmerHp.type = 'highpass'; s.shimmerHp.frequency.value = 1200;
@@ -370,8 +370,14 @@ class AudioEngine {
     }
   }
   setDelayTime(sec) {
-    this.params.delayTime = Math.max(0.12, Math.min(2.4, sec));
+    const nextSec = Math.max(0.12, Math.min(2.4, sec));
+    if (this._appliedDelayTime !== undefined && Math.abs(nextSec - this._appliedDelayTime) < 0.002) {
+      this.params.delayTime = nextSec;
+      return;
+    }
+    this.params.delayTime = nextSec;
     if (!this.ctx) return;
+    this._appliedDelayTime = nextSec;
     for (const st of (this.stems || [this.nodes])) {
       if (st && st.delayNodeL && st.delayNodeR) {
         st.delayNodeL.delayTime.setTargetAtTime(this.params.delayTime, this.ctx.currentTime, 0.05);
@@ -390,7 +396,7 @@ class AudioEngine {
     this.params.delayWow = Math.max(0, Math.min(1.0, val));
     if (!this.ctx) return;
     for (const st of (this.stems || [this.nodes])) {
-      if (st && st.wowGain) st.wowGain.gain.setTargetAtTime(this.params.delayWow * 0.0035, this.ctx.currentTime, 0.05);
+      if (st && st.wowGain) st.wowGain.gain.setTargetAtTime(this.params.delayWow * 0.0008, this.ctx.currentTime, 0.05);
     }
   }
 
@@ -539,6 +545,7 @@ class AudioEngine {
       now = Math.max(now, this._nextNoteScheduleTime || 0);
       this._nextNoteScheduleTime = now + 0.018;
     }
+    this.lastScheduledNoteTime = now;
     const freq = 440 * Math.pow(2, (midiNote - 69) / 12);
     const archetypeFactors = { pad: 1.25, piano: 0.35, bell: 0.45, choir: 1.35, tape: 0.85, drone: 1.5 };
     const af = archetypeFactors[voiceId] || 1.0, circ = this.params.circadianMultipliers || {};

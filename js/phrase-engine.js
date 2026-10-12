@@ -152,7 +152,9 @@ class PhraseEngine {
   degreeToMidi(degreeIndex, octaveOffset = 0, scaleId = this.scaleId) {
     const sc = this.getScale(scaleId), ivs = Array.isArray(sc.intervals) ? sc.intervals : [0, 2, 4, 6, 7, 9, 11];
     const len = ivs.length, oct = Math.floor(degreeIndex / len) + octaveOffset, idx = ((degreeIndex % len) + len) % len;
-    return this.quantizeMidiToKey(Math.max(0, Math.min(127, sc.rootMidi + oct * 12 + ivs[idx])), scaleId);
+    const q = this.quantizeMidiToKey(Math.max(0, Math.min(127, sc.rootMidi + oct * 12 + ivs[idx])), scaleId);
+    const ac = (typeof window !== 'undefined' && window.enoAutoCycler) ? window.enoAutoCycler : null;
+    return (ac && typeof ac.isTransitioning === 'function' && ac.isTransitioning()) ? ac.snapMidiToSharedModalPivot(q) : q;
   }
 
   getDiatonicFifthMidi(midi, scaleId = this.scaleId) {
@@ -421,12 +423,16 @@ class PhraseEngine {
         const pVoice = voice || ((this.probEngine && Array.isArray(this.probEngine.voices)) ? this.probEngine.voices.find((x) => x.id === 'piano') : null);
         const gain = (pVoice && typeof pVoice.gain === 'number') ? pVoice.gain : 2.0;
 
+        let baseStart = null;
         stepMidis.forEach((m, noteIdx) => {
           const rollDelay = noteIdx * ((step.rollMs || 35) / 1000);
           if (this.audioEngine) {
-            setBgTimer(() => {
+            if (noteIdx === 0) {
               this.audioEngine.triggerVoice('piano', m, vel, pan, gain);
-            }, rollDelay * 1000);
+              baseStart = this.audioEngine.lastScheduledNoteTime ?? this.audioEngine.ctx?.currentTime ?? null;
+            } else {
+              this.audioEngine.triggerVoice('piano', m, vel, pan, gain, null, baseStart !== null ? baseStart + rollDelay : null);
+            }
           }
         });
         if (window.aurora) window.aurora.pulse(sIdx === 0 ? 0.62 : 0.38, { voiceId: 'piano' });
@@ -483,21 +489,10 @@ class PhraseEngine {
     }
 
     return {
-      phraseName: phrase.name,
-      phraseType: this.pianoPhraseType,
-      variant: this.lastPhraseVariant,
-      cycleCount: this.pianoCycleCount,
-      firstMidi,
-      firstNoteName,
-      allMidiNotes,
-      stepCount: steps.length,
-      cutoffIndex,
-      lfoCutoffIndex,
-      lfoLengthRatio: lfoRaw.lengthRatio,
-      lfoPeriodSec: lfoRaw.periodSec,
-      lfoEnabled: lfoRaw.enabled,
-      stepStates,
-      outcome: this.lastPhraseOutcome,
+      phraseName: phrase.name, phraseType: this.pianoPhraseType, variant: this.lastPhraseVariant,
+      cycleCount: this.pianoCycleCount, firstMidi, firstNoteName, allMidiNotes, stepCount: steps.length,
+      cutoffIndex, lfoCutoffIndex, lfoLengthRatio: lfoRaw.lengthRatio, lfoPeriodSec: lfoRaw.periodSec,
+      lfoEnabled: lfoRaw.enabled, stepStates, outcome: this.lastPhraseOutcome,
       playedStepsCount: stepStates.filter(s => s === 'play').length
     };
   }
@@ -537,7 +532,15 @@ class PhraseEngine {
     const vel = 0.65, pan = (Math.random() * 2 - 1) * 0.35, gain = (voice && typeof voice.gain === 'number') ? voice.gain : 0.70;
 
     if (this.audioEngine) {
-      midiNotes.forEach((m, idx) => setBgTimer(() => this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68), idx * 28));
+      let baseStart = null;
+      midiNotes.forEach((m, idx) => {
+        if (idx === 0) {
+          this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68);
+          baseStart = this.audioEngine.lastScheduledNoteTime ?? this.audioEngine.ctx?.currentTime ?? null;
+        } else {
+          this.audioEngine.triggerVoice(voice.id, m, vel * 0.85, pan, gain * 0.68, null, baseStart !== null ? baseStart + idx * 0.028 : null);
+        }
+      });
     }
     if (window.aurora) window.aurora.pulse(0.72, { voiceId: voice ? voice.id : 'choir' });
 

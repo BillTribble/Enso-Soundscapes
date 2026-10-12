@@ -49,12 +49,15 @@ window.EnsoPwaMedia = (function() {
     due.sort((a, b) => a.dueAt - b.dueAt);
     const ae = window.enoApp?.audioEngine;
     const stagger = due.length > 1 && ae?.ctx && ae.isRunning;
+    const baseAudioTime = stagger ? ae.ctx.currentTime : 0;
+    const firstDueAt = due[0].dueAt;
     for (let i = 0; i < due.length; i++) {
       const d = due[i];
       clearTimeout(d.nativeId);
       bgTimers.delete(d.id);
       if (stagger) {
-        ae._nextNoteScheduleTime = ae.ctx.currentTime + (i * 0.065);
+        const relSec = Math.max(i * 0.065, Math.min(3.5, (d.dueAt - firstDueAt) / 1000));
+        ae._nextNoteScheduleTime = baseAudioTime + relSec;
       }
       try { d.fn(); } catch (e) {}
     }
@@ -110,7 +113,7 @@ window.EnsoPwaMedia = (function() {
   function initServiceWorker() {
     if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
       navigator.serviceWorker
-          .register('sw.js?v=20261010r', {updateViaCache: 'none'})
+          .register('sw.js?v=20261011p', {updateViaCache: 'none'})
           .then((reg) => {
             if (reg && typeof reg.update === 'function')
               reg.update().catch(() => {});
@@ -120,7 +123,7 @@ window.EnsoPwaMedia = (function() {
     if ('caches' in window) {
       caches.keys()
           .then((keys) => keys.forEach((k) => {
-            if (k !== 'enso-soundscapes-v21') caches.delete(k);
+            if (k !== 'enso-soundscapes-v23') caches.delete(k);
           }))
           .catch(() => {});
     }
@@ -217,7 +220,7 @@ window.EnsoPwaMedia = (function() {
       audio.setAttribute('playsinline', '');
       audio.setAttribute('preload', 'auto');
       audio.style.display = 'none';
-      audio.volume = (typeof document !== 'undefined' && document.hidden) ? 1.0 : 0.02;
+      audio.volume = 0.01;
       audio.muted = false;
       document.body.appendChild(audio);
       bgStreamAudio = audio;
@@ -232,9 +235,7 @@ window.EnsoPwaMedia = (function() {
     try {
       if (!engine.nodes.streamDest && typeof engine.ctx.createMediaStreamDestination === 'function') {
         engine.nodes.streamDest = engine.ctx.createMediaStreamDestination();
-        if (engine.nodes.masterGain) {
-          engine.nodes.masterGain.connect(engine.nodes.streamDest);
-        }
+        engine.nodes.masterConnectedToStreamDest = false;
       }
       if (engine.nodes.streamDest && engine.nodes.streamDest.stream) {
         initStreamAudio(engine.nodes.streamDest.stream);
@@ -462,12 +463,14 @@ window.EnsoPwaMedia = (function() {
   function initListeners() {
     document.addEventListener('visibilitychange', () => {
       lastBgTickTime = performance.now();
+      if (window.enoApp) window.enoApp.lastTickTime = lastBgTickTime;
       if (bgStreamAudio) {
-        bgStreamAudio.volume = document.hidden ? 1.0 : 0.02;
+        bgStreamAudio.volume = 0.01;
       }
-      if (!document.hidden && window.enoApp && window.enoApp.audioEngine && window.enoApp.audioEngine.isRunning) {
-        if (window.enoApp.audioEngine.ctx && window.enoApp.audioEngine.ctx.state === 'suspended') {
-          window.enoApp.audioEngine.ctx.resume().catch(() => {});
+      if (window.enoApp && window.enoApp.audioEngine && window.enoApp.audioEngine.isRunning) {
+        const ctx = window.enoApp.audioEngine.ctx;
+        if (ctx && (ctx.state === 'suspended' || ctx.state === 'interrupted')) {
+          ctx.resume().catch(() => {});
         }
         if (bgKeepAliveAudio && bgKeepAliveAudio.paused) {
           bgKeepAliveAudio.play().catch(() => {});
@@ -475,7 +478,7 @@ window.EnsoPwaMedia = (function() {
         if (bgStreamAudio && bgStreamAudio.paused) {
           bgStreamAudio.play().catch(() => {});
         }
-        if ('wakeLock' in navigator) {
+        if (!document.hidden && 'wakeLock' in navigator) {
           navigator.wakeLock.request('screen').catch(() => {});
         }
       }
@@ -530,7 +533,8 @@ window.EnsoPwaMedia = (function() {
         carrierOscHz: ae?.nodes?.keepAliveOsc ? ae.nodes.keepAliveOsc.frequency.value : 1.0,
         noScriptProcessorNode: !ae?.nodes?.bgClockNode,
         keepAliveDurationSec: bgKeepAliveDurationSec,
-        streamAudioAttached: Boolean(bgStreamAudio && bgStreamAudio.srcObject)
+        streamAudioAttached: Boolean(bgStreamAudio && bgStreamAudio.srcObject),
+        bgSingleOutputNoResample: Boolean(ae && ae.nodes?.masterConnectedToStreamDest === false && (!bgStreamAudio || bgStreamAudio.volume <= 0.02))
       };
     },
     setBgTimeout,

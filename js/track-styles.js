@@ -243,7 +243,7 @@ const TRACK_STYLE_PROFILES = {
     id: 'discreet_loops',
     name: 'Moss & Reel',
     methodTitle: 'Pauline Oliveros & Brian Eno: Deep Listening & Attention',
-    pianoEq: { bodyWarmthHz: 212, bodyWarmthGainDb: 4.5, highShelfHz: 1420, highShelfCutDb: -14.2, mechReleaseGain: 0.068, shimmerSend: 0.04, chorusDetuneCents: 0, tapeWowHz: 0.58, tapeWowDepth: 0.0042, feltThumpGain: 0.20 },
+    pianoEq: { bodyWarmthHz: 212, bodyWarmthGainDb: 4.5, highShelfHz: 1420, highShelfCutDb: -14.2, mechReleaseGain: 0.068, shimmerSend: 0.04, chorusDetuneCents: 0, tapeWowHz: 0.58, tapeWowDepth: 0.0006, feltThumpGain: 0.20 },
     voiceTrim:
         {pad: 1.0, piano: 1.0, bell: 1.0, choir: 1.0, tape: 1.0, drone: 1.0},
     padSynth: { wave1: 'sawtooth', wave2: 'triangle', detuneCents: 9, oscGain: 1.005, subGain: 0.48, fifthGain: 0.28, lydianSharp11Gain: 0, filterMult: 2.0, filterQ: 1.85, glideRatio: 1.0, glideDurationSec: 0 },
@@ -259,15 +259,15 @@ const TRACK_STYLE_PROFILES = {
       vibratoCents: 6.2
     },
     tapeSynth: {
-      triGain: 0.511,
-      sawGain: 0.431,
-      squareGain: 0.240,
+      triGain: 0.450,
+      sawGain: 0.380,
+      squareGain: 0.210,
       wowHz: 0.62,
-      wowCents: 12.0,
+      wowCents: 4.5,
       flutterHz: 5.4,
-      flutterCents: 7.0,
+      flutterCents: 3.0,
       filterHz: 1380,
-      filterQ: 2.70
+      filterQ: 2.15
     },
     droneSynth: { rootGain: 0.673, fifthGain: 0.435, octaveGain: 0.196, subOctaveGain: 0.421, filterMult: 1.75, filterQ: 1.50, breathLfoHz: 0.085 },
     shimmerCascade: { baseOctaveGain: 0.05, upperOctaveGain: 0.0, fifthOctaveGain: 0.0, bloomDelaySec: 0.40, tankFeedback: 0.06, detuneCents: 3.0 },
