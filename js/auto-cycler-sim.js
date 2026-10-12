@@ -199,6 +199,8 @@
       const shownAfterFirstPlay = banner.classList.contains('is-visible') &&
           cs.display !== 'none' && cs.visibility === 'visible' &&
           bRect.width > 120 && bRect.height >= 40;
+      const invertedSurfaceOk = cs.backgroundColor === 'rgb(48, 48, 48)' ||
+          cs.backgroundColor === 'rgb(227, 227, 227)';
       const pointsAtPatchesTab = bRect.top >= pRect.bottom - 2 &&
           (bRect.top - pRect.bottom) <= 22 &&
           Math.abs(bRect.left - pRect.left) <= 24;
@@ -221,9 +223,9 @@
       const onlyFirstTimeOk = !banner.classList.contains('is-visible') &&
           getComputedStyle(banner).display === 'none';
       return Boolean(
-          hiddenBeforePlay && shownAfterFirstPlay && pointsAtPatchesTab &&
-          defaultTextOk && closeTouchTargetOk && dynamicMinutesOk &&
-          dismissedOk && onlyFirstTimeOk);
+          hiddenBeforePlay && shownAfterFirstPlay && invertedSurfaceOk &&
+          pointsAtPatchesTab && defaultTextOk && closeTouchTargetOk &&
+          dynamicMinutesOk && dismissedOk && onlyFirstTimeOk);
     }
   };
 
