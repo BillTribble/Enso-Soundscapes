@@ -1,6 +1,6 @@
 # Enso Soundscapes
 
-> Generative ambient soundscapes and probabilistic tape-loop studio inspired by Brian Eno.
+> Generative ambient soundscapes and probabilistic tape-loop studio.
 
 [![Live App](https://img.shields.io/badge/Live%20App-GitHub%20Pages-4caf50?style=for-the-badge)](https://billtribble.github.io/Enso-Soundscapes/)
 
