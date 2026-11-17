@@ -17,9 +17,9 @@ import urllib.request
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 ARTIFACT_DIR = os.environ.get(
     'ARTIFACT_DIR',
-    '/usr/local/google/home/tribble/.gemini/jetski/brain/ed99bfaa-cf62-4c45-bd95-a3ce78cfcab8',
+    os.path.join(tempfile.gettempdir(), 'enso-soundscapes-artifacts'),
 )
-SERVER_URL = 'http://bat.c.googlers.com:8094'
+SERVER_URL = os.environ.get('SERVER_URL', 'http://127.0.0.1:8094')
 LOCAL_URL = 'http://127.0.0.1:8094'
 FILE_URL = f'file://{APP_DIR}/index.html'
 CHROME_BIN = '/usr/bin/google-chrome'
